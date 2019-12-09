@@ -6,22 +6,15 @@ data class Planet(
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = type.oreDistribution.map { it.oreType}.maxBy { it.baseSellValue }!!,
-    val managerBonus: PlanetBonus = PlanetBonus.NONE
+    val preferredOreType: OreType = type.oreDistribution.map { it.oreType}.maxBy { it.baseSellValue }!!
     // TODO add colony level per category
 ) {
-    private val internalMineRate: Double
-        get() = type.baseMineRate + 0.1 * (mineLevel - 1) + (0.017 * (mineLevel - 1) * (mineLevel - 1))
-    private val internalShipSpeed: Double
-        get() = 1 + 0.2 * (shipLevel - 1) + ((1.0/75) * (shipLevel - 1) * (shipLevel - 1))
-    private val internalCargo: Double
-        get() = 5.1 + 2 * (cargoLevel - 1) + (0.1 * (cargoLevel - 1) * (cargoLevel - 1))
     val ownMineRate: Double
-        get() = internalMineRate * managerBonus.mineRate
+        get() = type.baseMineRate + 0.1 * (mineLevel - 1) + (0.017 * (mineLevel - 1) * (mineLevel - 1))
     val ownShipSpeed: Double
-        get() = internalShipSpeed * managerBonus.shipSpeed
+        get() = 1 + 0.2 * (shipLevel - 1) + ((1.0/75) * (shipLevel - 1) * (shipLevel - 1))
     val ownCargo: Double
-        get() = internalCargo * managerBonus.cargo
+        get() = 5.1 + 2 * (cargoLevel - 1) + (0.1 * (cargoLevel - 1) * (cargoLevel - 1))
 
     // TODO compute upgrade costs
     /*
