@@ -2,32 +2,28 @@ package org.hildan.ipm.helper
 
 import java.util.EnumSet
 
-class Galaxy(
+data class Galaxy(
     private val longTermBonus: Bonus,
     private val beaconBonus: BeaconBonus,
-    private val managers: List<Manager>
+    private val planets: List<Planet> = PlanetType.values().map { Planet(it) },
+    private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
+    private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
 ) {
-    private val planets = PlanetType.values().map { Planet(it) }
-    private val planetsByType = planets.associateBy { it.type }
+    private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
+        planets = this.planets.map { if (it.type == planet) transform(it) else it }
+    )
 
-    private val researchedProjects: MutableSet<Project> = EnumSet.noneOf(Project::class.java)
-    private val unlockedProjects: MutableSet<Project> = EnumSet.noneOf(Project::class.java)
+    fun withLevels(planet: PlanetType, mine: Int, ships: Int, cargo: Int): Galaxy =
+            withChangedPlanet(planet) { it.copy(mineLevel = mine, shipLevel = ships, cargoLevel = cargo) }
 
-    fun setLevels(planet: PlanetType, mine: Int, ships: Int, cargo: Int) {
-        val p = planetsByType[planet] ?: error("Missing planet $planet!")
-        p.mineLevel = mine
-        p.shipLevel = ships
-        p.cargoLevel = cargo
+    fun withManager(manager: Manager, planet: PlanetType) : Galaxy = withChangedPlanet(planet) {
+        it.copy(managerBonus = manager.planetBonus)
     }
 
-    fun research(project: Project) {
-        researchedProjects.add(project)
-        unlockedProjects.addAll(project.children)
-    }
-
-    fun assignManager(manager: Manager, planet: PlanetType) {
-        planetsByType[planet]!!.managerBonus = manager.planetBonus
-    }
+    fun withProject(project: Project) : Galaxy = copy(
+        researchedProjects = researchedProjects + project,
+        unlockedProjects = unlockedProjects + project.children
+    )
 
     private val Planet.localBeaconBonus: PlanetBonus
         get() = if (Project.BEACON in researchedProjects) beaconBonus[this.type] else PlanetBonus.NONE
@@ -35,14 +31,21 @@ class Galaxy(
     private val Planet.beaconMiningBonus: Double
         get() = localBeaconBonus.mineRate
 
-    // TODO account for manager bonus
     // TODO account for colony bonus
     private val Planet.actualMineRate: Double
         get() = ownMineRate * longTermBonus.globalPlanetBonus.mineRate * beaconMiningBonus
 
-    // TODO account for preferred ore boost project
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
-        get() = type.oreDistribution.associate { it.oreType to (actualMineRate * it.ratio) }
+        get() {
+            val getRatio = { it: OrePart ->
+                if (Project.ORE_TARGETING in researchedProjects && it.oreType == preferredOreType) {
+                    it.ratio + 0.15
+                } else {
+                    it.ratio
+                }
+            }
+            return type.oreDistribution.associate { it.oreType to (actualMineRate * getRatio(it)) }
+        }
 
     override fun toString(): String = """
         Planets:

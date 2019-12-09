@@ -19,7 +19,7 @@ fun main() {
         Manager("Nicole", PlanetBonus(cargo = 2.0))
     )
 
-    val galaxy = Galaxy(bonus, beaconBonus, managers)
+    val galaxy = Galaxy(bonus, beaconBonus)
 
     println(galaxy)
 }

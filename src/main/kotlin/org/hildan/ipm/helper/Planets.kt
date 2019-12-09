@@ -3,11 +3,11 @@ package org.hildan.ipm.helper
 data class Planet(
     val type: PlanetType,
     val unlocked: Boolean = false,
-    var mineLevel: Int = 1,
-    var shipLevel: Int = 1,
-    var cargoLevel: Int = 1,
-    var preferredOreType: OreType = type.oreDistribution.map { it.oreType}.maxBy { it.baseSellValue }!!,
-    var managerBonus: PlanetBonus = PlanetBonus.NONE
+    val mineLevel: Int = 1,
+    val shipLevel: Int = 1,
+    val cargoLevel: Int = 1,
+    val preferredOreType: OreType = type.oreDistribution.map { it.oreType}.maxBy { it.baseSellValue }!!,
+    val managerBonus: PlanetBonus = PlanetBonus.NONE
     // TODO add colony level per category
 ) {
     private val internalMineRate: Double
@@ -84,9 +84,11 @@ enum class PlanetType(
     ),
 }
 
+// Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)
+
 // No.	Planet	UnlockCost	TelescopeTierRequired	Resources	Yield(%)	DistanceReal	BaseMineRate
 //1	Balor	100	―	Copper	100	10.00	0.25
-//2	Drasta	200	―	Copper,Iron	80,20	12.00	0.37
+//2	Drasta	200	―	Copper,Iron 80,20	12.00	0.37
 //3	Anadius	500	―	Copper,Iron	50,50	14.00	0.52
 //4	Dholen	1250	―	Iron,Lead	80,20	15.00	0.70
 //5	Verr	5k	1	Lead,Iron,Copper	50,30,20	16.00	0.92
@@ -98,8 +100,8 @@ enum class PlanetType(
 //11	Imir	150k	3	Aluminium	100	26.00	2.95
 //12	Relic	250k	3	Lead,Silica,Silver	45,35,20	28.00	3.41
 //13	Nith	400k	3	Silver,Aluminium	80,20	30.00	3.90
-//14	Batalla	800k	4	Copper, Iron, Gold	40,40,20	33.00	4.42
-//15	Micah	1.5m	4	Gold, Silver	50,50	35.00	4.98
+//14	Batalla	800k	4	Copper,Iron,Gold	40,40,20	33.00	4.42
+//15	Micah	1.5m	4	Gold,Silver	50,50	35.00	4.98
 //16	Pranas	3.0m	4	Gold	100	37.00	5.58
 //17	Castellus	6.4m	5	Aluminum, Silica, Diamond	40, 35, 25	40.00	6.20
 //18	Gorgon	12m	5	Diamond, Lead	80, 20	43.00	6.86
