@@ -1,5 +1,9 @@
 package org.hildan.ipm.helper
 
+import org.hildan.ipm.helper.OreType.*
+import org.hildan.ipm.helper.AlloyType.*
+import org.hildan.ipm.helper.Item.*
+
 data class ProjectRecipe(
     val ingredients: List<Ingredient>
 )
@@ -19,8 +23,8 @@ enum class Project(
     ASTEROID_MINER(
         recipe = ProjectRecipe(
             listOf(
-                Ingredient(OreType.COPPER, 400),
-                Ingredient(OreType.IRON, 100)
+                Ingredient(COPPER, 400),
+                Ingredient(IRON, 100)
             )
         ),
         bonus = Bonus.NONE // ability to mine asteroids
@@ -28,8 +32,8 @@ enum class Project(
     MANAGEMENT(
         recipe = ProjectRecipe(
             listOf(
-                Ingredient(OreType.COPPER, 400),
-                Ingredient(OreType.IRON, 50)
+                Ingredient(COPPER, 400),
+                Ingredient(IRON, 50)
             )
         ),
         bonus = Bonus.NONE // ability to assign managers
@@ -37,8 +41,8 @@ enum class Project(
     TELESCOPE_1(
         recipe = ProjectRecipe(
             listOf(
-                Ingredient(AlloyType.COPPER_BAR, 5),
-                Ingredient(OreType.IRON, 1_500)
+                Ingredient(COPPER_BAR, 5),
+                Ingredient(IRON, 1_500)
             )
         ),
         bonus = Bonus.NONE // ability to assign managers
@@ -46,10 +50,19 @@ enum class Project(
     BEACON(
         recipe = ProjectRecipe(
             listOf(
-                Ingredient(AlloyType.IRON_BAR, 15)
+                Ingredient(IRON_BAR, 15)
             )
         ),
         bonus = Bonus.NONE // beacon bonus is calculated separately
+    ),
+    ORE_TARGETING(
+        recipe = ProjectRecipe(
+            listOf(
+                Ingredient(HAMMER, 100),
+                Ingredient(BATTERY, 50)
+            )
+        ),
+        bonus = Bonus.NONE // calculated separately
     )
 
     // TODO fill in all projects
