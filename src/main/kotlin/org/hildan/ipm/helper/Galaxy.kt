@@ -13,7 +13,7 @@ data class Galaxy(
 ) {
     private val managerBonus = assignedManagers
         .map { (p, m) -> m.toBonus(p) }
-        .map { it.scale(shipsAndRoomsBonus.managersMultiplier) }
+        .map { it.scale(shipsAndRoomsBonus.managersBonusMultiplier) }
         .fold(Bonus.NONE) { b1, b2 -> b1 + b2}
 
     private val actualBeaconBonus = if (Project.BEACON in researchedProjects) beaconBonus else Bonus.NONE
@@ -52,7 +52,7 @@ data class Galaxy(
 
     // TODO account for colony bonus
     private val Planet.actualMineRate: Double
-        get() = ownMineRate * totalBonus.mineRate
+        get() = totalBonus.mineRate.applyTo(ownMineRate)
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
         get() {

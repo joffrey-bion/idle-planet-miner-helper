@@ -15,12 +15,12 @@ fun main() {
     val longTermBonus = shipsBonus + roomsBonus
 
     val beaconBonus = Beacon.bonus(
-        BeaconPlanetRange.RANGE_1_4 to PlanetBonus(1.22, 1.0, 1.0)
+        BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.22, 1.0, 1.0)
     )
 
-    val lukas = Manager("Lukas", PlanetBonus(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
-    val angela = Manager("Angela", PlanetBonus(cargo = 4.0), Bonus(allPlanets = PlanetBonus(shipSpeed = 1.2)))
-    val nicole = Manager("Nicole", PlanetBonus(cargo = 2.0))
+    val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
+    val angela = Manager("Angela", PlanetBonus.of(cargo = 4.0), Bonus.allPlanets(shipSpeed = 1.2))
+    val nicole = Manager("Nicole", PlanetBonus.of(cargo = 2.0))
 
     val galaxy = Galaxy(longTermBonus, beaconBonus)
         .withLevels(PlanetType.BALOR, 40, 19, 19)
