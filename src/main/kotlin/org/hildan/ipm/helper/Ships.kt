@@ -17,7 +17,7 @@ enum class Room(
     val bonus: (Int) -> Bonus
 ) {
     ENGINEERING({ l -> Bonus.allPlanets(mineRate = 1.25 + (l-1) * 0.15) }),
-    FORGE({ l -> Bonus.production(smeltSpeed = 1.1 + (l-1) * 0.1) }),
+    FORGE({ l -> Bonus.production(smeltSpeed = 1.2 + (l-1) * 0.1) }),
     AERONAUTICAL({ l -> Bonus.allPlanets(shipSpeed = 1.5 + (l-1) * 0.25) }),
     ASTRONOMY({ l -> Bonus(planetUpgradeCostMultiplier = Multiplier(0.9 + (l - 1) * (-0.04))) }),
     PACKAGING({ l -> Bonus.allPlanets(cargo = 1.5 + (l - 1) * 0.25) }),
