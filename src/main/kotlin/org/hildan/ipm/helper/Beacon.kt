@@ -1,7 +1,5 @@
 package org.hildan.ipm.helper
 
-import java.util.EnumMap
-
 private val planets = PlanetType.values()
 
 enum class BeaconPlanetRange(val planets: List<PlanetType>) {
@@ -17,6 +15,7 @@ object Beacon {
     fun bonus(vararg bonuses: Pair<BeaconPlanetRange, PlanetBonus>) = Bonus(
         perPlanet = bonuses
             .flatMap { (r, b) -> r.planets.map { it to b } }
-            .toMap(EnumMap<PlanetType, PlanetBonus>(PlanetType::class.java))
+            .toMap()
+            .asEMap { PlanetBonus.NONE } // TODO remove this default when all planets are covered
     )
 }

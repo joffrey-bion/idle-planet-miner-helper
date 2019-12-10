@@ -45,21 +45,21 @@ data class ProductionBonus(
 
 data class Bonus(
     val allPlanets: PlanetBonus = PlanetBonus.NONE,
-    val perPlanet: Map<PlanetType, PlanetBonus> = PlanetType.mapTo { PlanetBonus.NONE },
+    val perPlanet: EMap<PlanetType, PlanetBonus> = EMap.of { PlanetBonus.NONE },
     val production: ProductionBonus = ProductionBonus.NONE,
     val managersMultiplier: Double = 1.0,
     val projectCostMultiplier: Double = 1.0,
     val planetUpgradeCostMultiplier: Double = 1.0,
     val planetUpgradeCostMultiplierPerColonyLevel: Double = 1.0
 ) {
-    fun forPlanet(planet: PlanetType) = allPlanets * (perPlanet[planet] ?: PlanetBonus.NONE)
+    fun forPlanet(planet: PlanetType) = allPlanets * perPlanet[planet]
 
     operator fun plus(other: Bonus): Bonus = when {
         this === NONE -> other
         other === NONE -> this
         else -> Bonus(
             allPlanets = allPlanets * other.allPlanets,
-            perPlanet = PlanetType.mapTo { perPlanet[it]!! * other.perPlanet[it]!! },
+            perPlanet = EMap.of { perPlanet[it] * other.perPlanet[it] },
             production = production * other.production,
             managersMultiplier = managersMultiplier * other.managersMultiplier,
             projectCostMultiplier = projectCostMultiplier * other.projectCostMultiplier,
@@ -70,7 +70,7 @@ data class Bonus(
 
     fun scale(factor: Double): Bonus = Bonus(
         allPlanets = allPlanets.scale(factor),
-        perPlanet = perPlanet.mapValues { (_, b) -> b.scale(factor) },
+        perPlanet = perPlanet.mapValues { (_, b) -> b.scale(factor) }.asEMap(),
         production = production.scale(factor),
         managersMultiplier = managersMultiplier.scaleBonus(factor),
         projectCostMultiplier = projectCostMultiplier.scaleBonus(factor),
