@@ -6,16 +6,12 @@ inline class Multiplier(private val factor: Double) {
 
     operator fun times(other: Multiplier) = Multiplier(factor * other.factor)
 
-    fun scale(factor: Double) = Multiplier((this.factor - 1) * factor + 1)
-
     fun applyTo(value: Double): Double = value * factor
 
     companion object {
         val NONE = Multiplier(1.0)
     }
 }
-
-private fun Double.scaleBonus(factor: Double) = (this - 1) * factor + 1
 
 data class PlanetBonus(
     val mineRate: Multiplier = Multiplier.NONE,
@@ -26,12 +22,6 @@ data class PlanetBonus(
         mineRate = mineRate * other.mineRate,
         shipSpeed = shipSpeed * other.shipSpeed,
         cargo = cargo * other.cargo
-    )
-
-    fun scale(factor: Double): PlanetBonus = PlanetBonus(
-        mineRate = mineRate.scale(factor),
-        shipSpeed = shipSpeed.scale(factor),
-        cargo = cargo.scale(factor)
     )
 
     companion object {
@@ -54,11 +44,6 @@ data class ProductionBonus(
         craftSpeed = craftSpeed * other.craftSpeed
     )
 
-    fun scale(factor: Double): ProductionBonus = ProductionBonus(
-        smeltSpeed = smeltSpeed.scale(factor),
-        craftSpeed = craftSpeed.scale(factor)
-    )
-
     companion object {
         val NONE = ProductionBonus()
 
@@ -73,7 +58,6 @@ data class Bonus(
     val allPlanets: PlanetBonus = PlanetBonus.NONE,
     val perPlanet: EMap<PlanetType, PlanetBonus> = EMap.of { PlanetBonus.NONE },
     val production: ProductionBonus = ProductionBonus.NONE,
-    val managersBonusMultiplier: Double = 1.0,
     val projectCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplierPerColonyLevel: Multiplier = Multiplier.NONE
@@ -87,22 +71,11 @@ data class Bonus(
             allPlanets = allPlanets * other.allPlanets,
             perPlanet = EMap.of { perPlanet[it] * other.perPlanet[it] },
             production = production * other.production,
-            managersBonusMultiplier = managersBonusMultiplier * other.managersBonusMultiplier,
             projectCostMultiplier = projectCostMultiplier * other.projectCostMultiplier,
             planetUpgradeCostMultiplier = planetUpgradeCostMultiplier * other.planetUpgradeCostMultiplier,
             planetUpgradeCostMultiplierPerColonyLevel = planetUpgradeCostMultiplierPerColonyLevel * other.planetUpgradeCostMultiplierPerColonyLevel
         )
     }
-
-    fun scale(factor: Double): Bonus = Bonus(
-        allPlanets = allPlanets.scale(factor),
-        perPlanet = perPlanet.mapValues { (_, b) -> b.scale(factor) }.asEMap(),
-        production = production.scale(factor),
-        managersBonusMultiplier = managersBonusMultiplier.scaleBonus(factor),
-        projectCostMultiplier = projectCostMultiplier.scale(factor),
-        planetUpgradeCostMultiplier = planetUpgradeCostMultiplier.scale(factor),
-        planetUpgradeCostMultiplierPerColonyLevel = planetUpgradeCostMultiplierPerColonyLevel.scale(factor)
-    )
 
     companion object {
         val NONE = Bonus()

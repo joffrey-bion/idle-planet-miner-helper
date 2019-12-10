@@ -3,7 +3,6 @@ package org.hildan.ipm.helper
 fun main() {
 
     val shipsBonus =
-            Ships.AURORA +
             Ships.DAUGHTERSHIP +
             Ships.ELDERSHIP +
             Ships.NO_ADS

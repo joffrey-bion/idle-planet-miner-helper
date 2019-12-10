@@ -8,8 +8,6 @@ object Ships {
             Bonus.allPlanets(mineRate = 2.0, shipSpeed = 1.5, cargo = 1.5) +
             Bonus.production(smeltSpeed = 1.5, craftSpeed = 1.5)
 
-    val AURORA = Bonus(managersBonusMultiplier = 2.0)
-
     val NO_ADS = Bonus.allPlanets(mineRate = 1.2)
 }
 
