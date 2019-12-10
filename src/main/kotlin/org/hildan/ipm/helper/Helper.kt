@@ -40,6 +40,7 @@ fun main() {
         .withLevels(PlanetType.VERR, 1, 1, 1)
         .withColony(PlanetType.BALOR, 4, PlanetBonus.of(mineRate = 2.0))
         .withProject(Project.BEACON)
+        .withProject(Project.ADVANCED_MINING)
 
     println(galaxy)
 }

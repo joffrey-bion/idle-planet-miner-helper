@@ -14,7 +14,9 @@ data class Galaxy(
 
     private val actualBeaconBonus = if (Project.BEACON in researchedProjects) beaconBonus else Bonus.NONE
 
-    private val totalBonus = shipsAndRoomsBonus + managerBonus + actualBeaconBonus
+    private val projectBonus = researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
+
+    private val totalBonus = shipsAndRoomsBonus + managerBonus + actualBeaconBonus + projectBonus
 
     private val planetBonuses = PlanetType.values().associate { it to totalBonus.forPlanet(it) }
 
