@@ -4,13 +4,24 @@ import java.util.EnumMap
 import java.util.EnumSet
 
 data class Galaxy(
-    private val longTermBonus: Bonus,
-    private val beaconBonus: BeaconBonus,
+    private val shipsAndRoomsBonus: Bonus,
+    private val beaconBonus: Bonus,
     private val planets: List<Planet> = PlanetType.values().map { Planet(it) },
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
-    private val assignedManagers: Map<PlanetType, Manager?> = EnumMap(PlanetType::class.java)
+    private val assignedManagers: Map<PlanetType, Manager> = EnumMap(PlanetType::class.java)
 ) {
+    private val managerBonus = assignedManagers
+        .map { (p, m) -> m.toBonus(p) }
+        .map { it.scale(shipsAndRoomsBonus.managersMultiplier) }
+        .fold(Bonus.NONE) { b1, b2 -> b1 + b2}
+
+    private val actualBeaconBonus = if (Project.BEACON in researchedProjects) beaconBonus else Bonus.NONE
+
+    private val totalBonus = shipsAndRoomsBonus + managerBonus + actualBeaconBonus
+
+    private val planetBonuses = PlanetType.values().associate { it to totalBonus.forPlanet(it) }
+
     private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
     )
@@ -36,18 +47,12 @@ data class Galaxy(
         unlockedProjects = unlockedProjects + project.children
     )
 
-    private val Planet.localBeaconBonus: PlanetBonus
-        get() = if (Project.BEACON in researchedProjects) beaconBonus[this.type] else PlanetBonus.NONE
-
-    private val Planet.beaconMiningBonus: Double
-        get() = localBeaconBonus.mineRate
-
-    private val Planet.managerBonus: PlanetBonus
-        get() = assignedManagers[type]?.planetBonus ?: PlanetBonus.NONE
+    private val Planet.totalBonus: PlanetBonus
+        get() = planetBonuses[type] ?: error("Missing planet $this!")
 
     // TODO account for colony bonus
     private val Planet.actualMineRate: Double
-        get() = ownMineRate * managerBonus.mineRate * longTermBonus.globalPlanetBonus.mineRate * beaconMiningBonus
+        get() = ownMineRate * totalBonus.mineRate
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
         get() {

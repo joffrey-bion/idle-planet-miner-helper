@@ -12,12 +12,11 @@ enum class BeaconPlanetRange(val planets: List<PlanetType>) {
     // TODO complete ranges when PlanetType is complete
 }
 
-class BeaconBonus(
-    vararg bonuses: Pair<BeaconPlanetRange, PlanetBonus>
-) {
-    private val bonusByPlanet: Map<PlanetType, PlanetBonus> = bonuses
-        .flatMap { (r, b) -> r.planets.map { it to b } }
-        .toMap(EnumMap<PlanetType, PlanetBonus>(PlanetType::class.java))
+object Beacon {
 
-    operator fun get(planet: PlanetType): PlanetBonus = bonusByPlanet[planet] ?: error("Missing planet $planet!")
+    fun bonus(vararg bonuses: Pair<BeaconPlanetRange, PlanetBonus>) = Bonus(
+        perPlanet = bonuses
+            .flatMap { (r, b) -> r.planets.map { it to b } }
+            .toMap(EnumMap<PlanetType, PlanetBonus>(PlanetType::class.java))
+    )
 }

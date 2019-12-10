@@ -1,5 +1,7 @@
 package org.hildan.ipm.helper
 
+import java.util.EnumMap
+
 data class Planet(
     val type: PlanetType,
     val unlocked: Boolean = false,
@@ -74,7 +76,12 @@ enum class PlanetType(
         baseMineRate = 0.92,
         distance = 16,
         oreDistribution = listOf(OrePart(OreType.COPPER, 0.2), OrePart(OreType.IRON, 0.3), OrePart(OreType.LEAD, 0.5))
-    ),
+    );
+
+    companion object {
+        fun <T> mapTo(transform: (PlanetType) -> T): Map<PlanetType, T> =
+                values().associateTo(EnumMap<PlanetType, T>(PlanetType::class.java)) { it to transform(it) }
+    }
 }
 
 // Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)

@@ -2,37 +2,26 @@ package org.hildan.ipm.helper
 
 object Ships {
 
-    val DAUGHTERSHIP = Bonus(
-        globalPlanetBonus = PlanetBonus(
-            mineRate = 1.5,
-            shipSpeed = 1.25,
-            cargo = 1.25
-        )
-    )
+    val DAUGHTERSHIP = Bonus.allPlanets(mineRate = 1.5, shipSpeed = 1.25, cargo = 1.25)
 
-    val ELDERSHIP = Bonus(
-        globalPlanetBonus = PlanetBonus(
-            mineRate = 2.0,
-            shipSpeed = 1.5,
-            cargo = 1.5
-        ),
-        production = ProductionBonus(
-            smeltSpeed = 1.5,
-            craftSpeed = 1.5
-        )
-    )
+    val ELDERSHIP =
+            Bonus.allPlanets(mineRate = 2.0, shipSpeed = 1.5, cargo = 1.5) +
+            Bonus.production(smeltSpeed = 1.5, craftSpeed = 1.5)
 
-    val AURORA = Bonus(
-        managersMultiplier = 2.0
-    )
+    val AURORA = Bonus(managersMultiplier = 2.0)
+
+    val NO_ADS = Bonus.allPlanets(mineRate = 1.2)
 }
 
 enum class Room(
     val bonus: (Int) -> Bonus
 ) {
-    ENGINEERING({ l -> Bonus(globalPlanetBonus = PlanetBonus(mineRate = 1.25 + (l-1) * 0.15)) }),
-    FORGE({ l -> Bonus(production = ProductionBonus(smeltSpeed = 1.1 + (l-1) * 0.1)) }),
-    AERONAUTICAL({ l -> Bonus(globalPlanetBonus = PlanetBonus(shipSpeed = 1.5 + (l-1) * 0.25)) }),
+    ENGINEERING({ l -> Bonus.allPlanets(mineRate = 1.25 + (l-1) * 0.15) }),
+    FORGE({ l -> Bonus.production(smeltSpeed = 1.1 + (l-1) * 0.1) }),
+    AERONAUTICAL({ l -> Bonus.allPlanets(shipSpeed = 1.5 + (l-1) * 0.25) }),
+    ASTRONOMY({ l -> Bonus(planetUpgradeCostMultiplier = 0.9 + (l - 1) * (-0.04)) }),
+    PACKAGING({ l -> Bonus.allPlanets(cargo = 1.5 + (l - 1) * 0.25) }),
+    WORKSHOP({ l -> Bonus.production(craftSpeed = 1.1 + (l - 1) * 0.1) }),
 }
 
 /*
