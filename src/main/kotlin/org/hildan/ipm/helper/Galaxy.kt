@@ -25,6 +25,9 @@ data class Galaxy(
     fun withLevels(planet: PlanetType, mine: Int, ships: Int, cargo: Int): Galaxy =
             withChangedPlanet(planet) { it.copy(mineLevel = mine, shipLevel = ships, cargoLevel = cargo) }
 
+    fun withColony(planet: PlanetType, level: Int, bonus: PlanetBonus): Galaxy =
+            withChangedPlanet(planet) { it.copy(colonyLevel = level, colonyBonus = bonus) }
+
     fun withProject(project: Project) : Galaxy = copy(
         researchedProjects = researchedProjects + project,
         unlockedProjects = unlockedProjects + project.children
@@ -33,7 +36,6 @@ data class Galaxy(
     private val Planet.totalBonus: PlanetBonus
         get() = planetBonuses[type] ?: error("Missing planet $this!")
 
-    // TODO account for colony bonus
     private val Planet.actualMineRate: Double
         get() = totalBonus.mineRate.applyTo(ownMineRate)
 

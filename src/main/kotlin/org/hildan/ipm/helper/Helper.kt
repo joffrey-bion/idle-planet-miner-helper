@@ -5,17 +5,19 @@ fun main() {
     val shipsBonus =
             Ships.AURORA +
             Ships.DAUGHTERSHIP +
-            Ships.ELDERSHIP
+            Ships.ELDERSHIP +
+            Ships.NO_ADS
 
     val roomsBonus =
             Room.ENGINEERING.bonus(13) +
             Room.AERONAUTICAL.bonus(6) +
-            Room.FORGE.bonus(9)
+            Room.PACKAGING.bonus(3) +
+            Room.FORGE.bonus(10)
 
     val longTermBonus = shipsBonus + roomsBonus
 
     val beaconBonus = Beacon.bonus(
-        BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.22, 1.0, 1.0)
+        BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.24, 1.0, 1.0)
     )
 
     val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
@@ -31,11 +33,12 @@ fun main() {
     )
 
     val galaxy = Galaxy(longTermBonus, beaconBonus, managerAssignment)
-        .withLevels(PlanetType.BALOR, 40, 19, 19)
+        .withLevels(PlanetType.BALOR, 50, 30, 20)
         .withLevels(PlanetType.ANADIUS, 1, 1, 1)
         .withLevels(PlanetType.DHOLEN, 1, 1, 1)
         .withLevels(PlanetType.DRASTA, 1, 1, 1)
         .withLevels(PlanetType.VERR, 1, 1, 1)
+        .withColony(PlanetType.BALOR, 4, PlanetBonus.of(mineRate = 2.0))
         .withProject(Project.BEACON)
 
     println(galaxy)
