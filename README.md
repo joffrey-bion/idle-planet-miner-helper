@@ -26,20 +26,23 @@ A good deal of elements are required as inputs, for the algorithm to be accurate
 ### Algorithm
 
 1. define a set of possible actions from the current state
-    - if all planets have a mine rate lower than the ship/cargo combo
-        - upgrade a planet's mine
-        - research an unlocked project
-        - buy an unlocked planet
-    - if a planet's mine rate is too high for the ship/cargo, limit the possible actions to just:
-        - upgrade that planet's ship
-        - upgrade that planet's cargo 
+    - upgrade a planet's mine
+    - upgrade a planet's ship
+    - upgrade a planet's cargo 
+    - research an unlocked project
+    - buy an unlocked planet
+    - unlock the next smelt recipe
+    - unlock the next craft recipe
+    - (build a new smelter)
+    - (build a new crafter)
 2. for each available action:
     - calculate its cost in money and the time it takes
         - if it requires an instant payment, then take the price as cost, and the time is 0 
         - if it requires resources
             - find the equivalent cost given the current market
             - compute the time it takes to smelt/craft the resource (recursively)
-              (NOTE: this can be done up front for all recipes)
+                - it is roughly the max between craft time and smelt time
+                - each of craft time and smelt time can be roughly divided by the number of smelters/crafters available
     - compute the galaxy's state if the action is taken
     - compute the difference between the current galaxy's income and the target galaxy's income
         - if the diff is 0, it means the action is likely to be unlocking something for later
