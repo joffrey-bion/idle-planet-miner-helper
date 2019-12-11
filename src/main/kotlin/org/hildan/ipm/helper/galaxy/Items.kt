@@ -6,53 +6,53 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.toDuration
 
 interface Sellable {
-    val baseSellValue: Int
+    val baseSellValue: Price
 }
 
 @UseExperimental(ExperimentalTime::class)
 private fun Int.sec() = toDuration(DurationUnit.SECONDS)
 
 enum class OreType(
-    override val baseSellValue: Int
+    override val baseSellValue: Price
 ) : Sellable {
-    COPPER(1),
-    IRON(1),
-    LEAD(4),
-    SILICON(8),
-    ALUMINUM(17),
-    SILVER(36),
-    GOLD(75),
-    DIAMOND(160),
-    PLATINUM(340)
+    COPPER(Price(1)),
+    IRON(Price(2)),
+    LEAD(Price(4)),
+    SILICON(Price(8)),
+    ALUMINUM(Price(17)),
+    SILVER(Price(36)),
+    GOLD(Price(75)),
+    DIAMOND(Price(160)),
+    PLATINUM(Price(340))
 }
 
 @UseExperimental(ExperimentalTime::class)
 enum class AlloyType(
-    val recipeUnlockPrice: Int,
-    override val baseSellValue: Int,
+    val recipeUnlockPrice: Price,
+    override val baseSellValue: Price,
     val baseSmeltTime: Duration
 ) : Sellable {
-    COPPER_BAR(0, 1_450, 20.sec()),
-    IRON_BAR(3_000, 3_000, 30.sec()),
-    LEAD_BAR(9_000, 6_100, 40.sec()),
-    SILICON_BAR(25_000, 12_500, 60.sec()),
-    ALUMINUM_BAR(75_000, 27_600, 80.sec()),
-    SILVER_BAR(225_000, 60_000, 120.sec()),
-    GOLD_BAR(500_000, 120_000, 180.sec()),
-    BRONZE(1_000_000, 234_000, 240.sec())
+    COPPER_BAR(Price(0), Price(1_450), 20.sec()),
+    IRON_BAR(Price(3_000), Price(3_000), 30.sec()),
+    LEAD_BAR(Price(9_000), Price(6_100), 40.sec()),
+    SILICON_BAR(Price(25_000), Price(12_500), 60.sec()),
+    ALUMINUM_BAR(Price(75_000), Price(27_600), 80.sec()),
+    SILVER_BAR(Price(225_000), Price(60_000), 120.sec()),
+    GOLD_BAR(Price(500_000), Price(120_000), 180.sec()),
+    BRONZE(Price(1_000_000), Price(234_000), 240.sec())
 }
 
 @UseExperimental(ExperimentalTime::class)
 enum class Item(
-    val recipeUnlockPrice: Int,
-    override val baseSellValue: Int,
+    val recipeUnlockPrice: Price,
+    override val baseSellValue: Price,
     val baseCraftTime: Duration
 ) : Sellable {
-    COPPER_WIRE(0, 10_000, 60.sec()),
-    IRON_NAIL(20_000, 20_000, 120.sec()),
-    BATTERY(50_000, 70_000, 240.sec()),
-    HAMMER(100_000, 135_000, 480.sec()),
-    GLASS(200_000, 215_000, 720.sec()),
-    CIRCUIT(400_000, 620_000, 1200.sec()),
-    LENSE(1_000_000, 1_100_000, 2400.sec())
+    COPPER_WIRE(Price(0), Price(10_000), 60.sec()),
+    IRON_NAIL(Price(20_000), Price(20_000), 120.sec()),
+    BATTERY(Price(50_000), Price(70_000), 240.sec()),
+    HAMMER(Price(100_000), Price(135_000), 480.sec()),
+    GLASS(Price(200_000), Price(215_000), 720.sec()),
+    CIRCUIT(Price(400_000), Price(620_000), 1200.sec()),
+    LENSE(Price(1_000_000), Price(1_100_000), 2400.sec())
 }

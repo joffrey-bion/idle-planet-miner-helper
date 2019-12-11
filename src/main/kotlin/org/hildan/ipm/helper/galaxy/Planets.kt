@@ -12,7 +12,7 @@ data class Planet(
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseSellValue }!!,
+    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseSellValue.amount }!!,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE
 ) {
