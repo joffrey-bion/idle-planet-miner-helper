@@ -18,6 +18,8 @@ data class Galaxy(
 
     private val planetStats = planets.associate { it.type to globalBonus.forPlanet(it.type).applyTo(it.stats) }
 
+    private val planetCosts = planets.associate { it.type to globalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
+
     private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
     )
@@ -46,8 +48,11 @@ data class Galaxy(
             return type.oreDistribution.associate { it.oreType to (actualStats.mineRate * getRatio(it)) }
         }
 
-    override fun toString(): String = """
-        Planets:
-            ${planets.joinToString("\n            ") { "${it.type.name}: ${it.actualMineRateByOreType}" }}
+    fun PlanetType.stateReport() = """
+        $name:
+            Stats:         ${planetStats[this]}
+            Upgrade costs: ${planetCosts[this]}
     """.trimIndent()
+
+    override fun toString(): String = PlanetType.values().joinToString("\n") { it.stateReport() }
 }

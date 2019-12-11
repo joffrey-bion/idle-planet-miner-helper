@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.utils.EMap
+import kotlin.math.pow
 
 inline class Multiplier(private val factor: Double) {
 
@@ -8,7 +9,11 @@ inline class Multiplier(private val factor: Double) {
 
     operator fun times(other: Multiplier) = Multiplier(factor * other.factor)
 
+    fun pow(n: Int): Multiplier = Multiplier(factor.pow(n))
+
     fun applyTo(value: Double): Double = value * factor
+
+    fun applyTo(price: Price): Price = price * factor
 
     companion object {
         val NONE = Multiplier(1.0)
@@ -70,7 +75,17 @@ data class Bonus(
     val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplierPerColonyLevel: Multiplier = Multiplier.NONE
 ) {
-    fun forPlanet(planet: PlanetType) = allPlanets * perPlanet[planet]
+    fun forPlanet(planet: PlanetType): PlanetBonus = allPlanets * perPlanet[planet]
+
+    fun reduceUpgradeCosts(costs: PlanetUpgradeCosts, colonyLevel: Int): PlanetUpgradeCosts {
+        val colonyMultiplier = planetUpgradeCostMultiplierPerColonyLevel.pow(colonyLevel)
+        val multiplier = planetUpgradeCostMultiplier * colonyMultiplier
+        return PlanetUpgradeCosts(
+            mineUpgrade = multiplier.applyTo(costs.mineUpgrade),
+            shipUpgrade = multiplier.applyTo(costs.shipUpgrade),
+            cargoUpgrade = multiplier.applyTo(costs.cargoUpgrade)
+        )
+    }
 
     operator fun plus(other: Bonus): Bonus = when {
         this === NONE -> other

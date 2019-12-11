@@ -1,9 +1,17 @@
 package org.hildan.ipm.helper.galaxy
 
+import kotlin.math.pow
+
 data class PlanetStats(
     val mineRate: Double,
     val shipSpeed: Double,
     val cargo: Double
+)
+
+data class PlanetUpgradeCosts(
+    val mineUpgrade: Price,
+    val shipUpgrade: Price,
+    val cargoUpgrade: Price
 )
 
 data class Planet(
@@ -18,20 +26,20 @@ data class Planet(
 ) {
     val stats = colonyBonus.applyTo(
         PlanetStats(
-            mineRate = type.baseMineRate + 0.1 * (mineLevel - 1) + (0.017 * (mineLevel - 1) * (mineLevel - 1)),
-            shipSpeed = 1 + 0.2 * (shipLevel - 1) + ((1.0 / 75) * (shipLevel - 1) * (shipLevel - 1)),
-            cargo = 5.1 + 2 * (cargoLevel - 1) + (0.1 * (cargoLevel - 1) * (cargoLevel - 1))
+            mineRate = computeStat(type.baseMineRate, 0.1, 0.017, mineLevel),
+            shipSpeed = computeStat(1.0, 0.2, 1.0 / 75, shipLevel),
+            cargo = computeStat(5.1, 2.0, 0.1, cargoLevel)
         )
     )
 
-    // TODO compute upgrade costs
-    /*
-    Level 1 cost = 1/20 * planet cost (Balor is 1/30) Each level this increases by 30% Then multiplied by room reduction Then multiplied by research reduction
+    private fun computeStat(base: Double, c1: Double, c2: Double, level: Int) =
+            base + c1 * (level - 1) + (c2 * (level - 1) * (level - 1))
 
-    Full formula: (Planet Cost / 20) * (1.3^(Current level - 1)) * Room Reduction ) * (((1 - (0.05 * (Colony Level ^ Research Reduction))
-
-    Where: Planet Cost is the Unlock Price of the planet
-     */
+    val upgradeCosts = PlanetUpgradeCosts(
+        mineUpgrade = type.upgradeCost(mineLevel),
+        shipUpgrade = type.upgradeCost(shipLevel),
+        cargoUpgrade = type.upgradeCost(cargoLevel)
+    )
 }
 
 data class OrePart(
@@ -83,6 +91,12 @@ enum class PlanetType(
         distance = 16,
         oreDistribution = listOf(OrePart(OreType.COPPER, 0.2), OrePart(OreType.IRON, 0.3), OrePart(OreType.LEAD, 0.5))
     );
+
+    private val baseUpgradeCost: Price by lazy {
+        unlockPrice * (if (this == BALOR) 1.0/30 else 1.0/20)
+    }
+
+    fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
 }
 
 // Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)
