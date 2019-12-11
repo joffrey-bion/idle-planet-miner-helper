@@ -26,7 +26,7 @@ data class Planet(
 ) {
     val stats = colonyBonus.applyTo(
         PlanetStats(
-            mineRate = computeStat(type.baseMineRate, 0.1, 0.017, mineLevel),
+            mineRate = computeStat(0.25, 0.1, 0.017, mineLevel),
             shipSpeed = computeStat(1.0, 0.2, 1.0 / 75, shipLevel),
             cargo = computeStat(5.1, 2.0, 0.1, cargoLevel)
         )
