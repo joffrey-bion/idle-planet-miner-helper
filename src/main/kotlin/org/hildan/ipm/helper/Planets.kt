@@ -1,5 +1,11 @@
 package org.hildan.ipm.helper
 
+data class PlanetStats(
+    val mineRate: Double,
+    val shipSpeed: Double,
+    val cargo: Double
+)
+
 data class Planet(
     val type: PlanetType,
     val unlocked: Boolean = false,
@@ -10,18 +16,13 @@ data class Planet(
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE
 ) {
-    private val leveledMineRate = type.baseMineRate + 0.1 * (mineLevel - 1) + (0.017 * (mineLevel - 1) * (mineLevel - 1))
-
-    private val leveledShipSpeed = 1 + 0.2 * (shipLevel - 1) + ((1.0 / 75) * (shipLevel - 1) * (shipLevel - 1))
-
-    private val leveledCargo = 5.1 + 2 * (cargoLevel - 1) + (0.1 * (cargoLevel - 1) * (cargoLevel - 1))
-
-    val ownMineRate: Double
-        get() = colonyBonus.mineRate.applyTo(leveledMineRate)
-    val ownShipSpeed: Double
-        get() = colonyBonus.shipSpeed.applyTo(leveledShipSpeed)
-    val ownCargo: Double
-        get() = colonyBonus.cargo.applyTo(leveledCargo)
+    val stats = colonyBonus.applyTo(
+        PlanetStats(
+            mineRate = type.baseMineRate + 0.1 * (mineLevel - 1) + (0.017 * (mineLevel - 1) * (mineLevel - 1)),
+            shipSpeed = 1 + 0.2 * (shipLevel - 1) + ((1.0 / 75) * (shipLevel - 1) * (shipLevel - 1)),
+            cargo = 5.1 + 2 * (cargoLevel - 1) + (0.1 * (cargoLevel - 1) * (cargoLevel - 1))
+        )
+    )
 
     // TODO compute upgrade costs
     /*

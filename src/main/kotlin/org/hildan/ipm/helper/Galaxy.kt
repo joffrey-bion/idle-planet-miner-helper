@@ -14,9 +14,9 @@ data class Galaxy(
 
     private val projectBonus = researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
 
-    private val totalBonus = shipsAndRoomsBonus + managerAssignment.totalBonus + actualBeaconBonus + projectBonus
+    private val globalBonus = shipsAndRoomsBonus + managerAssignment.totalBonus + actualBeaconBonus + projectBonus
 
-    private val planetBonuses = PlanetType.values().associate { it to totalBonus.forPlanet(it) }
+    private val planetStats = planets.associate { it.type to globalBonus.forPlanet(it.type).applyTo(it.stats) }
 
     private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
@@ -33,14 +33,9 @@ data class Galaxy(
         unlockedProjects = unlockedProjects + project.children
     )
 
-    private val Planet.totalBonus: PlanetBonus
-        get() = planetBonuses[type] ?: error("Missing planet $this!")
-
-    private val Planet.actualMineRate: Double
-        get() = totalBonus.mineRate.applyTo(ownMineRate)
-
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
         get() {
+            val actualStats = planetStats[type] ?: error("Planet $type not found")
             val getRatio = { it: OrePart ->
                 if (Project.ORE_TARGETING in researchedProjects && it.oreType == preferredOreType) {
                     it.ratio + 0.15
@@ -48,7 +43,7 @@ data class Galaxy(
                     it.ratio
                 }
             }
-            return type.oreDistribution.associate { it.oreType to (actualMineRate * getRatio(it)) }
+            return type.oreDistribution.associate { it.oreType to (actualStats.mineRate * getRatio(it)) }
         }
 
     override fun toString(): String = """

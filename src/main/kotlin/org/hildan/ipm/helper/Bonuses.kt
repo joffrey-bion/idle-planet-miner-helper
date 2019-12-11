@@ -24,6 +24,12 @@ data class PlanetBonus(
         cargo = cargo * other.cargo
     )
 
+    fun applyTo(planetStats: PlanetStats) = PlanetStats(
+        mineRate = mineRate.applyTo(planetStats.mineRate),
+        shipSpeed = shipSpeed.applyTo(planetStats.shipSpeed),
+        cargo = cargo.applyTo(planetStats.cargo)
+    )
+
     companion object {
         val NONE = PlanetBonus()
 
