@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.utils
 
 import java.util.EnumMap
 import kotlin.reflect.KClass

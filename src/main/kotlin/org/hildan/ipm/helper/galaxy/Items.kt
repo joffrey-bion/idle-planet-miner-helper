@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.galaxy
 
 import kotlin.time.Duration
 import kotlin.time.DurationUnit

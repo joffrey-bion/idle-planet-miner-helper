@@ -1,8 +1,8 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.galaxy
 
-import org.hildan.ipm.helper.OreType.*
-import org.hildan.ipm.helper.AlloyType.*
-import org.hildan.ipm.helper.Item.*
+import org.hildan.ipm.helper.galaxy.OreType.*
+import org.hildan.ipm.helper.galaxy.AlloyType.*
+import org.hildan.ipm.helper.galaxy.Item.*
 
 data class ProjectRecipe(
     val ingredients: List<Ingredient>

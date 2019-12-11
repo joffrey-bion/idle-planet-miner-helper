@@ -1,4 +1,6 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.galaxy
+
+import org.hildan.ipm.helper.utils.EMap
 
 inline class Multiplier(private val factor: Double) {
 

@@ -1,5 +1,6 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.utils.asEMap
 import java.util.EnumMap
 
 data class Manager(
