@@ -13,7 +13,6 @@ import org.hildan.ipm.helper.galaxy.Room
 import org.hildan.ipm.helper.galaxy.Ships
 
 fun main() {
-
     val shipsBonus =
             Ships.DAUGHTERSHIP +
             Ships.ELDERSHIP +
@@ -45,13 +44,19 @@ fun main() {
 
     val galaxy = Galaxy(longTermBonus, beaconBonus, managerAssignment)
         .withLevels(PlanetType.BALOR, 50, 30, 20)
-        .withLevels(PlanetType.ANADIUS, 1, 1, 1)
-        .withLevels(PlanetType.DHOLEN, 1, 1, 1)
-        .withLevels(PlanetType.DRASTA, 1, 1, 1)
+        .withLevels(PlanetType.DRASTA, 40, 30, 20)
+        .withLevels(PlanetType.ANADIUS, 40, 30, 20)
+        .withLevels(PlanetType.DHOLEN, 40, 30, 30)
         .withLevels(PlanetType.VERR, 1, 1, 1)
         .withColony(PlanetType.BALOR, 4, PlanetBonus.of(mineRate = 2.0))
+        .withColony(PlanetType.DRASTA, 3, PlanetBonus.of(mineRate = 1.75))
+        .withColony(PlanetType.ANADIUS, 3, PlanetBonus.of(mineRate = 1.75))
         .withProject(Project.BEACON)
         .withProject(Project.ADVANCED_MINING)
+        .withProject(Project.ADVANCED_THRUSTERS)
+        .withProject(Project.ADVANCED_CARGO_HANDLING)
+        .withProject(Project.ORE_TARGETING)
+        .withProject(Project.COLONY_TAX_INCENTIVES)
 
     println(galaxy)
 }
