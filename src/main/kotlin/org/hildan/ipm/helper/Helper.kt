@@ -31,23 +31,9 @@ fun main() {
         BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.24, 1.0, 1.0)
     )
 
-    val lukas =
-            Manager(
-                "Lukas",
-                PlanetBonus.of(mineRate = 2.5),
-                Bonus.production(smeltSpeed = 1.1)
-            )
-    val angela =
-            Manager(
-                "Angela",
-                PlanetBonus.of(cargo = 4.0),
-                Bonus.allPlanets(shipSpeed = 1.2)
-            )
-    val nicole =
-            Manager(
-                "Nicole",
-                PlanetBonus.of(cargo = 2.0)
-            )
+    val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
+    val angela = Manager("Angela", PlanetBonus.of(cargo = 4.0), Bonus.allPlanets(shipSpeed = 1.2))
+    val nicole = Manager("Nicole", PlanetBonus.of(cargo = 2.0))
 
     val managerAssignment = ManagerAssignment(
         mapOf(
