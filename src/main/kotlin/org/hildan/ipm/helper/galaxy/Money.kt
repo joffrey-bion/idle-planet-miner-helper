@@ -15,3 +15,27 @@ inline class Price(val amount: Double) {
 
     private fun format(x: Double, unit: String): String = String.format("\$%.2f$unit", x)
 }
+
+data class Market(
+    private val multipliers: Map<Sellable, Multiplier> = emptyMap(),
+    private val stars: Map<Sellable, Int> = emptyMap()
+) {
+    private val sellPrice = Sellable.all().associateWith { computePrice(it) }
+
+    fun withMultiplier(item: Sellable, factor: Double) = copy(multipliers = multipliers + (item to Multiplier(factor)))
+
+    fun withStars(item: Sellable, nbStars: Int) = copy(stars = stars + (item to nbStars))
+
+    fun getSellPrice(item: Sellable): Price = sellPrice[item] ?: error("No sell price found for item $item")
+
+    private fun computePrice(item: Sellable): Price {
+        val nbStars = stars[item] ?: 0
+        val multiplier = multipliers[item] ?: Multiplier.NONE
+        val basePrice = item.baseSellValue * (1 + 0.2 * nbStars)
+        return multiplier.applyTo(basePrice)
+    }
+
+    override fun toString(): String {
+        return "Market:\n  ${sellPrice.map { "${it.key} = ${it.value}" }.joinToString("\n  ")}"
+    }
+}

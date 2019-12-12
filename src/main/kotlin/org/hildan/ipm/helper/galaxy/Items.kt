@@ -7,6 +7,11 @@ import kotlin.time.toDuration
 
 interface Sellable {
     val baseSellValue: Price
+
+    companion object {
+
+        fun all(): List<Sellable> = emptyList<Sellable>() + OreType.values() + AlloyType.values() + Item.values()
+    }
 }
 
 @UseExperimental(ExperimentalTime::class)

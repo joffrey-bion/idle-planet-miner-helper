@@ -1,11 +1,16 @@
 package org.hildan.ipm.helper
 
+import org.hildan.ipm.helper.galaxy.AlloyType
 import org.hildan.ipm.helper.galaxy.Beacon
 import org.hildan.ipm.helper.galaxy.BeaconPlanetRange
 import org.hildan.ipm.helper.galaxy.Bonus
+import org.hildan.ipm.helper.galaxy.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.Galaxy
+import org.hildan.ipm.helper.galaxy.Item
 import org.hildan.ipm.helper.galaxy.Manager
 import org.hildan.ipm.helper.galaxy.ManagerAssignment
+import org.hildan.ipm.helper.galaxy.Market
+import org.hildan.ipm.helper.galaxy.OreType
 import org.hildan.ipm.helper.galaxy.PlanetBonus
 import org.hildan.ipm.helper.galaxy.PlanetType
 import org.hildan.ipm.helper.galaxy.Project
@@ -24,8 +29,6 @@ fun main() {
             Room.PACKAGING.bonus(3) +
             Room.FORGE.bonus(10)
 
-    val longTermBonus = shipsBonus + roomsBonus
-
     val beaconBonus = Beacon.bonus(
         BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.24, 1.0, 1.0)
     )
@@ -42,7 +45,21 @@ fun main() {
         )
     )
 
-    val galaxy = Galaxy(longTermBonus, beaconBonus, managerAssignment)
+    val market = Market()
+        .withStars(OreType.SILVER, 2)
+        .withStars(OreType.GOLD, 1)
+        .withStars(AlloyType.COPPER_BAR, 1)
+        .withStars(AlloyType.IRON_BAR, 1)
+        .withStars(AlloyType.ALUMINUM_BAR, 1)
+        .withMultiplier(AlloyType.IRON_BAR, 2.0)
+        .withMultiplier(OreType.SILVER, 2.0)
+        .withMultiplier(Item.HAMMER, 0.5)
+
+    val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market)
+
+    println(constantBonuses)
+
+    val galaxy = Galaxy(constantBonuses)
         .withLevels(PlanetType.BALOR, 50, 30, 20)
         .withLevels(PlanetType.DRASTA, 40, 30, 20)
         .withLevels(PlanetType.ANADIUS, 40, 30, 20)

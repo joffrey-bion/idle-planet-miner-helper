@@ -2,23 +2,34 @@ package org.hildan.ipm.helper.galaxy
 
 import java.util.EnumSet
 
-data class Galaxy(
-    private val shipsAndRoomsBonus: Bonus,
+data class ConstantBonuses(
+    private val shipsBonus: Bonus,
+    private val roomsBonus: Bonus,
     private val beaconBonus: Bonus,
     private val managerAssignment: ManagerAssignment = ManagerAssignment(),
+    private val market: Market
+) {
+    private val withoutBeacon = shipsBonus + roomsBonus + managerAssignment.totalBonus
+    private val withBeacon = withoutBeacon + beaconBonus
+
+    fun total(beaconActive: Boolean) = if (beaconActive) withBeacon else withoutBeacon
+}
+
+data class Galaxy(
+    private val constantBonuses: ConstantBonuses,
     private val planets: List<Planet> = PlanetType.values().map { Planet(it) },
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
 ) {
-    private val actualBeaconBonus = if (Project.BEACON in researchedProjects) beaconBonus else Bonus.NONE
+    private val totalBonus by lazy {
+        val constantBonusTotal = constantBonuses.total(Project.BEACON in researchedProjects)
+        val projectBonus = researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
+        constantBonusTotal + projectBonus
+    }
 
-    private val projectBonus = researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
+    private val planetStats = planets.associate { it.type to totalBonus.forPlanet(it.type).applyTo(it.stats) }
 
-    private val globalBonus = shipsAndRoomsBonus + managerAssignment.totalBonus + actualBeaconBonus + projectBonus
-
-    private val planetStats = planets.associate { it.type to globalBonus.forPlanet(it.type).applyTo(it.stats) }
-
-    private val planetCosts = planets.associate { it.type to globalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
+    private val planetCosts = planets.associate { it.type to totalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
 
     private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
@@ -48,7 +59,7 @@ data class Galaxy(
             return type.oreDistribution.associate { it.oreType to (actualStats.mineRate * getRatio(it)) }
         }
 
-    fun PlanetType.stateReport() = """
+    private fun PlanetType.stateReport() = """
         $name:
             Stats:         ${planetStats[this]}
             Upgrade costs: ${planetCosts[this]}
