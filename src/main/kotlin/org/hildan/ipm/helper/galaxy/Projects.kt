@@ -40,14 +40,8 @@ enum class Project(
     ADVANCED_THRUSTERS(ProjectRecipe.of(2 of GLASS, 10 of GOLD_BAR), Bonus.allPlanets(shipSpeed = 1.25)),
     ADVANCED_CARGO_HANDLING(ProjectRecipe.of(5 of HAMMER, 25 of SILVER_BAR), Bonus.allPlanets(cargo = 1.25)),
     ORE_TARGETING(ProjectRecipe.of(100 of HAMMER, 50 of BATTERY)),
-    COLONY_TAX_INCENTIVES(
-        recipe = ProjectRecipe.of(60 of ALUMINUM_BAR),
-        bonus = Bonus(planetUpgradeCostMultiplierPerColonyLevel = Multiplier(0.95))
-    ),
-    COLONY_ADVANCED_TAX_INCENTIVES(
-        recipe = ProjectRecipe.of(60 of BRONZE),
-        bonus = Bonus(planetUpgradeCostMultiplierPerColonyLevel = Multiplier(0.95))
-    )
+    COLONY_TAX_INCENTIVES(ProjectRecipe.of(60 of ALUMINUM_BAR), Bonus(planetUpgradeCost5pReductions = 1)),
+    COLONY_ADVANCED_TAX_INCENTIVES(ProjectRecipe.of(60 of BRONZE), Bonus(planetUpgradeCost5pReductions = 1))
 
     // TODO fill in all projects
 }

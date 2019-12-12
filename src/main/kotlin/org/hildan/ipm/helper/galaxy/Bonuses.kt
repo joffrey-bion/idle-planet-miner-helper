@@ -1,12 +1,15 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.utils.EMap
+import kotlin.math.pow
 
 inline class Multiplier(private val factor: Double) {
 
     operator fun plus(other: Multiplier) = Multiplier(factor + (other.factor - 1))
 
     operator fun times(other: Multiplier) = Multiplier(factor * other.factor)
+
+    fun pow(n: Int): Multiplier = Multiplier(factor.pow(n))
 
     fun repeat(n: Int): Multiplier = Multiplier(1 + (factor - 1) * n)
 
@@ -72,12 +75,12 @@ data class Bonus(
     val production: ProductionBonus = ProductionBonus.NONE,
     val projectCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
-    val planetUpgradeCostMultiplierPerColonyLevel: Multiplier = Multiplier.NONE
+    val planetUpgradeCost5pReductions: Int = 0
 ) {
     fun forPlanet(planet: PlanetType): PlanetBonus = allPlanets * perPlanet[planet]
 
     fun reduceUpgradeCosts(costs: PlanetUpgradeCosts, colonyLevel: Int): PlanetUpgradeCosts {
-        val colonyMultiplier = planetUpgradeCostMultiplierPerColonyLevel.repeat(colonyLevel)
+        val colonyMultiplier = Multiplier(0.95).repeat(colonyLevel).pow(planetUpgradeCost5pReductions)
         val multiplier = planetUpgradeCostMultiplier * colonyMultiplier
         return PlanetUpgradeCosts(
             mineUpgrade = multiplier.applyTo(costs.mineUpgrade),
@@ -95,7 +98,7 @@ data class Bonus(
             production = production * other.production,
             projectCostMultiplier = projectCostMultiplier * other.projectCostMultiplier,
             planetUpgradeCostMultiplier = planetUpgradeCostMultiplier * other.planetUpgradeCostMultiplier,
-            planetUpgradeCostMultiplierPerColonyLevel = planetUpgradeCostMultiplierPerColonyLevel * other.planetUpgradeCostMultiplierPerColonyLevel
+            planetUpgradeCost5pReductions = planetUpgradeCost5pReductions + other.planetUpgradeCost5pReductions
         )
     }
 

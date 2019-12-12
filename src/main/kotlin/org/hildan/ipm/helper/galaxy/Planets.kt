@@ -92,9 +92,7 @@ enum class PlanetType(
         oreDistribution = listOf(OrePart(OreType.COPPER, 0.2), OrePart(OreType.IRON, 0.3), OrePart(OreType.LEAD, 0.5))
     );
 
-    private val baseUpgradeCost: Price by lazy {
-        unlockPrice * (if (this == BALOR) 1.0/30 else 1.0/20)
-    }
+    private val baseUpgradeCost: Price = unlockPrice * 0.05
 
     fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
 }
