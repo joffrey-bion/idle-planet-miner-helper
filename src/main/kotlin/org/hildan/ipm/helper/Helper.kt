@@ -27,7 +27,8 @@ fun main() {
             Room.ENGINEERING.bonus(13) +
             Room.AERONAUTICAL.bonus(6) +
             Room.PACKAGING.bonus(3) +
-            Room.FORGE.bonus(10)
+            Room.FORGE.bonus(10) +
+            Room.ASTRONOMY.bonus(7)
 
     val beaconBonus = Beacon.bonus(
         BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.24, 1.0, 1.0)
@@ -64,16 +65,19 @@ fun main() {
         .withLevels(PlanetType.DRASTA, 40, 30, 20)
         .withLevels(PlanetType.ANADIUS, 40, 30, 20)
         .withLevels(PlanetType.DHOLEN, 40, 30, 30)
-        .withLevels(PlanetType.VERR, 1, 1, 1)
+        .withLevels(PlanetType.VERR, 40, 30, 20)
         .withColony(PlanetType.BALOR, 4, PlanetBonus.of(mineRate = 2.0))
         .withColony(PlanetType.DRASTA, 3, PlanetBonus.of(mineRate = 1.75))
         .withColony(PlanetType.ANADIUS, 3, PlanetBonus.of(mineRate = 1.75))
+        .withColony(PlanetType.DHOLEN, 4, PlanetBonus.of(mineRate = 2.0))
+        .withColony(PlanetType.VERR, 2, PlanetBonus.of(mineRate = 1.5))
         .withProject(Project.BEACON)
         .withProject(Project.ADVANCED_MINING)
         .withProject(Project.ADVANCED_THRUSTERS)
         .withProject(Project.ADVANCED_CARGO_HANDLING)
         .withProject(Project.ORE_TARGETING)
         .withProject(Project.COLONY_TAX_INCENTIVES)
+        .withProject(Project.COLONY_ADVANCED_TAX_INCENTIVES)
 
     println(galaxy)
 }

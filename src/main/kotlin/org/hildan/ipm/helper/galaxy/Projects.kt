@@ -43,6 +43,10 @@ enum class Project(
     COLONY_TAX_INCENTIVES(
         recipe = ProjectRecipe.of(60 of ALUMINUM_BAR),
         bonus = Bonus(planetUpgradeCostMultiplierPerColonyLevel = Multiplier(0.95))
+    ),
+    COLONY_ADVANCED_TAX_INCENTIVES(
+        recipe = ProjectRecipe.of(60 of BRONZE),
+        bonus = Bonus(planetUpgradeCostMultiplierPerColonyLevel = Multiplier(0.95))
     )
 
     // TODO fill in all projects
