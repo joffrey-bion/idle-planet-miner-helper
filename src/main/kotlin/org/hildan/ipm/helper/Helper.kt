@@ -58,8 +58,6 @@ fun main() {
 
     val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market)
 
-    println(constantBonuses)
-
     val galaxy = Galaxy(constantBonuses)
         .withLevels(PlanetType.BALOR, 50, 30, 20)
         .withLevels(PlanetType.DRASTA, 40, 30, 20)
@@ -80,4 +78,6 @@ fun main() {
         .withProject(Project.COLONY_ADVANCED_TAX_INCENTIVES)
 
     println(galaxy)
+
+    // println(Optimizer(galaxy).generateActions().first())
 }

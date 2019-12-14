@@ -17,7 +17,7 @@ data class ConstantBonuses(
 
 data class Galaxy(
     private val constantBonuses: ConstantBonuses,
-    private val planets: List<Planet> = PlanetType.values().map { Planet(it) },
+    val planets: List<Planet> = PlanetType.values().map { Planet(it) },
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
 ) {
@@ -31,7 +31,13 @@ data class Galaxy(
 
     private val planetCosts = planets.associate { it.type to totalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
 
-    private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
+    // TODO create class for income rate
+    val totalIncomePerSecond: Price
+        get() {
+            TODO()
+        }
+
+    inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
     )
 

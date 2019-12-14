@@ -4,6 +4,12 @@ inline class Price(val amount: Double) {
 
     constructor(amount: Int) : this(amount.toDouble())
 
+    operator fun plus(other: Price) = Price(amount + other.amount)
+
+    operator fun minus(other: Price) = Price(amount - other.amount)
+
+    operator fun div(other: Price) = amount / other.amount
+
     operator fun times(factor: Double) = Price(amount * factor)
 
     override fun toString(): String = when {
@@ -14,6 +20,10 @@ inline class Price(val amount: Double) {
     }
 
     private fun format(x: Double, unit: String): String = String.format("\$%.2f$unit", x)
+
+    companion object {
+        val ZERO = Price(0.0)
+    }
 }
 
 data class Market(
