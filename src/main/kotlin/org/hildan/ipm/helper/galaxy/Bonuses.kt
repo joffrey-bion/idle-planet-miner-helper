@@ -1,7 +1,9 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.utils.EMap
+import java.time.Duration
 import kotlin.math.pow
+import kotlin.math.roundToLong
 
 inline class Multiplier(private val factor: Double) {
 
@@ -16,6 +18,8 @@ inline class Multiplier(private val factor: Double) {
     fun applyTo(value: Double): Double = value * factor
 
     fun applyTo(price: Price): Price = price * factor
+
+    fun applyAsSpeed(duration: Duration): Duration = Duration.ofMillis((duration.toMillis() / factor).roundToLong())
 
     companion object {
         val NONE = Multiplier(1.0)

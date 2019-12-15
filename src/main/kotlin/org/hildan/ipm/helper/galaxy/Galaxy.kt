@@ -4,6 +4,7 @@ import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import java.time.Duration
 import java.util.EnumSet
 
 data class ConstantBonuses(
@@ -79,11 +80,22 @@ data class Galaxy(
         )
     }
 
-    fun areAccessible(resources: Resources): Boolean {
-        val oresAccessible = resources.highestOre?.let { it <= highestAccessibleOreType } ?: true
-        val alloysAccessible = resources.highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
-        val itemsAccessible = resources.highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
+    fun Resources.areAccessible(): Boolean {
+        val oresAccessible = highestOre?.let { it <= highestAccessibleOreType } ?: true
+        val alloysAccessible = highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
+        val itemsAccessible = highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
         return oresAccessible && alloysAccessible && itemsAccessible
+    }
+
+    fun getTotalCost(resources: Resources): Price =
+            resources.resources.map { constantBonuses.market.getSellPrice(it.resourceType) * it.quantity }.sum()
+
+    fun getApproximateTime(resources: Resources): Duration {
+        val smeltTime = resources.totalSmeltTimeFromOre.dividedBy(nbSmelters.toLong())
+        val craftTime = resources.totalCraftTimeFromOresAndAlloys.dividedBy(nbCrafters.toLong())
+        val reducedSmeltTime = totalBonus.production.smeltSpeed.applyAsSpeed(smeltTime)
+        val reducedCraftTime = totalBonus.production.craftSpeed.applyAsSpeed(craftTime)
+        return if (reducedSmeltTime > reducedCraftTime) reducedSmeltTime else reducedCraftTime
     }
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>

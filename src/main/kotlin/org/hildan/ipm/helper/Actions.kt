@@ -23,7 +23,7 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
         )
     }
     val researchActions = unlockedProjects
-        .filter { areAccessible(it.requiredResources) }
+        .filter { it.requiredResources.areAccessible() }
         .map { Action.Research(it).performOn(this) }
     return buyPlanetActions + upgradeActions + researchActions
 }
@@ -83,8 +83,8 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = AppliedAction(
             action = this,
             newGalaxy = galaxy.withProject(project),
-            cost = project.requiredResources.getTotalCost(galaxy.constantBonuses.market),
-            time = project.requiredResources.getApproximateTime(galaxy.nbSmelters, galaxy.nbCrafters)
+            cost = galaxy.getTotalCost(project.requiredResources),
+            time = galaxy.getApproximateTime(project.requiredResources)
         )
     }
 }
