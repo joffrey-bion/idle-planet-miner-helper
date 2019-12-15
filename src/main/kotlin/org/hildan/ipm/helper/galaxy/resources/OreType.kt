@@ -1,10 +1,11 @@
 package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.Price
+import java.time.Duration
 
 enum class OreType(
     override val baseValue: Price
-) : Resource {
+) : ResourceType {
     COPPER(Price(1)),
     IRON(Price(2)),
     LEAD(Price(4)),
@@ -26,5 +27,7 @@ enum class OreType(
     VIBRANIUM(Price(1_250_000)),
     AETHER(Price(3_200_000));
 
-    override val recipe: Recipe = Recipe.NOTHING
+    override val requiredResources: Resources = Resources.NOTHING
+    override val craftTime: Duration = Duration.ZERO
+    override val smeltTime: Duration = Duration.ZERO
 }

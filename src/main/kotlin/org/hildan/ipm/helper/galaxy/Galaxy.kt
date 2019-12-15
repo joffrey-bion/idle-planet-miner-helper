@@ -3,7 +3,7 @@ package org.hildan.ipm.helper.galaxy
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.resources.Recipe
+import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.util.EnumSet
 
 data class ConstantBonuses(
@@ -60,10 +60,10 @@ data class Galaxy(
         unlockedProjects = unlockedProjects + project.children
     )
 
-    fun isBuildable(recipe: Recipe) {
-        val oresAccessible = recipe.highestOre?.let { it <= highestAccessibleOreType } ?: true
-        val alloysAccessible = recipe.highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
-        val itemsAccessible = recipe.highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
+    fun isBuildable(resources: Resources) {
+        val oresAccessible = resources.highestOre?.let { it <= highestAccessibleOreType } ?: true
+        val alloysAccessible = resources.highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
+        val itemsAccessible = resources.highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
     }
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
