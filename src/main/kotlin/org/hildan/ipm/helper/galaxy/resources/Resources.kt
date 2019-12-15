@@ -1,8 +1,6 @@
 package org.hildan.ipm.helper.galaxy.resources
 
-import org.hildan.ipm.helper.galaxy.Market
 import org.hildan.ipm.helper.galaxy.Price
-import org.hildan.ipm.helper.galaxy.sum
 import java.time.Duration
 
 infix fun Int.of(resourceType: ResourceType): CountedResource = CountedResource(resourceType, this)
@@ -43,14 +41,6 @@ data class Resources(
 
     val totalCraftTimeFromOresAndAlloys: Duration =
             resources.map { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }.sum()
-
-    fun getTotalCost(market: Market): Price = resources.map { market.getSellPrice(it.resourceType) * it.quantity }.sum()
-
-    fun getApproximateTime(nbSmelters: Int, nbCrafters: Int): Duration {
-        val smeltTime = totalSmeltTimeFromOre.dividedBy(nbSmelters.toLong())
-        val craftTime = totalCraftTimeFromOresAndAlloys.dividedBy(nbCrafters.toLong())
-        return if (smeltTime > craftTime) smeltTime else craftTime
-    }
 
     companion object {
         val NOTHING = Resources(emptyList())
