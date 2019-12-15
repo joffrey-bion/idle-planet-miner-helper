@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.resources.OreType
 import kotlin.math.pow
 
 data class PlanetStats(
@@ -14,13 +15,14 @@ data class PlanetUpgradeCosts(
     val cargoUpgrade: Price
 )
 
+// FIXME unlocked/bought planets / interaction with unlocked telescopes
 data class Planet(
     val type: PlanetType,
     val unlocked: Boolean = false,
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseSellValue.amount }!!,
+    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseValue.amount }!!,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE
 ) {

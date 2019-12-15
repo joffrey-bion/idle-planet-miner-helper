@@ -1,5 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.resources.Resource
+
 inline class Price(val amount: Double) {
 
     constructor(amount: Int) : this(amount.toDouble())
@@ -27,21 +29,22 @@ inline class Price(val amount: Double) {
 }
 
 data class Market(
-    private val multipliers: Map<Sellable, Multiplier> = emptyMap(),
-    private val stars: Map<Sellable, Int> = emptyMap()
+    private val multipliers: Map<Resource, Multiplier> = emptyMap(),
+    private val stars: Map<Resource, Int> = emptyMap()
 ) {
-    private val sellPrice = Sellable.all().associateWith { computePrice(it) }
+    private val sellPrice = Resource.all().associateWith { computePrice(it) }
 
-    fun withMultiplier(item: Sellable, factor: Double) = copy(multipliers = multipliers + (item to Multiplier(factor)))
+    fun withMultiplier(resource: Resource, factor: Double) =
+            copy(multipliers = multipliers + (resource to Multiplier(factor)))
 
-    fun withStars(item: Sellable, nbStars: Int) = copy(stars = stars + (item to nbStars))
+    fun withStars(resource: Resource, nbStars: Int) = copy(stars = stars + (resource to nbStars))
 
-    fun getSellPrice(item: Sellable): Price = sellPrice[item] ?: error("No sell price found for item $item")
+    fun getSellPrice(resource: Resource): Price = sellPrice[resource] ?: error("No sell price found for item $resource")
 
-    private fun computePrice(item: Sellable): Price {
+    private fun computePrice(item: Resource): Price {
         val nbStars = stars[item] ?: 0
         val multiplier = multipliers[item] ?: Multiplier.NONE
-        val basePrice = item.baseSellValue * (1 + 0.2 * nbStars)
+        val basePrice = item.baseValue * (1 + 0.2 * nbStars)
         return multiplier.applyTo(basePrice)
     }
 

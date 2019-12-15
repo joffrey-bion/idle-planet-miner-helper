@@ -1,5 +1,9 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.resources.AlloyType
+import org.hildan.ipm.helper.galaxy.resources.ItemType
+import org.hildan.ipm.helper.galaxy.resources.OreType
+import org.hildan.ipm.helper.galaxy.resources.Recipe
 import java.util.EnumSet
 
 data class ConstantBonuses(
@@ -19,8 +23,12 @@ data class Galaxy(
     private val constantBonuses: ConstantBonuses,
     val planets: List<Planet> = PlanetType.values().map { Planet(it) },
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
-    private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
+    private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
+    private val highestUnlockedAlloyRecipe: AlloyType = AlloyType.BRONZE,
+    private val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE
 ) {
+    private val highestAccessibleOreType: OreType = planets.map { it.preferredOreType }.max()!!
+
     private val totalBonus by lazy {
         val constantBonusTotal = constantBonuses.total(Project.BEACON in researchedProjects)
         val projectBonus = researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
@@ -51,6 +59,12 @@ data class Galaxy(
         researchedProjects = researchedProjects + project,
         unlockedProjects = unlockedProjects + project.children
     )
+
+    fun isBuildable(recipe: Recipe) {
+        val oresAccessible = recipe.highestOre?.let { it <= highestAccessibleOreType } ?: true
+        val alloysAccessible = recipe.highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
+        val itemsAccessible = recipe.highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
+    }
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
         get() {
