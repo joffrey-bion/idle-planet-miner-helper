@@ -2,6 +2,8 @@ package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 
+fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
+
 inline class Price(val amount: Double) {
 
     constructor(amount: Int) : this(amount.toDouble())
@@ -13,6 +15,8 @@ inline class Price(val amount: Double) {
     operator fun div(other: Price) = amount / other.amount
 
     operator fun times(factor: Double) = Price(amount * factor)
+
+    operator fun times(factor: Int) = Price(amount * factor)
 
     override fun toString(): String = when {
         amount < 1_000 -> format(amount, "")

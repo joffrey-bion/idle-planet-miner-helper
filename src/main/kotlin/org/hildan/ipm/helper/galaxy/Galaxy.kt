@@ -11,7 +11,7 @@ data class ConstantBonuses(
     private val roomsBonus: Bonus,
     private val beaconBonus: Bonus,
     private val managerAssignment: ManagerAssignment = ManagerAssignment(),
-    private val market: Market
+    val market: Market
 ) {
     private val withoutBeacon = shipsBonus + roomsBonus + managerAssignment.totalBonus
     private val withBeacon = withoutBeacon + beaconBonus
@@ -20,13 +20,15 @@ data class ConstantBonuses(
 }
 
 data class Galaxy(
-    private val constantBonuses: ConstantBonuses,
+    val constantBonuses: ConstantBonuses,
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
-    private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
+    val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
     private val highestUnlockedAlloyRecipe: AlloyType = AlloyType.BRONZE,
     private val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE,
     val planets: List<Planet> = emptyList(),
-    val unlockedPlanets: Set<PlanetType> = TelescopeLevel(0).unlockedPlanets
+    val unlockedPlanets: Set<PlanetType> = TelescopeLevel(0).unlockedPlanets,
+    val nbSmelters: Int = 0,
+    val nbCrafters: Int = 0
 ) {
     private val highestAccessibleOreType: OreType = planets.map { it.preferredOreType }.max()!!
 
@@ -36,9 +38,9 @@ data class Galaxy(
         constantBonusTotal + projectBonus
     }
 
-    private val planetStats = planets.associate { it.type to totalBonus.forPlanet(it.type).applyTo(it.stats) }
+    val planetStats = planets.associate { it.type to totalBonus.forPlanet(it.type).applyTo(it.stats) }
 
-    private val planetCosts = planets.associate { it.type to totalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
+    val planetCosts = planets.associate { it.type to totalBonus.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
 
     // TODO create class for income rate
     val totalIncomePerSecond: Price
@@ -66,17 +68,22 @@ data class Galaxy(
         } else {
             unlockedPlanets
         }
+        val newNbSmelters = if (project == Project.SMELTER) 1 else nbSmelters
+        val newNbCrafters = if (project == Project.CRAFTER) 1 else nbCrafters
         return copy(
             unlockedPlanets = newPlanets,
             researchedProjects = researchedProjects + project,
-            unlockedProjects = unlockedProjects + project.children - project
+            unlockedProjects = unlockedProjects + project.children - project,
+            nbSmelters = newNbSmelters,
+            nbCrafters = newNbCrafters
         )
     }
 
-    fun isBuildable(resources: Resources) {
+    fun areAccessible(resources: Resources): Boolean {
         val oresAccessible = resources.highestOre?.let { it <= highestAccessibleOreType } ?: true
         val alloysAccessible = resources.highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
         val itemsAccessible = resources.highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
+        return oresAccessible && alloysAccessible && itemsAccessible
     }
 
     private val Planet.actualMineRateByOreType: Map<OreType, Double>
