@@ -59,6 +59,11 @@ fun main() {
     val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market)
 
     val galaxy = Galaxy(constantBonuses)
+        .withBoughtPlanet(PlanetType.BALOR)
+        .withBoughtPlanet(PlanetType.DRASTA)
+        .withBoughtPlanet(PlanetType.ANADIUS)
+        .withBoughtPlanet(PlanetType.DHOLEN)
+        .withBoughtPlanet(PlanetType.VERR)
         .withLevels(PlanetType.BALOR, 50, 30, 20)
         .withLevels(PlanetType.DRASTA, 40, 30, 20)
         .withLevels(PlanetType.ANADIUS, 40, 30, 20)

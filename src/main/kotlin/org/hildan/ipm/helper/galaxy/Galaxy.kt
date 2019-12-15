@@ -21,11 +21,12 @@ data class ConstantBonuses(
 
 data class Galaxy(
     private val constantBonuses: ConstantBonuses,
-    val planets: List<Planet> = PlanetType.values().map { Planet(it) },
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     private val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
     private val highestUnlockedAlloyRecipe: AlloyType = AlloyType.BRONZE,
-    private val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE
+    private val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE,
+    val planets: List<Planet> = emptyList(),
+    val unlockedPlanets: Set<PlanetType> = TelescopeLevel(0).unlockedPlanets
 ) {
     private val highestAccessibleOreType: OreType = planets.map { it.preferredOreType }.max()!!
 
@@ -45,6 +46,10 @@ data class Galaxy(
             TODO()
         }
 
+    fun withBoughtPlanet(planet: PlanetType) : Galaxy = copy(
+        planets = planets + Planet(planet)
+    )
+
     inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
     )
@@ -55,10 +60,18 @@ data class Galaxy(
     fun withColony(planet: PlanetType, level: Int, bonus: PlanetBonus): Galaxy =
             withChangedPlanet(planet) { it.copy(colonyLevel = level, colonyBonus = bonus) }
 
-    fun withProject(project: Project) : Galaxy = copy(
-        researchedProjects = researchedProjects + project,
-        unlockedProjects = unlockedProjects + project.children
-    )
+    fun withProject(project: Project) : Galaxy {
+        val newPlanets = if (project.telescopeLevel != null) {
+            unlockedPlanets + project.telescopeLevel.unlockedPlanets
+        } else {
+            unlockedPlanets
+        }
+        return copy(
+            unlockedPlanets = newPlanets,
+            researchedProjects = researchedProjects + project,
+            unlockedProjects = unlockedProjects + project.children - project
+        )
+    }
 
     fun isBuildable(resources: Resources) {
         val oresAccessible = resources.highestOre?.let { it <= highestAccessibleOreType } ?: true

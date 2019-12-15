@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.resources.OreType
+import java.util.EnumSet
 import kotlin.math.pow
 
 data class PlanetStats(
@@ -15,10 +16,8 @@ data class PlanetUpgradeCosts(
     val cargoUpgrade: Price
 )
 
-// FIXME unlocked/bought planets / interaction with unlocked telescopes
 data class Planet(
     val type: PlanetType,
-    val unlocked: Boolean = false,
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
@@ -49,7 +48,11 @@ data class OrePart(
     val ratio: Double
 )
 
-inline class TelescopeLevel(val value: Int)
+inline class TelescopeLevel(val value: Int) {
+
+    val unlockedPlanets: Set<PlanetType> get() = PlanetType.values()
+        .filterTo(EnumSet.noneOf(PlanetType::class.java)) { it.telescopeLevel == this }
+}
 
 enum class PlanetType(
     val unlockPrice: Price,

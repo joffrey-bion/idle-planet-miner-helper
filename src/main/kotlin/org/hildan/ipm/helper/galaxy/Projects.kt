@@ -11,14 +11,15 @@ val Project.parents: Set<Project> get() = ProjectGraph.parents[this] ?: emptySet
 
 enum class Project(
     val requiredResources: Resources,
-    val bonus: Bonus = Bonus.NONE
+    val bonus: Bonus = Bonus.NONE,
+    val telescopeLevel: TelescopeLevel? = null
 ) {
     /** Ability to mine asteroids */
     ASTEROID_MINER(Resources.of(400 of COPPER, 100 of IRON)),
     /** Ability to assign managers */
     MANAGEMENT(Resources.of(400 of COPPER, 50 of IRON)),
     SMELTER(Resources.of(600 of COPPER, 250 of IRON)),
-    TELESCOPE_1(Resources.of(5 of COPPER_BAR, 1_500 of IRON)),
+    TELESCOPE_1(Resources.of(5 of COPPER_BAR, 1_500 of IRON), telescopeLevel = TelescopeLevel(1)),
     CRAFTER(Resources.of(5000 of LEAD, 5 of IRON_BAR)),
     BEACON(Resources.of(15 of IRON_BAR)),
     ROVER(Resources.of(10 of COPPER_WIRE)),

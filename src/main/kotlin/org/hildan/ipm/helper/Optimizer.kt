@@ -11,7 +11,6 @@ class Optimizer(
 ) {
     private var currentState = State(
         galaxy = initialGalaxy,
-        depth = 0,
         actionsFromStart = emptyList(),
         costToReach = Price.ZERO,
         timeToReach = Duration.ZERO
@@ -34,7 +33,6 @@ class Optimizer(
 
 data class State(
     val galaxy: Galaxy,
-    val depth: Int,
     val actionsFromStart: List<Action>,
     val costToReach: Price,
     val timeToReach: Duration
@@ -49,7 +47,6 @@ data class State(
 fun State.expand(): List<State> = galaxy.possibleActions().map {
     State(
         it.newGalaxy,
-        depth + 1,
         actionsFromStart + it.action,
         costToReach + it.cost,
         timeToReach + it.time
