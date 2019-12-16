@@ -20,6 +20,7 @@ enum class Room(
     ASTRONOMY({ l -> Bonus(planetUpgradeCostMultiplier = Multiplier(0.9 + (l - 1) * (-0.04))) }),
     PACKAGING({ l -> Bonus.allPlanets(cargo = 1.5 + (l - 1) * 0.25) }),
     WORKSHOP({ l -> Bonus.production(craftSpeed = 1.1 + (l - 1) * 0.1) }),
+    LABORATORY({ l -> Bonus(projectCostMultiplier = Multiplier(0.9 + (l - 1) * (-0.04))) }),
 }
 
 /*
