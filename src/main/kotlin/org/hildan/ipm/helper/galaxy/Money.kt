@@ -4,6 +4,8 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import java.time.Duration
 import kotlin.math.roundToLong
 
+fun min(p1: Price, p2: Price) = if (p1 < p2) p1 else p2
+
 fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
 
 fun List<ValueRate>.sumRates() = fold(ValueRate.ZERO) { vr1, vr2 -> vr1 + vr2}
@@ -39,7 +41,11 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     operator fun div(time: Duration): ValueRate = ValueRate(amount / time.toSeconds())
 
-    operator fun div(rate: ValueRate): Duration = Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
+    operator fun div(rate: ValueRate): Duration = if (rate == ValueRate.ZERO) {
+        Duration.ofDays(1000) // Infinite time
+    } else {
+        Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
+    }
 
     operator fun times(factor: Double) = Price(amount * factor)
 

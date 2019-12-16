@@ -5,6 +5,7 @@ import org.hildan.ipm.helper.galaxy.PlanetType
 import org.hildan.ipm.helper.galaxy.Price
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.ValueRate
+import org.hildan.ipm.helper.galaxy.min
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.time.Duration
 
@@ -42,11 +43,13 @@ private fun Galaxy.createAction(
     requiredCash: Price = Price.ZERO,
     requiredResources: Resources = Resources.NOTHING
 ): AppliedAction {
-    val timeWaitingForCash = requiredCash / totalIncomeRate
+    val cashInstantlySpent = min(currentCash, requiredCash)
+    val remainingToPay = requiredCash - cashInstantlySpent
+    val timeWaitingForCash = if (remainingToPay == Price.ZERO) Duration.ZERO else remainingToPay / totalIncomeRate
     val timeWaitingForResources = getApproximateTime(requiredResources)
     return AppliedAction(
         action = action,
-        newGalaxy = newGalaxy,
+        newGalaxy = newGalaxy.copy(currentCash = currentCash - cashInstantlySpent),
         requiredCash = requiredCash,
         requiredResources = requiredResources,
         time = max(timeWaitingForCash, timeWaitingForResources),
