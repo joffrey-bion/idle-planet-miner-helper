@@ -123,8 +123,8 @@ data class Galaxy(
 
     private val ResourceType.currentValue: Price get() = constantBonuses.market.getSellPrice(this)
 
-    fun getTotalValue(resources: Resources): Price =
-            resources.resources.map { it.resourceType.currentValue * it.quantity }.sum()
+    private val Resources.totalValue: Price
+        get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()
 
     fun getApproximateTime(resources: Resources): Duration {
         val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
@@ -137,14 +137,14 @@ data class Galaxy(
     private fun getSmeltingIncome(alloyType: AlloyType): ValueRate {
         // TODO take into account number of smelters and limit recipes accordingly (offline VS online). For instance,
         //      bronze can only be smelted for a long time if we can also smelt copper and silver at the same time.
-        val consumedValue = getTotalValue(alloyType.requiredResources)
+        val consumedValue = alloyType.requiredResources.totalValue
         val producedValue = alloyType.currentValue
         return (producedValue - consumedValue) / alloyType.smeltTime
     }
 
     private fun getCraftingIncome(itemType: ItemType): ValueRate {
         // TODO consider computing this value for offline crafting (see TODO in smelting income)
-        val consumedValue = getTotalValue(itemType.requiredResources)
+        val consumedValue = itemType.requiredResources.totalValue
         val producedValue = itemType.currentValue
         return (producedValue - consumedValue) / itemType.craftTime
     }

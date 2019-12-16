@@ -81,5 +81,5 @@ fun main() {
 
 //    println(galaxy)
 
-    Optimizer(Galaxy(constantBonuses)).generateActions().take(50).forEach { println(it) }
+    Optimizer(Galaxy(constantBonuses)).generateActions().take(50).forEach { println(it.action) }
 }
