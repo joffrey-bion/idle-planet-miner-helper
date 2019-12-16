@@ -18,10 +18,7 @@ import org.hildan.ipm.helper.galaxy.Room
 import org.hildan.ipm.helper.galaxy.Ships
 
 fun main() {
-    val shipsBonus =
-            Ships.DAUGHTERSHIP +
-            Ships.ELDERSHIP +
-            Ships.NO_ADS
+    val shipsBonus = Ships.DAUGHTERSHIP + Ships.ELDERSHIP + Ships.NO_ADS
 
     val roomsBonus =
             Room.ENGINEERING.bonus(13) +
@@ -82,7 +79,7 @@ fun main() {
         .withProject(Project.COLONY_TAX_INCENTIVES)
         .withProject(Project.COLONY_ADVANCED_TAX_INCENTIVES)
 
-    println(galaxy)
+//    println(galaxy)
 
-    // println(Optimizer(galaxy).generateActions().first())
+    Optimizer(Galaxy(constantBonuses)).generateActions().take(50).forEach { println(it) }
 }

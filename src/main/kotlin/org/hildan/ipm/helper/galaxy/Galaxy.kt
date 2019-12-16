@@ -4,6 +4,7 @@ import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.galaxy.resources.div
 import java.time.Duration
 import java.util.EnumSet
 
@@ -18,6 +19,16 @@ data class ConstantBonuses(
     private val withBeacon = withoutBeacon + beaconBonus
 
     fun total(beaconActive: Boolean) = if (beaconActive) withBeacon else withoutBeacon
+
+    companion object {
+        val NONE = ConstantBonuses(
+            shipsBonus = Bonus.NONE,
+            roomsBonus = Bonus.NONE,
+            beaconBonus = Bonus.NONE,
+            managerAssignment = ManagerAssignment(),
+            market = Market()
+        )
+    }
 }
 
 data class Galaxy(
@@ -31,7 +42,7 @@ data class Galaxy(
     val nbSmelters: Int = 0,
     val nbCrafters: Int = 0
 ) {
-    private val highestAccessibleOreType: OreType = planets.map { it.preferredOreType }.max()!!
+    private val highestAccessibleOreType: OreType? = planets.map { it.preferredOreType }.max()
 
     private val totalBonus by lazy {
         val constantBonusTotal = constantBonuses.total(Project.BEACON in researchedProjects)
@@ -46,11 +57,16 @@ data class Galaxy(
     // TODO create class for income rate
     val totalIncomePerSecond: Price
         get() {
-            TODO()
+            val oreTargeting = Project.ORE_TARGETING in researchedProjects
+            val rates =  planets.flatMap {
+                planetStats[it.type]!!.deliveryRateByOreType(it, oreTargeting)
+            }
+            return rates.map { constantBonuses.market.getSellPrice(it.oreType) * it.rate }.sum()
         }
 
     fun withBoughtPlanet(planet: PlanetType) : Galaxy = copy(
-        planets = planets + Planet(planet)
+        planets = planets + Planet(planet),
+        unlockedPlanets = unlockedPlanets - planet
     )
 
     inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
@@ -81,7 +97,9 @@ data class Galaxy(
     }
 
     fun Resources.areAccessible(): Boolean {
-        val oresAccessible = highestOre?.let { it <= highestAccessibleOreType } ?: true
+        if (highestAlloy != null && nbSmelters == 0) return false
+        if (highestItem != null && nbCrafters == 0) return false
+        val oresAccessible = highestOre?.let { o -> highestAccessibleOreType?.let { o <= it } } ?: true
         val alloysAccessible = highestAlloy?.let { it <= highestUnlockedAlloyRecipe } ?: true
         val itemsAccessible = highestItem?.let { it <= highestUnlockedItemRecipe } ?: true
         return oresAccessible && alloysAccessible && itemsAccessible
@@ -91,25 +109,12 @@ data class Galaxy(
             resources.resources.map { constantBonuses.market.getSellPrice(it.resourceType) * it.quantity }.sum()
 
     fun getApproximateTime(resources: Resources): Duration {
-        val smeltTime = resources.totalSmeltTimeFromOre.dividedBy(nbSmelters.toLong())
-        val craftTime = resources.totalCraftTimeFromOresAndAlloys.dividedBy(nbCrafters.toLong())
+        val smeltTime = resources.totalSmeltTimeFromOre / nbSmelters
+        val craftTime = resources.totalCraftTimeFromOresAndAlloys/ nbCrafters
         val reducedSmeltTime = totalBonus.production.smeltSpeed.applyAsSpeed(smeltTime)
         val reducedCraftTime = totalBonus.production.craftSpeed.applyAsSpeed(craftTime)
         return if (reducedSmeltTime > reducedCraftTime) reducedSmeltTime else reducedCraftTime
     }
-
-    private val Planet.actualMineRateByOreType: Map<OreType, Double>
-        get() {
-            val actualStats = planetStats[type] ?: error("Planet $type not found")
-            val getRatio = { it: OrePart ->
-                if (Project.ORE_TARGETING in researchedProjects && it.oreType == preferredOreType) {
-                    it.ratio + 0.15
-                } else {
-                    it.ratio
-                }
-            }
-            return type.oreDistribution.associate { it.oreType to (actualStats.mineRate * getRatio(it)) }
-        }
 
     private fun PlanetType.stateReport() = """
         $name:

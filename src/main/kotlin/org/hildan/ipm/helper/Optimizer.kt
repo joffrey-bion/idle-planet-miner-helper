@@ -7,27 +7,28 @@ import kotlin.math.roundToInt
 
 class Optimizer(
     initialGalaxy: Galaxy,
-    private val searchDepth: Int = 3
+    private val searchDepth: Int = 4
 ) {
-    private var currentState = State(
-        galaxy = initialGalaxy,
-        actionsFromStart = emptyList(),
-        costToReach = Price.ZERO,
-        timeToReach = Duration.ZERO
-    )
+    private var currentGalaxy = initialGalaxy
 
-    fun generateActions(): Sequence<Action> = sequence {
-        val nextBestState = computeNextBestState()
-        yield(nextBestState.actionsFromStart.first())
-        currentState = nextBestState
+    fun generateActions(): Sequence<Action> = generateSequence {
+        val appliedAction = computeNextBestAction()
+        currentGalaxy = appliedAction.newGalaxy
+        appliedAction.action
     }
 
-    private fun computeNextBestState(): State {
-        var states = listOf(currentState)
+    private fun computeNextBestAction(): AppliedAction {
+        var states = listOf(State(
+            galaxy = currentGalaxy,
+            actionsFromStart = emptyList(),
+            costToReach = Price.ZERO,
+            timeToReach = Duration.ZERO
+        ))
         repeat(searchDepth) {
             states = states.flatMap { it.expand() }
         }
-        return states.minBy { it.timeToRoi1(currentState.galaxy) }!!
+        val bestEndState = states.minBy { it.timeToRoi1(currentGalaxy) }!!
+        return bestEndState.actionsFromStart.first().performOn(currentGalaxy)
     }
 }
 
