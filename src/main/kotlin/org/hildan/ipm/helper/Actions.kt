@@ -17,9 +17,12 @@ data class AppliedAction(
     val time: Duration,
     val incomeRateGain: ValueRate
 ) {
-    override fun toString(): String {
-        return "$action - Cost: $requiredCash and $requiredResources"
-    }
+    override fun toString(): String = """
+        $action
+            Cost:        $requiredCash and $requiredResources
+            Time:        $time
+            Income gain: ${if (incomeRateGain > ValueRate.ZERO) incomeRateGain else "none"}
+    """.trimIndent()
 }
 
 fun Galaxy.possibleActions(): List<AppliedAction> {
