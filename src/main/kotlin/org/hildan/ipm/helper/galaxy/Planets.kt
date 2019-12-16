@@ -5,6 +5,8 @@ import java.util.EnumSet
 import kotlin.math.min
 import kotlin.math.pow
 
+// TODO use Rate class here
+
 data class OreRate(val oreType: OreType, val rate: Double)
 
 data class PlanetStats(
@@ -56,7 +58,7 @@ data class Planet(
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseValue.amount }!!,
+    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseValue }!!,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE
 ) {

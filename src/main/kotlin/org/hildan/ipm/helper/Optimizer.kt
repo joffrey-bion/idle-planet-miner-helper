@@ -3,7 +3,6 @@ package org.hildan.ipm.helper
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.Price
 import java.time.Duration
-import kotlin.math.roundToInt
 
 class Optimizer(
     initialGalaxy: Galaxy,
@@ -39,8 +38,8 @@ data class State(
     val timeToReach: Duration
 ) {
     fun timeToRoi1(initialGalaxy: Galaxy): Duration {
-        val incomeDiffPerSecond = galaxy.totalIncomePerSecond - initialGalaxy.totalIncomePerSecond
-        val timeToGetMoneyBack = Duration.ofSeconds((costToReach / incomeDiffPerSecond).roundToInt().toLong())!!
+        val incomeRateDiff = galaxy.totalIncomeRate - initialGalaxy.totalIncomeRate
+        val timeToGetMoneyBack = costToReach / incomeRateDiff
         return timeToReach + timeToGetMoneyBack
     }
 }

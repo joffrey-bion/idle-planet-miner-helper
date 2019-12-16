@@ -83,7 +83,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = AppliedAction(
             action = this,
             newGalaxy = galaxy.withProject(project),
-            cost = galaxy.getTotalCost(project.requiredResources),
+            cost = galaxy.getTotalValue(project.requiredResources),
             time = galaxy.getApproximateTime(project.requiredResources)
         )
     }
