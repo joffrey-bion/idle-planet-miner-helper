@@ -10,8 +10,5 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     testImplementation(kotlin("test-junit"))
+    testImplementation("junit:junit:4.12")
 }
-
-//tasks.withType<Test> {
-//    useJUnitPlatform()
-//}

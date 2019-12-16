@@ -1,8 +1,6 @@
 package org.hildan.ipm.helper.galaxy
 
-import kotlin.math.round
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 internal class GalaxyTest {
@@ -29,9 +27,3 @@ private fun assertPlanetStats(expected: PlanetStats, actual: PlanetStats?) {
     assertDoubleEquals(expected.shipSpeed, actual.shipSpeed, "Incorrect ship speed")
     assertDoubleEquals(expected.cargo, actual.cargo, "Incorrect cargo size")
 }
-
-private fun assertDoubleEquals(expected: Double, actual: Double, message: String? = null) {
-    assertEquals(expected.rounded(), actual.rounded(), message)
-}
-
-private fun Double.rounded(): Double = round(this * 100) / 100.0

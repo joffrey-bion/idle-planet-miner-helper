@@ -43,3 +43,7 @@ object ProjectSamples {
 //        Project.SMELTING_EFFICIENCY
 //    )
 }
+
+fun assertDoubleEquals(expected: Double, actual: Double, message: String? = null) {
+    org.junit.Assert.assertEquals(message, expected, actual, 0.01)
+}
