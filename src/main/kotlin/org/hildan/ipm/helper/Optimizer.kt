@@ -11,10 +11,10 @@ class Optimizer(
 ) {
     private var currentGalaxy = initialGalaxy
 
-    fun generateActions(): Sequence<Action> = generateSequence {
+    fun generateActions(): Sequence<AppliedAction> = generateSequence {
         val appliedAction = computeNextBestAction()
         currentGalaxy = appliedAction.newGalaxy
-        appliedAction.action
+        appliedAction
     }
 
     private fun computeNextBestAction(): AppliedAction {

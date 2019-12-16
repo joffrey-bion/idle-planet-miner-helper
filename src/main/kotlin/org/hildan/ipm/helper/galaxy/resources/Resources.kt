@@ -49,6 +49,12 @@ data class Resources(
     // TODO merge resources to have max one CountedResources per resource type
     operator fun plus(other: Resources) = Resources(resources + other.resources)
 
+    override fun toString(): String = if(resources.isEmpty()) {
+        "no resources"
+    } else {
+        resources.joinToString(", ") { "${it.quantity} ${it.resourceType}" }
+    }
+
     companion object {
         val NOTHING = Resources(emptyList())
 

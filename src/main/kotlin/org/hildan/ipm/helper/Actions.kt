@@ -15,7 +15,11 @@ data class AppliedAction(
     val requiredResources: Resources,
     val time: Duration,
     val incomeRateGain: ValueRate
-)
+) {
+    override fun toString(): String {
+        return "$action - Cost: $requiredCash and $requiredResources"
+    }
+}
 
 fun Galaxy.possibleActions(): List<AppliedAction> {
     val buyPlanetActions = unlockedPlanets.map { Action.BuyPlanet(it).performOn(this) }
