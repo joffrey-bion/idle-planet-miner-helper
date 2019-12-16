@@ -16,7 +16,7 @@ inline class Rate(val timesPerSecond: Double)
 
 inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate> {
 
-    val amountPerMillisecond: Price get() = Price(amountPerSec * 1000)
+    val amountPerMillisecond: Price get() = Price(amountPerSec / 1000)
 
     operator fun plus(other: ValueRate) = ValueRate(amountPerSec + other.amountPerSec)
 
@@ -24,7 +24,7 @@ inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate>
 
     override fun compareTo(other: ValueRate): Int = amountPerSec.compareTo(other.amountPerSec)
 
-    override fun toString(): String = "+\$$amountPerSec/s"
+    override fun toString(): String = String.format("+\$%.2f/s", amountPerSec)
 
     companion object {
         val ZERO = ValueRate(0.0)

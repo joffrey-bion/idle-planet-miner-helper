@@ -29,13 +29,13 @@ class Optimizer(
             states = states.flatMap { it.expand() }
         }
         val bestEndState = states.minBy { it.timeToRoi1(currentGalaxy) }!!
-        return bestEndState.actionsFromStart.first().performOn(currentGalaxy)
+        return bestEndState.actionsFromStart.first()
     }
 }
 
 data class State(
     val galaxy: Galaxy,
-    val actionsFromStart: List<Action>,
+    val actionsFromStart: List<AppliedAction>,
     val requiredCashSoFar: Price,
     val requiredResourcesSoFar: Resources,
     val timeToReach: Duration
@@ -50,7 +50,7 @@ data class State(
 fun State.expand(): List<State> = galaxy.possibleActions().map {
     State(
         it.newGalaxy,
-        actionsFromStart + it.action,
+        actionsFromStart + it,
         requiredCashSoFar + it.requiredCash,
         requiredResourcesSoFar + it.requiredResources,
         timeToReach + it.time

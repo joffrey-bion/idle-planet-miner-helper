@@ -24,7 +24,7 @@ data class ConstantBonuses(
 
 data class Galaxy(
     val constantBonuses: ConstantBonuses,
-    val currentCash: Price = Price(360),
+    val currentCash: Price = Price(180),
     private val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT),
     val planets: List<Planet> = emptyList(),
