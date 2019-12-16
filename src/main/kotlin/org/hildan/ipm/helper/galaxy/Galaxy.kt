@@ -96,6 +96,12 @@ data class Galaxy(
         )
     }
 
+    fun withProjects(projects: List<Project>) : Galaxy {
+        var nextGalaxy = this
+        projects.forEach { nextGalaxy = nextGalaxy.withProject(it) }
+        return nextGalaxy
+    }
+
     fun Resources.areAccessible(): Boolean {
         if (highestAlloy != null && nbSmelters == 0) return false
         if (highestItem != null && nbCrafters == 0) return false
