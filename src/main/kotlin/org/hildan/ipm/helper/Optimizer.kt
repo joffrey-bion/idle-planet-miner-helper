@@ -2,6 +2,7 @@ package org.hildan.ipm.helper
 
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.time.Duration
 
 class Optimizer(
@@ -20,7 +21,8 @@ class Optimizer(
         var states = listOf(State(
             galaxy = currentGalaxy,
             actionsFromStart = emptyList(),
-            costToReach = Price.ZERO,
+            requiredCashSoFar = Price.ZERO,
+            requiredResourcesSoFar = Resources.NOTHING,
             timeToReach = Duration.ZERO
         ))
         repeat(searchDepth) {
@@ -34,12 +36,13 @@ class Optimizer(
 data class State(
     val galaxy: Galaxy,
     val actionsFromStart: List<Action>,
-    val costToReach: Price,
+    val requiredCashSoFar: Price,
+    val requiredResourcesSoFar: Resources,
     val timeToReach: Duration
 ) {
     fun timeToRoi1(initialGalaxy: Galaxy): Duration {
         val incomeRateDiff = galaxy.totalIncomeRate - initialGalaxy.totalIncomeRate
-        val timeToGetMoneyBack = costToReach / incomeRateDiff
+        val timeToGetMoneyBack = requiredCashSoFar / incomeRateDiff
         return timeToReach + timeToGetMoneyBack
     }
 }
@@ -48,7 +51,8 @@ fun State.expand(): List<State> = galaxy.possibleActions().map {
     State(
         it.newGalaxy,
         actionsFromStart + it.action,
-        costToReach + it.cost,
+        requiredCashSoFar + it.requiredCash,
+        requiredResourcesSoFar + it.requiredResources,
         timeToReach + it.time
     )
 }

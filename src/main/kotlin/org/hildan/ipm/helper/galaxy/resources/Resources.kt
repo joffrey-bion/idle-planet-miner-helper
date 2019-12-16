@@ -27,20 +27,27 @@ data class Resources(
     private val resourceTypes: Set<ResourceType>
         get() = resources.map { it.resourceType }.toSet()
 
-    val highestOre: OreType? =
-            (resourceTypes.mapNotNull { it.requiredResources.highestOre } + resourceTypes.filterIsInstance<OreType>()).max()
+    private val allResourceTypes: Set<ResourceType>
+        get() = resourceTypes.flatMap { it.requiredResources.allResourceTypes + it }.toSet()
 
-    val highestAlloy: AlloyType? =
-            (resourceTypes.mapNotNull { it.requiredResources.highestAlloy } + resourceTypes.filterIsInstance<AlloyType>()).max()
+    val hasAlloys = allResourceTypes.any { it is AlloyType }
 
-    val highestItem: ItemType? =
-            (resourceTypes.mapNotNull { it.requiredResources.highestItem } + resourceTypes.filterIsInstance<ItemType>()).max()
+    val hasItems = allResourceTypes.any { it is ItemType }
+
+    val highestOre: OreType? = allResourceTypes.filterIsInstance<OreType>().max()
+
+    val highestAlloy: AlloyType? = allResourceTypes.filterIsInstance<AlloyType>().max()
+
+    val highestItem: ItemType? = allResourceTypes.filterIsInstance<ItemType>().max()
 
     val totalSmeltTimeFromOre: Duration =
             resources.map { it.resourceType.smeltTimeFromOre * it.quantity }.sum()
 
     val totalCraftTimeFromOresAndAlloys: Duration =
             resources.map { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }.sum()
+
+    // TODO merge resources to have max one CountedResources per resource type
+    operator fun plus(other: Resources) = Resources(resources + other.resources)
 
     companion object {
         val NOTHING = Resources(emptyList())

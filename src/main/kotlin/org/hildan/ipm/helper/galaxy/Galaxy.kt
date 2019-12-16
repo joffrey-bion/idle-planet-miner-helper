@@ -126,8 +126,8 @@ data class Galaxy(
             resources.resources.map { it.resourceType.currentValue * it.quantity }.sum()
 
     fun getApproximateTime(resources: Resources): Duration {
-        val smeltTime = resources.totalSmeltTimeFromOre / nbSmelters
-        val craftTime = resources.totalCraftTimeFromOresAndAlloys/ nbCrafters
+        val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
+        val craftTime = if (resources.hasItems) resources.totalCraftTimeFromOresAndAlloys/ nbCrafters else Duration.ZERO
         val reducedSmeltTime = totalBonus.production.smeltSpeed.applyAsSpeed(smeltTime)
         val reducedCraftTime = totalBonus.production.craftSpeed.applyAsSpeed(craftTime)
         return if (reducedSmeltTime > reducedCraftTime) reducedSmeltTime else reducedCraftTime
