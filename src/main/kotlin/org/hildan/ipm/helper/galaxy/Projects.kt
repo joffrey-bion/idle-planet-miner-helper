@@ -29,8 +29,10 @@ enum class Project(
     ADVANCED_CARGO_HANDLING(Resources.of(5 of HAMMER, 25 of SILVER_BAR), Bonus.allPlanets(cargo = 1.25)),
     ORE_TARGETING(Resources.of(100 of HAMMER, 50 of BATTERY)),
     COLONY_TAX_INCENTIVES(Resources.of(60 of ALUMINUM_BAR), Bonus(planetUpgradeCost5pReductions = 1)),
-    COLONY_ADVANCED_TAX_INCENTIVES(Resources.of(60 of BRONZE), Bonus(planetUpgradeCost5pReductions = 1))
+    COLONY_ADVANCED_TAX_INCENTIVES(Resources.of(60 of BRONZE), Bonus(planetUpgradeCost5pReductions = 1)),
 
+    ADVANCED_FURNACE(Resources.of(3 of GLASS, 10 of ALUMINUM_BAR), Bonus.production(smeltSpeed = 1.2)),
+    ADVANCED_CRAFTER(Resources.of(5 of LENSE, 50 of GOLD_BAR), Bonus.production(craftSpeed = 1.2)),
     // TODO fill in all projects
 }
 
@@ -41,8 +43,8 @@ private object ProjectGraph {
         Project.MANAGEMENT to setOf(Project.TELESCOPE_1),// Project.COLONIZATION),
         Project.TELESCOPE_1 to setOf(Project.BEACON),// Project.TELESCOPE_2),
         Project.BEACON to setOf(),
-        Project.SMELTER to setOf(Project.CRAFTER),// Project.ADVANCED_FURNACE),
-        Project.CRAFTER to setOf(),// Project.ADVANCED_CRAFTER),
+        Project.SMELTER to setOf(Project.CRAFTER, Project.ADVANCED_FURNACE),
+        Project.CRAFTER to setOf(Project.ADVANCED_CRAFTER),
         Project.ADVANCED_MINING to setOf(Project.ADVANCED_THRUSTERS, Project.ADVANCED_CARGO_HANDLING),
         Project.ADVANCED_THRUSTERS to setOf(),// Project.SUPERIOR_MINING),
         Project.ADVANCED_CARGO_HANDLING to setOf()//, Project.SUPERIOR_MINING),
