@@ -2,12 +2,13 @@ package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.bonuses.Beacon
 import org.hildan.ipm.helper.galaxy.bonuses.BeaconPlanetRange
+import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.ManagerAssignment
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Room
 import org.hildan.ipm.helper.galaxy.bonuses.Ships
-import org.hildan.ipm.helper.galaxy.money.Market
+import org.hildan.ipm.helper.galaxy.bonuses.Market
 
 object ConstantBonusesSamples {
 
@@ -15,19 +16,19 @@ object ConstantBonusesSamples {
 
     private val roomsBonus1 =
             Room.ENGINEERING.bonus(13) +
-                    Room.AERONAUTICAL.bonus(6) +
-                    Room.PACKAGING.bonus(3) +
-                    Room.FORGE.bonus(12) +
-                    Room.WORKSHOP.bonus(9) +
-                    Room.ASTRONOMY.bonus(7) +
-                    Room.LABORATORY.bonus(4)
+            Room.AERONAUTICAL.bonus(6) +
+            Room.PACKAGING.bonus(3) +
+            Room.FORGE.bonus(12) +
+            Room.WORKSHOP.bonus(9) +
+            Room.ASTRONOMY.bonus(7) +
+            Room.LABORATORY.bonus(4)
 
     private val beaconBonus1 = Beacon.bonus(
         BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.26, 1.0, 1.0)
     )
 
     val SAMPLE_1 = ConstantBonuses(
-        shipsBonus, roomsBonus1, beaconBonus1, ManagerAssignment(), Market()
+        shipsBonus, roomsBonus1, beaconBonus1, ManagerAssignment(), Market(), ChallengeStars()
     )
 
 }

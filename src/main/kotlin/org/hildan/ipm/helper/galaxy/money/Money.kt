@@ -1,7 +1,5 @@
 package org.hildan.ipm.helper.galaxy.money
 
-import org.hildan.ipm.helper.galaxy.bonuses.Multiplier
-import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import java.time.Duration
 import kotlin.math.roundToLong
 
@@ -72,27 +70,3 @@ inline class Price(private val amount: Double) : Comparable<Price> {
     override fun compareTo(other: Price): Int = amount.compareTo(other.amount)
 }
 
-data class Market(
-    private val multipliers: Map<ResourceType, Multiplier> = emptyMap(),
-    private val stars: Map<ResourceType, Int> = emptyMap()
-) {
-    private val sellPrice = ResourceType.all().associateWith { computePrice(it) }
-
-    fun withMultiplier(resourceType: ResourceType, factor: Double) =
-            copy(multipliers = multipliers + (resourceType to Multiplier(factor)))
-
-    fun withStars(resourceType: ResourceType, nbStars: Int) = copy(stars = stars + (resourceType to nbStars))
-
-    fun getSellPrice(resourceType: ResourceType): Price = sellPrice[resourceType] ?: error("No sell price found for item $resourceType")
-
-    private fun computePrice(item: ResourceType): Price {
-        val nbStars = stars[item] ?: 0
-        val multiplier = multipliers[item] ?: Multiplier.NONE
-        val basePrice = item.baseValue * (1 + 0.2 * nbStars)
-        return multiplier.applyTo(basePrice)
-    }
-
-    override fun toString(): String {
-        return "Market:\n  ${sellPrice.map { "${it.key} = ${it.value}" }.joinToString("\n  ")}"
-    }
-}

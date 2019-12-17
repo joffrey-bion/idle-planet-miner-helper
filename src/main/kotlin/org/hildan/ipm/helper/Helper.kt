@@ -9,11 +9,13 @@ import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.bonuses.Manager
 import org.hildan.ipm.helper.galaxy.bonuses.ManagerAssignment
-import org.hildan.ipm.helper.galaxy.money.Market
+import org.hildan.ipm.helper.galaxy.bonuses.Market
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import org.hildan.ipm.helper.galaxy.Project
+import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
+import org.hildan.ipm.helper.galaxy.bonuses.Multiplier
 import org.hildan.ipm.helper.galaxy.bonuses.Room
 import org.hildan.ipm.helper.galaxy.bonuses.Ships
 
@@ -43,17 +45,21 @@ fun main() {
         )
     )
 
-    val market = Market()
-        .withStars(OreType.SILVER, 2)
-        .withStars(OreType.GOLD, 1)
-        .withStars(AlloyType.COPPER_BAR, 1)
-        .withStars(AlloyType.IRON_BAR, 1)
-        .withStars(AlloyType.ALUMINUM_BAR, 1)
-        .withMultiplier(AlloyType.IRON_BAR, 2.0)
-        .withMultiplier(OreType.SILVER, 2.0)
-        .withMultiplier(ItemType.HAMMER, 0.5)
+    val market = Market(mapOf(
+        AlloyType.IRON_BAR to Multiplier(2.0),
+        OreType.SILVER to Multiplier(2.0),
+        ItemType.HAMMER to Multiplier(0.5)
+    ))
 
-    val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market)
+    val stars = ChallengeStars(mapOf(
+        OreType.SILVER to 2,
+        OreType.GOLD to 1,
+        AlloyType.COPPER_BAR to 1,
+        AlloyType.IRON_BAR to 1,
+        AlloyType.ALUMINUM_BAR to 1
+    ))
+
+    val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market, stars)
 
     val galaxy = Galaxy(constantBonuses)
         .withBoughtPlanet(PlanetType.BALOR)

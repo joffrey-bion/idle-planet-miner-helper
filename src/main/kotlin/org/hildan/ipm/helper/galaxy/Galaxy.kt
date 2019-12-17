@@ -119,7 +119,7 @@ data class Galaxy(
     }
 
     private val ResourceType.currentValue: Price
-        get() = constantBonuses.market.getSellPrice(this)
+        get() = totalBonus.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue
 
     private val Resources.totalValue: Price
         get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()

@@ -21,3 +21,11 @@ inline fun <reified K : Enum<K>, V> Map<K, V>.asEMap() =
 
 inline fun <reified K : Enum<K>, V> Map<K, V>.asEMap(createMissingValue: (K) -> V) =
         EMap.of<K, V> { this[it] ?: createMissingValue(it) }
+
+fun <K, V> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, V> {
+    val result = this.toMutableMap()
+    for ((k,v) in other) {
+        result.merge(k, v, combine)
+    }
+    return result
+}
