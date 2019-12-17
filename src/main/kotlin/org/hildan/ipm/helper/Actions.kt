@@ -6,7 +6,11 @@ import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.min
+import org.hildan.ipm.helper.galaxy.resources.AlloyType
+import org.hildan.ipm.helper.galaxy.resources.ItemType
+import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.utils.INFINITE_TIME
 import java.time.Duration
 
 data class AppliedAction(
@@ -37,8 +41,22 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
     val researchActions = unlockedProjects
         .filter { it.requiredResources.areAccessible() }
         .map { Action.Research(it).performOn(this) }
-    return buyPlanetActions + upgradeActions + researchActions
+
+    val unlockRecipeActions = mutableListOf<AppliedAction>()
+    if (nbSmelters > 0) {
+        unlockRecipeActions.add(unlockNextSmeltRecipeAction())
+    }
+    if (nbCrafters > 0) {
+        unlockRecipeActions.add(unlockNextCraftRecipeAction())
+    }
+    return buyPlanetActions + upgradeActions + researchActions + unlockRecipeActions
 }
+
+private fun Galaxy.unlockNextSmeltRecipeAction() =
+        Action.UnlockSmeltRecipe(AlloyType.values()[highestUnlockedAlloyRecipe.ordinal + 1]).performOn(this)
+
+private fun Galaxy.unlockNextCraftRecipeAction() =
+        Action.UnlockCraftRecipe(ItemType.values()[highestUnlockedItemRecipe.ordinal + 1]).performOn(this)
 
 private fun Galaxy.createAction(
     action: Action,
@@ -48,7 +66,11 @@ private fun Galaxy.createAction(
 ): AppliedAction {
     val cashInstantlySpent = min(currentCash, requiredCash)
     val remainingToPay = requiredCash - cashInstantlySpent
-    val timeWaitingForCash = if (remainingToPay == Price.ZERO) Duration.ZERO else remainingToPay / totalIncomeRate
+    val timeWaitingForCash = when {
+        remainingToPay == Price.ZERO -> Duration.ZERO
+        totalIncomeRate == ValueRate.ZERO -> INFINITE_TIME
+        else -> remainingToPay / totalIncomeRate
+    }
     val timeWaitingForResources = getApproximateTime(requiredResources)
     return AppliedAction(
         action = action,
@@ -114,6 +136,24 @@ sealed class Action {
             action = this,
             newGalaxy = galaxy.withProject(project),
             requiredResources = project.requiredResources
+        )
+    }
+
+    data class UnlockSmeltRecipe(val alloy: AlloyType): Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy.copy(highestUnlockedAlloyRecipe = alloy),
+            requiredCash = alloy.recipeUnlockPrice
+        )
+    }
+
+    data class UnlockCraftRecipe(val item: ItemType): Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy.copy(highestUnlockedItemRecipe = item),
+            requiredCash = item.recipeUnlockPrice
         )
     }
 }

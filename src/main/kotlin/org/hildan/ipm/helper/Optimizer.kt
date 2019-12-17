@@ -2,7 +2,9 @@ package org.hildan.ipm.helper
 
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.money.Price
+import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.utils.INFINITE_TIME
 import java.time.Duration
 
 class Optimizer(
@@ -36,6 +38,9 @@ data class State(
 ) {
     fun timeToRoi1(initialGalaxy: Galaxy): Duration {
         val incomeRateDiff = galaxy.totalIncomeRate - initialGalaxy.totalIncomeRate
+        if (incomeRateDiff == ValueRate.ZERO) {
+            return INFINITE_TIME
+        }
         val timeToGetMoneyBack = requiredCashSoFar / incomeRateDiff
         return timeToReach + timeToGetMoneyBack
     }

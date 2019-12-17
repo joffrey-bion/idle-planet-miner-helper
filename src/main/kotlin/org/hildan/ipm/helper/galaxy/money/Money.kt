@@ -42,11 +42,7 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     operator fun div(time: Duration): ValueRate = ValueRate(amount / time.toSeconds())
 
-    operator fun div(rate: ValueRate): Duration = if (rate == ValueRate.ZERO) {
-        Duration.ofDays(1000) // Infinite time
-    } else {
-        Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
-    }
+    operator fun div(rate: ValueRate): Duration = Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
 
     operator fun times(factor: Double) = Price(amount * factor)
 

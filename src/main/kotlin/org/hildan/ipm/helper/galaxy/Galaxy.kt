@@ -28,8 +28,8 @@ data class Galaxy(
     val unlockedPlanets: Set<PlanetType> = TelescopeLevel(0).unlockedPlanets,
     val nbSmelters: Int = 0,
     val nbCrafters: Int = 0,
-    private val highestUnlockedAlloyRecipe: AlloyType = AlloyType.COPPER_BAR,
-    private val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE
+    val highestUnlockedAlloyRecipe: AlloyType = AlloyType.COPPER_BAR,
+    val highestUnlockedItemRecipe: ItemType = ItemType.COPPER_WIRE
 ) {
     private val totalBonus by lazy {
         val constantBonusTotal = constantBonuses.total(Project.BEACON in researchedProjects)
