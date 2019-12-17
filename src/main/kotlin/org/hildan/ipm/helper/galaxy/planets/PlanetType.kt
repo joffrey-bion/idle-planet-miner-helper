@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper.galaxy.planets
 
+import org.hildan.ipm.helper.galaxy.TelescopeLevel
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.OreType.*
