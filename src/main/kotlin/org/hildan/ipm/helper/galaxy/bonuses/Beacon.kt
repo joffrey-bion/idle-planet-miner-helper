@@ -1,5 +1,6 @@
-package org.hildan.ipm.helper.galaxy
+package org.hildan.ipm.helper.galaxy.bonuses
 
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import org.hildan.ipm.helper.utils.asEMap
 
 private val planets = PlanetType.values()

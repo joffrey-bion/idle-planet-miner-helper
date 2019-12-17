@@ -1,6 +1,6 @@
 package org.hildan.ipm.helper.galaxy.resources
 
-import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.money.Price
 import java.time.Duration
 
 enum class OreType(

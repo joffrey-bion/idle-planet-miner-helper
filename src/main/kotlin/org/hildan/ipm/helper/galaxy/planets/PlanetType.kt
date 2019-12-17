@@ -1,95 +1,16 @@
-package org.hildan.ipm.helper.galaxy
+package org.hildan.ipm.helper.galaxy.planets
 
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.OreType
-import java.util.EnumSet
-import kotlin.math.min
+import org.hildan.ipm.helper.galaxy.resources.OreType.*
 import kotlin.math.pow
-
-// TODO use Rate class here
-
-data class OreRate(val oreType: OreType, val rate: Double)
-
-data class PlanetStats(
-    val mineRate: Double,
-    val shipSpeed: Double,
-    val cargo: Double
-) {
-    fun deliveryRateByOreType(planet: Planet, oreTargeting: Boolean): List<OreRate> {
-        val removalRate = cargo * shipSpeed / (planet.type.distance * 2)
-        val mineRates = mineRateByType(oreTargeting, planet)
-        return computeDeliveryRates(removalRate, mineRates)
-    }
-
-    private fun mineRateByType(oreTargeting: Boolean, planet: Planet): List<OreRate> {
-        val getRatio = { it: OrePart ->
-            if (oreTargeting && it.oreType == planet.preferredOreType) {
-                it.ratio + 0.15
-            } else {
-                it.ratio
-            }
-        }
-        val (preferred, others) = planet.type.oreDistribution
-                    .map { OreRate(it.oreType, mineRate * getRatio(it)) }
-                    .partition { it.oreType == planet.preferredOreType }
-        return preferred + others.sortedByDescending { it.oreType }
-    }
-
-    private fun computeDeliveryRates(totalRemovalRate: Double, mineRates: List<OreRate>): List<OreRate> {
-        var remainingRemovalRate = totalRemovalRate
-
-        val deliveryRates = mutableListOf<OreRate>()
-        for (mr in mineRates) {
-            val deliveryRate = min(remainingRemovalRate, mr.rate)
-            remainingRemovalRate -= deliveryRate
-            deliveryRates.add(OreRate(mr.oreType, deliveryRate))
-        }
-        return deliveryRates
-    }
-}
-
-data class PlanetUpgradeCosts(
-    val mineUpgrade: Price,
-    val shipUpgrade: Price,
-    val cargoUpgrade: Price
-)
-
-data class Planet(
-    val type: PlanetType,
-    val mineLevel: Int = 1,
-    val shipLevel: Int = 1,
-    val cargoLevel: Int = 1,
-    val preferredOreType: OreType = type.oreDistribution.map { it.oreType }.maxBy { it.baseValue }!!,
-    val colonyLevel: Int = 0,
-    val colonyBonus: PlanetBonus = PlanetBonus.NONE
-) {
-    val stats = colonyBonus.applyTo(
-        PlanetStats(
-            mineRate = computeStat(0.25, 0.1, 0.017, mineLevel),
-            shipSpeed = computeStat(1.0, 0.2, 1.0 / 75, shipLevel),
-            cargo = computeStat(5.1, 2.0, 0.1, cargoLevel)
-        )
-    )
-
-    private fun computeStat(base: Double, c1: Double, c2: Double, level: Int) =
-            base + c1 * (level - 1) + (c2 * (level - 1) * (level - 1))
-
-    val upgradeCosts = PlanetUpgradeCosts(
-        mineUpgrade = type.upgradeCost(mineLevel),
-        shipUpgrade = type.upgradeCost(shipLevel),
-        cargoUpgrade = type.upgradeCost(cargoLevel)
-    )
-}
 
 data class OrePart(
     val oreType: OreType,
     val ratio: Double
 )
 
-inline class TelescopeLevel(val value: Int) {
-
-    val unlockedPlanets: Set<PlanetType> get() = PlanetType.values()
-        .filterTo(EnumSet.noneOf(PlanetType::class.java)) { it.telescopeLevel == this }
-}
+private infix fun Double.of(oreType: OreType) = OrePart(oreType, this)
 
 enum class PlanetType(
     val unlockPrice: Price,
@@ -103,42 +24,41 @@ enum class PlanetType(
         telescopeLevel = TelescopeLevel(0),
         baseMineRate = 0.25,
         distance = 10,
-        oreDistribution = listOf(OrePart(OreType.COPPER, 1.0))
+        oreDistribution = listOf(1.0 of COPPER)
     ),
     DRASTA(
         unlockPrice = Price(200),
         telescopeLevel = TelescopeLevel(0),
         baseMineRate = 0.37,
         distance = 12,
-        oreDistribution = listOf(OrePart(OreType.COPPER, 0.8), OrePart(OreType.IRON, 0.2))
+        oreDistribution = listOf(0.8 of COPPER, 0.2 of IRON)
     ),
     ANADIUS(
         unlockPrice = Price(500),
         telescopeLevel = TelescopeLevel(0),
         baseMineRate = 0.52,
         distance = 14,
-        oreDistribution = listOf(OrePart(OreType.COPPER, 0.5), OrePart(OreType.IRON, 0.5))
+        oreDistribution = listOf(0.5 of COPPER, 0.5 of IRON)
     ),
     DHOLEN(
         unlockPrice = Price(1250),
         telescopeLevel = TelescopeLevel(0),
         baseMineRate = 0.70,
         distance = 15,
-        oreDistribution = listOf(OrePart(OreType.IRON, 0.8), OrePart(OreType.LEAD, 0.2))
+        oreDistribution = listOf(0.8 of IRON, 0.2 of LEAD)
     ),
     VERR(
         unlockPrice = Price(5000),
         telescopeLevel = TelescopeLevel(1),
         baseMineRate = 0.92,
         distance = 16,
-        oreDistribution = listOf(OrePart(OreType.COPPER, 0.2), OrePart(OreType.IRON, 0.3), OrePart(OreType.LEAD, 0.5))
+        oreDistribution = listOf(0.2 of COPPER, 0.3 of IRON, 0.5 of LEAD)
     );
 
     private val baseUpgradeCost: Price = unlockPrice * 0.05
 
     fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
 }
-
 // Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)
 
 // No.	Planet	UnlockCost	TelescopeTierRequired	Resources	Yield(%)	DistanceReal	BaseMineRate

@@ -1,11 +1,11 @@
 package org.hildan.ipm.helper
 
 import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.PlanetType
-import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.Project
-import org.hildan.ipm.helper.galaxy.ValueRate
-import org.hildan.ipm.helper.galaxy.min
+import org.hildan.ipm.helper.galaxy.money.ValueRate
+import org.hildan.ipm.helper.galaxy.money.min
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.time.Duration
 

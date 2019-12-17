@@ -1,5 +1,8 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
+import org.hildan.ipm.helper.galaxy.planets.PlanetStats
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 

@@ -1,21 +1,21 @@
 package org.hildan.ipm.helper
 
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
-import org.hildan.ipm.helper.galaxy.Beacon
-import org.hildan.ipm.helper.galaxy.BeaconPlanetRange
-import org.hildan.ipm.helper.galaxy.Bonus
-import org.hildan.ipm.helper.galaxy.ConstantBonuses
+import org.hildan.ipm.helper.galaxy.bonuses.Beacon
+import org.hildan.ipm.helper.galaxy.bonuses.BeaconPlanetRange
+import org.hildan.ipm.helper.galaxy.bonuses.Bonus
+import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.resources.ItemType
-import org.hildan.ipm.helper.galaxy.Manager
-import org.hildan.ipm.helper.galaxy.ManagerAssignment
-import org.hildan.ipm.helper.galaxy.Market
+import org.hildan.ipm.helper.galaxy.bonuses.Manager
+import org.hildan.ipm.helper.galaxy.bonuses.ManagerAssignment
+import org.hildan.ipm.helper.galaxy.money.Market
 import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.PlanetBonus
-import org.hildan.ipm.helper.galaxy.PlanetType
+import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import org.hildan.ipm.helper.galaxy.Project
-import org.hildan.ipm.helper.galaxy.Room
-import org.hildan.ipm.helper.galaxy.Ships
+import org.hildan.ipm.helper.galaxy.bonuses.Room
+import org.hildan.ipm.helper.galaxy.bonuses.Ships
 
 fun main() {
     val shipsBonus = Ships.DAUGHTERSHIP + Ships.ELDERSHIP + Ships.NO_ADS

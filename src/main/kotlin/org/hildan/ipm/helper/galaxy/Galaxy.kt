@@ -1,5 +1,15 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.bonuses.Bonus
+import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
+import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
+import org.hildan.ipm.helper.galaxy.money.Price
+import org.hildan.ipm.helper.galaxy.money.ValueRate
+import org.hildan.ipm.helper.galaxy.money.perSecond
+import org.hildan.ipm.helper.galaxy.money.sum
+import org.hildan.ipm.helper.galaxy.money.sumRates
+import org.hildan.ipm.helper.galaxy.planets.Planet
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
@@ -8,19 +18,6 @@ import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.div
 import java.time.Duration
 import java.util.EnumSet
-
-data class ConstantBonuses(
-    private val shipsBonus: Bonus,
-    private val roomsBonus: Bonus,
-    private val beaconBonus: Bonus,
-    private val managerAssignment: ManagerAssignment = ManagerAssignment(),
-    val market: Market
-) {
-    private val withoutBeacon = shipsBonus + roomsBonus + managerAssignment.totalBonus
-    private val withBeacon = withoutBeacon + beaconBonus
-
-    fun total(beaconActive: Boolean) = if (beaconActive) withBeacon else withoutBeacon
-}
 
 data class Galaxy(
     val constantBonuses: ConstantBonuses,
@@ -92,8 +89,8 @@ data class Galaxy(
             withChangedPlanet(planet) { it.copy(colonyLevel = level, colonyBonus = bonus) }
 
     fun withProject(project: Project) : Galaxy {
-        val newPlanets = if (project.telescopeLevel != null) {
-            unlockedPlanets + project.telescopeLevel.unlockedPlanets
+        val newPlanets = if (project.telescope != null) {
+            unlockedPlanets + project.telescope.unlockedPlanets
         } else {
             unlockedPlanets
         }
@@ -121,7 +118,8 @@ data class Galaxy(
         return oresAccessible && alloysAccessible && itemsAccessible
     }
 
-    private val ResourceType.currentValue: Price get() = constantBonuses.market.getSellPrice(this)
+    private val ResourceType.currentValue: Price
+        get() = constantBonuses.market.getSellPrice(this)
 
     private val Resources.totalValue: Price
         get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()

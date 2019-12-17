@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper.galaxy
+package org.hildan.ipm.helper.galaxy.bonuses
 
 object Ships {
 

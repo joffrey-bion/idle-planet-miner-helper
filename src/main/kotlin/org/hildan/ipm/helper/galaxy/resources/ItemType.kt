@@ -1,6 +1,6 @@
 package org.hildan.ipm.helper.galaxy.resources
 
-import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.ALUMINUM_BAR
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.COPPER_BAR
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.GOLD_BAR

@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper
 
 import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.time.Duration
 
@@ -18,13 +18,7 @@ class Optimizer(
     }
 
     private fun computeNextBestAction(): AppliedAction {
-        var states = listOf(State(
-            galaxy = currentGalaxy,
-            actionsFromStart = emptyList(),
-            requiredCashSoFar = Price.ZERO,
-            requiredResourcesSoFar = Resources.NOTHING,
-            timeToReach = Duration.ZERO
-        ))
+        var states = listOf(State.initial(currentGalaxy))
         repeat(searchDepth) {
             states = states.flatMap { it.expand() }
         }
@@ -45,14 +39,26 @@ data class State(
         val timeToGetMoneyBack = requiredCashSoFar / incomeRateDiff
         return timeToReach + timeToGetMoneyBack
     }
+
+    fun expand(): List<State> = galaxy.possibleActions().map {
+        State(
+            it.newGalaxy,
+            actionsFromStart + it,
+            requiredCashSoFar + it.requiredCash,
+            requiredResourcesSoFar + it.requiredResources,
+            timeToReach + it.time
+        )
+    }
+
+    companion object {
+
+        fun initial(galaxy: Galaxy) = State(
+            galaxy = galaxy,
+            actionsFromStart = emptyList(),
+            requiredCashSoFar = Price.ZERO,
+            requiredResourcesSoFar = Resources.NOTHING,
+            timeToReach = Duration.ZERO
+        )
+    }
 }
 
-fun State.expand(): List<State> = galaxy.possibleActions().map {
-    State(
-        it.newGalaxy,
-        actionsFromStart + it,
-        requiredCashSoFar + it.requiredCash,
-        requiredResourcesSoFar + it.requiredResources,
-        timeToReach + it.time
-    )
-}

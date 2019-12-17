@@ -1,5 +1,6 @@
-package org.hildan.ipm.helper.galaxy
+package org.hildan.ipm.helper.galaxy.money
 
+import org.hildan.ipm.helper.galaxy.bonuses.Multiplier
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import java.time.Duration
 import kotlin.math.roundToLong

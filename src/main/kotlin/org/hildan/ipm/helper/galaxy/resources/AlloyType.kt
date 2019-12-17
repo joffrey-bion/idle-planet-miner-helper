@@ -1,6 +1,6 @@
 package org.hildan.ipm.helper.galaxy.resources
 
-import org.hildan.ipm.helper.galaxy.Price
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.OreType.ALUMINUM
 import org.hildan.ipm.helper.galaxy.resources.OreType.COPPER
 import org.hildan.ipm.helper.galaxy.resources.OreType.GOLD
