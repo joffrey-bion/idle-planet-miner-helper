@@ -24,6 +24,8 @@ enum class ItemType(
     CIRCUIT(Price(620_000), Price(400_000), 20.min(), Resources.of(5 of ALUMINUM_BAR, 5 of SILICON_BAR, 10 of COPPER_WIRE)),
     LENSE(Price(1_100_000), Price(1_000_000), 40.min(), Resources.of(1 of GLASS, 5 of SILVER_BAR)),
     LASER(Price(3_200_000), Price(2_000_000), 1.h(), Resources.of(10 of IRON_BAR, 5 of GOLD_BAR, 1 of LENSE)),
+    BASIC_COMPUTER(Price(7_600_000), Price(5_000_000), 80.min(), Resources.of(5 of CIRCUIT, 5 of SILVER_BAR)),
+    SOLAR_PANEL(Price(15_000_000), Price(10_000_000), 100.min(), Resources.of(5 of CIRCUIT, 10 of GLASS)),
     // TODO fill other items based on excel sheet
     ;
 

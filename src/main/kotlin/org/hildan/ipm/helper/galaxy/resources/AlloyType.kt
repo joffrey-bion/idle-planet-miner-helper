@@ -1,13 +1,7 @@
 package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
-import org.hildan.ipm.helper.galaxy.resources.OreType.ALUMINUM
-import org.hildan.ipm.helper.galaxy.resources.OreType.COPPER
-import org.hildan.ipm.helper.galaxy.resources.OreType.GOLD
-import org.hildan.ipm.helper.galaxy.resources.OreType.IRON
-import org.hildan.ipm.helper.galaxy.resources.OreType.LEAD
-import org.hildan.ipm.helper.galaxy.resources.OreType.SILICON
-import org.hildan.ipm.helper.galaxy.resources.OreType.SILVER
+import org.hildan.ipm.helper.galaxy.resources.OreType.*
 import java.time.Duration
 
 enum class AlloyType(
@@ -25,6 +19,7 @@ enum class AlloyType(
     GOLD_BAR(Price(120_000), Price(500_000), 3.min(), Resources.of(1000 of GOLD)),
     BRONZE(Price(234_000), Price(1_000_000), 4.min(), Resources.of(2 of SILVER_BAR, 10 of COPPER_BAR)),
     STEEL(Price(340_000), Price(2_000_000), 8.min(), Resources.of(15 of LEAD_BAR, 30 of IRON_BAR)),
+    PLATINUM_BAR(Price(780_000), Price(4_000_000), 10.min(), Resources.of(2 of GOLD_BAR, 1000 of PLATINUM)),
     // TODO fill remaining alloys from https://idle-planet-miner.fandom.com/wiki/Alloy
     ;
 
