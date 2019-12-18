@@ -8,9 +8,9 @@ import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.min
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
-import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.utils.INFINITE_TIME
+import org.hildan.ipm.helper.utils.next
 import java.time.Duration
 
 data class AppliedAction(
@@ -42,21 +42,22 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
         .filter { it.requiredResources.areAccessible() }
         .map { Action.Research(it).performOn(this) }
 
-    val unlockRecipeActions = mutableListOf<AppliedAction>()
-    if (nbSmelters > 0) {
-        unlockRecipeActions.add(unlockNextSmeltRecipeAction())
-    }
-    if (nbCrafters > 0) {
-        unlockRecipeActions.add(unlockNextCraftRecipeAction())
-    }
+    val unlockRecipeActions = unlockRecipeActions()
     return buyPlanetActions + upgradeActions + researchActions + unlockRecipeActions
 }
 
-private fun Galaxy.unlockNextSmeltRecipeAction() =
-        Action.UnlockSmeltRecipe(AlloyType.values()[highestUnlockedAlloyRecipe.ordinal + 1]).performOn(this)
-
-private fun Galaxy.unlockNextCraftRecipeAction() =
-        Action.UnlockCraftRecipe(ItemType.values()[highestUnlockedItemRecipe.ordinal + 1]).performOn(this)
+private fun Galaxy.unlockRecipeActions(): List<AppliedAction> {
+    val unlockRecipeActions = mutableListOf<AppliedAction>()
+    val nextAlloyRecipe = highestUnlockedAlloyRecipe.next()
+    val nextItemRecipe = highestUnlockedItemRecipe.next()
+    if (nbSmelters > 0 && nextAlloyRecipe != null) {
+        unlockRecipeActions.add(Action.UnlockSmeltRecipe(nextAlloyRecipe).performOn(this))
+    }
+    if (nbCrafters > 0 && nextItemRecipe != null) {
+        unlockRecipeActions.add(Action.UnlockCraftRecipe(nextItemRecipe).performOn(this))
+    }
+    return unlockRecipeActions
+}
 
 private fun Galaxy.createAction(
     action: Action,

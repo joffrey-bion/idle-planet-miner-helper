@@ -22,10 +22,9 @@ inline fun <reified K : Enum<K>, V> Map<K, V>.asEMap() =
 inline fun <reified K : Enum<K>, V> Map<K, V>.asEMap(createMissingValue: (K) -> V) =
         EMap.of<K, V> { this[it] ?: createMissingValue(it) }
 
-fun <K, V> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, V> {
-    val result = this.toMutableMap()
-    for ((k,v) in other) {
-        result.merge(k, v, combine)
-    }
-    return result
+fun <T : Enum<T>> T.nextIn(clazz: KClass<T>): T? {
+    val values = clazz.java.enumConstants
+    return if (ordinal == values.lastIndex) null else values[ordinal + 1]
 }
+
+inline fun <reified T : Enum<T>> T.next(): T? = nextIn(T::class)
