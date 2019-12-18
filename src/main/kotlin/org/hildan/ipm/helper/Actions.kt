@@ -33,18 +33,20 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
     val buyPlanetActions = unlockedPlanets.map { Action.BuyPlanet(it).performOn(this) }
     val upgradeActions = planets.flatMap {
         listOf(
-            Action.UpgradeMine(it.type, 1).performOn(this),
-            Action.UpgradeShip(it.type, 1).performOn(this),
-            Action.UpgradeCargo(it.type, 1).performOn(this)
+            Action.UpgradeMine(it.type, it.mineLevel + 1).performOn(this),
+            Action.UpgradeShip(it.type, it.shipLevel + 1).performOn(this),
+            Action.UpgradeCargo(it.type, it.cargoLevel + 1).performOn(this)
         )
     }
-    val researchActions = unlockedProjects
-        .filter { it.requiredResources.areAccessible() }
-        .map { Action.Research(it).performOn(this) }
-
+    val researchActions = researchProjectActions()
     val unlockRecipeActions = unlockRecipeActions()
     return buyPlanetActions + upgradeActions + researchActions + unlockRecipeActions
 }
+
+private fun Galaxy.researchProjectActions(): List<AppliedAction> =
+        unlockedProjects
+            .filter { it.requiredResources.areAccessible() }
+            .map { Action.Research(it).performOn(this) }
 
 private fun Galaxy.unlockRecipeActions(): List<AppliedAction> {
     val unlockRecipeActions = mutableListOf<AppliedAction>()
@@ -96,39 +98,41 @@ sealed class Action {
             newGalaxy = galaxy.withBoughtPlanet(planet),
             requiredCash = planet.unlockPrice
         )
+
+        override fun toString(): String = "Buy planet $planet"
     }
 
-    data class UpgradeMine(val planet: PlanetType, val additionalLevels: Int = 1) : Action() {
+    data class UpgradeMine(val planet: PlanetType, val targetLevel: Int) : Action() {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy.withChangedPlanet(planet) {
-                p -> p.copy(mineLevel = p.mineLevel + additionalLevels)
-            },
+            newGalaxy = galaxy.withMineLevel(planet, targetLevel),
             requiredCash = galaxy.planetCosts[planet]!!.mineUpgrade
         )
+
+        override fun toString(): String = "Upgrade $planet's MINE to level $targetLevel"
     }
 
-    data class UpgradeShip(val planet: PlanetType, val additionalLevels: Int = 1) : Action() {
+    data class UpgradeShip(val planet: PlanetType, val targetLevel: Int = 1) : Action() {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy.withChangedPlanet(planet) {
-                p -> p.copy(shipLevel = p.shipLevel + additionalLevels)
-            },
+            newGalaxy = galaxy.withShipLevel(planet, targetLevel),
             requiredCash = galaxy.planetCosts[planet]!!.shipUpgrade
         )
+
+        override fun toString(): String = "Upgrade $planet's SHIP to level $targetLevel"
     }
 
-    data class UpgradeCargo(val planet: PlanetType, val additionalLevels: Int = 1) : Action() {
+    data class UpgradeCargo(val planet: PlanetType, val targetLevel: Int = 1) : Action() {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy.withChangedPlanet(planet) {
-                p -> p.copy(cargoLevel = p.cargoLevel + additionalLevels)
-            },
+            newGalaxy = galaxy.withCargoLevel(planet, targetLevel),
             requiredCash = galaxy.planetCosts[planet]!!.cargoUpgrade
         )
+
+        override fun toString(): String = "Upgrade $planet's CARGO to level $targetLevel"
     }
 
     data class Research(val project: Project): Action() {
@@ -138,6 +142,8 @@ sealed class Action {
             newGalaxy = galaxy.withProject(project),
             requiredResources = project.requiredResources
         )
+
+        override fun toString(): String = "Research project $project"
     }
 
     data class UnlockSmeltRecipe(val alloy: AlloyType): Action() {
@@ -147,6 +153,8 @@ sealed class Action {
             newGalaxy = galaxy.copy(highestUnlockedAlloyRecipe = alloy),
             requiredCash = alloy.recipeUnlockPrice
         )
+
+        override fun toString(): String = "Unlock smelter recipe $alloy"
     }
 
     data class UnlockCraftRecipe(val item: ItemType): Action() {
@@ -156,5 +164,7 @@ sealed class Action {
             newGalaxy = galaxy.copy(highestUnlockedItemRecipe = item),
             requiredCash = item.recipeUnlockPrice
         )
+
+        override fun toString(): String = "Unlock crafter recipe $item"
     }
 }

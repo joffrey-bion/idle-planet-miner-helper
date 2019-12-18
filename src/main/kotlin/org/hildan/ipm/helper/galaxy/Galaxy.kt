@@ -85,6 +85,12 @@ data class Galaxy(
     fun withLevels(planet: PlanetType, mine: Int, ships: Int, cargo: Int): Galaxy =
             withChangedPlanet(planet) { it.copy(mineLevel = mine, shipLevel = ships, cargoLevel = cargo) }
 
+    fun withMineLevel(planet: PlanetType, level: Int): Galaxy = withChangedPlanet(planet) { it.copy(mineLevel = level) }
+
+    fun withShipLevel(planet: PlanetType, level: Int): Galaxy = withChangedPlanet(planet) { it.copy(shipLevel = level) }
+
+    fun withCargoLevel(planet: PlanetType, level: Int): Galaxy = withChangedPlanet(planet) { it.copy(cargoLevel = level) }
+
     fun withColony(planet: PlanetType, level: Int, bonus: PlanetBonus): Galaxy =
             withChangedPlanet(planet) { it.copy(colonyLevel = level, colonyBonus = bonus) }
 
