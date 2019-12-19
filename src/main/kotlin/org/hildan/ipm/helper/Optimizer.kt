@@ -9,14 +9,26 @@ import java.time.Duration
 
 class Optimizer(
     initialGalaxy: Galaxy,
-    private val searchDepth: Int = 4
+    private val searchDepth: Int = 5
 ) {
     private var currentGalaxy = initialGalaxy
 
-    fun generateActions(): Sequence<AppliedAction> = generateSequence {
-        val appliedAction = computeNextBestAction()
-        currentGalaxy = appliedAction.newGalaxy
-        appliedAction
+    fun generateActions(): Sequence<AppliedAction> = sequence {
+        while (true) {
+            val appliedAction = computeNextBestAction()
+            val newGalaxy = appliedAction.newGalaxy
+            yield(appliedAction)
+
+            // these could be included in the search by providing actual income rate changes (make them "real" actions)
+            if (currentGalaxy.maxIncomeSmeltRecipe != newGalaxy.maxIncomeSmeltRecipe) {
+                yield(Action.SwitchSmeltRecipe(newGalaxy.maxIncomeSmeltRecipe!!).performOn(newGalaxy))
+            }
+            if (currentGalaxy.maxIncomeCraftRecipe != newGalaxy.maxIncomeCraftRecipe) {
+                yield(Action.SwitchCraftRecipe(newGalaxy.maxIncomeCraftRecipe!!).performOn(newGalaxy))
+            }
+
+            currentGalaxy = newGalaxy
+        }
     }
 
     private fun computeNextBestAction(): AppliedAction {
@@ -45,15 +57,15 @@ data class State(
         return timeToReach + timeToGetMoneyBack
     }
 
-    fun expand(): List<State> = galaxy.possibleActions().map {
-        State(
-            it.newGalaxy,
-            actionsFromStart + it,
-            requiredCashSoFar + it.requiredCash,
-            requiredResourcesSoFar + it.requiredResources,
-            timeToReach + it.time
-        )
-    }
+    fun expand(): List<State> = galaxy.possibleActions().map { transition(it) }
+
+    private fun transition(action: AppliedAction): State = State(
+        action.newGalaxy,
+        actionsFromStart + action,
+        requiredCashSoFar + action.requiredCash,
+        requiredResourcesSoFar + action.requiredResources,
+        timeToReach + action.time
+    )
 
     companion object {
 

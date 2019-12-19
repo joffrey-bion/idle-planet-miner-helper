@@ -175,4 +175,24 @@ sealed class Action {
 
         override fun toString(): String = "Unlock crafter recipe $item"
     }
+
+    data class SwitchSmeltRecipe(val alloy: AlloyType): Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy
+        )
+
+        override fun toString(): String = "Switch smelt recipe to $alloy"
+    }
+
+    data class SwitchCraftRecipe(val item: ItemType): Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy
+        )
+
+        override fun toString(): String = "Switch craft recipe to $item"
+    }
 }

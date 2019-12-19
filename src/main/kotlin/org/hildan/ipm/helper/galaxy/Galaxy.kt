@@ -58,9 +58,9 @@ data class Galaxy(
         ItemType.values().filter { it <= highestUnlockedItemRecipe }.toSet()
     }
 
-    private val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloyTypes.maxBy { getSmeltingIncome(it) }
+    val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloyTypes.maxBy { getSmeltingIncome(it) }
 
-    private val maxIncomeCraftRecipe: ItemType? = accessibleItemTypes.maxBy { getCraftingIncome(it) }
+    val maxIncomeCraftRecipe: ItemType? = accessibleItemTypes.maxBy { getCraftingIncome(it) }
 
     val totalIncomeRate: ValueRate
         get() {
