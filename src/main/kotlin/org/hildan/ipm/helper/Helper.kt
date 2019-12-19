@@ -1,23 +1,24 @@
 package org.hildan.ipm.helper
 
-import org.hildan.ipm.helper.galaxy.resources.AlloyType
+import org.hildan.ipm.helper.galaxy.Galaxy
+import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.bonuses.Beacon
 import org.hildan.ipm.helper.galaxy.bonuses.BeaconPlanetRange
 import org.hildan.ipm.helper.galaxy.bonuses.Bonus
+import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
-import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.bonuses.Manager
 import org.hildan.ipm.helper.galaxy.bonuses.ManagerAssignment
 import org.hildan.ipm.helper.galaxy.bonuses.Market
-import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
-import org.hildan.ipm.helper.galaxy.Project
-import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
 import org.hildan.ipm.helper.galaxy.bonuses.Multiplier
+import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Room
 import org.hildan.ipm.helper.galaxy.bonuses.Ships
+import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.resources.AlloyType
+import org.hildan.ipm.helper.galaxy.resources.ItemType
+import org.hildan.ipm.helper.galaxy.resources.OreType
+import java.time.Duration
 
 fun main() {
     val shipsBonus = Ships.DAUGHTERSHIP + Ships.ELDERSHIP + Ships.NO_ADS
@@ -87,9 +88,15 @@ fun main() {
 
 //    println(galaxy)
 
+    var gameTime: Duration = Duration.ZERO
     Optimizer(Galaxy(constantBonuses))
         .generateActions()
         .take(100)
         .compact()
-        .forEachIndexed { i, action -> println("$i. $action") }
+        .forEachIndexed { i, action ->
+            gameTime += action.time
+            println("$i.\t[${gameTime.format()}]\t${action.action}")
+        }
 }
+
+private fun Duration.format(): String = "${toHoursPart()}h ${toMinutesPart()}m ${toSecondsPart()}s"
