@@ -46,14 +46,19 @@ data class Resources(
     val totalCraftTimeFromOresAndAlloys: Duration =
             resources.map { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }.sum()
 
-    // TODO merge resources to have max one CountedResources per resource type
+    // TODO merge resources to have max one CountedResources per resource type (unless less efficient)
     operator fun plus(other: Resources) = Resources(resources + other.resources)
 
-    override fun toString(): String = if(resources.isEmpty()) {
+    override fun toString(): String = if (resources.isEmpty()) {
         "no resources"
     } else {
         resources.joinToString(", ") { "${it.quantity} ${it.resourceType}" }
     }
+
+    override fun equals(other: Any?): Boolean =
+            other is Resources && resources.normalized() == other.resources.normalized()
+
+    override fun hashCode(): Int = resources.normalized().hashCode()
 
     companion object {
         val NOTHING = Resources(emptyList())
@@ -66,3 +71,27 @@ data class CountedResource(
     val resourceType: ResourceType,
     val quantity: Int
 )
+
+private fun List<CountedResource>.normalized(): List<CountedResource> {
+    val quantities = mutableMapOf<ResourceType, Int>()
+    forEach { quantities.merge(it.resourceType, it.quantity) { q1, q2 -> q1 + q2 } }
+    return quantities.map { CountedResource(it.key, it.value) }.sortedWith(countedResourceComparator)
+}
+
+private val countedResourceComparator = Comparator<CountedResource> { cr1, cr2 ->
+    resourcesComparator.compare(cr1.resourceType, cr2.resourceType)
+}
+
+private val resourcesComparator: Comparator<ResourceType> =
+        Comparator { rt1, rt2 ->
+            when (rt1) {
+                is OreType -> if (rt2 is OreType) rt1.compareTo(rt2) else -1
+                is AlloyType -> when (rt2) {
+                    is OreType -> 1
+                    is AlloyType -> rt1.compareTo(rt2)
+                    else -> -1
+                }
+                is ItemType -> if (rt2 is ItemType) rt1.compareTo(rt2) else 1
+                else -> throw IllegalArgumentException("Unknown resource type ${rt1::class}")
+            }
+        }

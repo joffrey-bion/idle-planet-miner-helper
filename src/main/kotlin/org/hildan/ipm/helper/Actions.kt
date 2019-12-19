@@ -33,9 +33,9 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
     val buyPlanetActions = unlockedPlanets.map { Action.BuyPlanet(it).performOn(this) }
     val upgradeActions = planets.flatMap {
         listOf(
-            Action.UpgradeMine(it.type, it.mineLevel + 1).performOn(this),
-            Action.UpgradeShip(it.type, it.shipLevel + 1).performOn(this),
-            Action.UpgradeCargo(it.type, it.cargoLevel + 1).performOn(this)
+            Action.Upgrade.Mine(it.type, it.mineLevel + 1).performOn(this),
+            Action.Upgrade.Ship(it.type, it.shipLevel + 1).performOn(this),
+            Action.Upgrade.Cargo(it.type, it.cargoLevel + 1).performOn(this)
         )
     }
     val researchActions = researchProjectActions()
@@ -102,37 +102,45 @@ sealed class Action {
         override fun toString(): String = "Buy planet $planet"
     }
 
-    data class UpgradeMine(val planet: PlanetType, val targetLevel: Int) : Action() {
+    sealed class Upgrade(
+        open val planet: PlanetType,
+        open val targetLevel: Int
+    ) : Action() {
+        fun toString(upgradedElementName: String): String =
+                "Upgrade $planet's $upgradedElementName to level $targetLevel"
 
-        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
-            action = this,
-            newGalaxy = galaxy.withMineLevel(planet, targetLevel),
-            requiredCash = galaxy.planetCosts[planet]!!.mineUpgrade
-        )
+        data class Mine(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
-        override fun toString(): String = "Upgrade $planet's MINE to level $targetLevel"
-    }
+            override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+                action = this,
+                newGalaxy = galaxy.withMineLevel(planet, targetLevel),
+                requiredCash = galaxy.planetCosts[planet]!!.mineUpgrade
+            )
 
-    data class UpgradeShip(val planet: PlanetType, val targetLevel: Int = 1) : Action() {
+            override fun toString(): String = super.toString("MINE")
+        }
 
-        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
-            action = this,
-            newGalaxy = galaxy.withShipLevel(planet, targetLevel),
-            requiredCash = galaxy.planetCosts[planet]!!.shipUpgrade
-        )
+        data class Ship(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
-        override fun toString(): String = "Upgrade $planet's SHIP to level $targetLevel"
-    }
+            override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+                action = this,
+                newGalaxy = galaxy.withShipLevel(planet, targetLevel),
+                requiredCash = galaxy.planetCosts[planet]!!.shipUpgrade
+            )
 
-    data class UpgradeCargo(val planet: PlanetType, val targetLevel: Int = 1) : Action() {
+            override fun toString(): String = super.toString("SHIP")
+        }
 
-        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
-            action = this,
-            newGalaxy = galaxy.withCargoLevel(planet, targetLevel),
-            requiredCash = galaxy.planetCosts[planet]!!.cargoUpgrade
-        )
+        data class Cargo(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
-        override fun toString(): String = "Upgrade $planet's CARGO to level $targetLevel"
+            override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+                action = this,
+                newGalaxy = galaxy.withCargoLevel(planet, targetLevel),
+                requiredCash = galaxy.planetCosts[planet]!!.cargoUpgrade
+            )
+
+            override fun toString(): String = super.toString("CARGO")
+        }
     }
 
     data class Research(val project: Project): Action() {

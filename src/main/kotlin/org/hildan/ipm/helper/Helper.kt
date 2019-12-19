@@ -87,5 +87,9 @@ fun main() {
 
 //    println(galaxy)
 
-    Optimizer(Galaxy(constantBonuses)).generateActions().take(50).forEach { println(it.action) }
+    Optimizer(Galaxy(constantBonuses))
+        .generateActions()
+        .take(100)
+        .compact()
+        .forEachIndexed { i, action -> println("$i. $action") }
 }
