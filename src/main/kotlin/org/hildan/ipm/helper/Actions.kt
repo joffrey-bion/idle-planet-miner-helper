@@ -183,7 +183,7 @@ sealed class Action {
             newGalaxy = galaxy
         )
 
-        override fun toString(): String = "Switch smelt recipe to $alloy"
+        override fun toString(): String = "Switch all smelters to $alloy"
     }
 
     data class SwitchCraftRecipe(val item: ItemType): Action() {
@@ -193,6 +193,6 @@ sealed class Action {
             newGalaxy = galaxy
         )
 
-        override fun toString(): String = "Switch craft recipe to $item"
+        override fun toString(): String = "Switch all crafters to $item"
     }
 }
