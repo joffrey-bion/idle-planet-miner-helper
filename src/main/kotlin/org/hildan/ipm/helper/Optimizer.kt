@@ -9,7 +9,7 @@ import java.time.Duration
 
 class Optimizer(
     initialGalaxy: Galaxy,
-    private val searchDepth: Int = 5
+    private val searchDepth: Int = 4
 ) {
     private var currentGalaxy = initialGalaxy
 
