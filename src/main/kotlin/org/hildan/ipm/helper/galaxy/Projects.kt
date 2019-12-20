@@ -64,6 +64,15 @@ private object ProjectGraph {
 
     val children: Map<Project, Set<Project>> = mapOf(
         Project.ASTEROID_MINER to setOf(Project.SMELTER, Project.ROVER),
+        Project.ROVER to setOf(Project.ADVANCED_MINING),
+        Project.ADVANCED_MINING to setOf(Project.ADVANCED_THRUSTERS, Project.ADVANCED_CARGO_HANDLING),
+        Project.ADVANCED_THRUSTERS to setOf(),// Project.SUPERIOR_MINING),
+        Project.ADVANCED_CARGO_HANDLING to setOf(),// Project.SUPERIOR_MINING),
+
+        Project.SMELTER to setOf(Project.CRAFTER, Project.ADVANCED_FURNACE),
+        Project.CRAFTER to setOf(Project.ADVANCED_CRAFTER),
+        Project.ADVANCED_FURNACE to setOf(), // SMELTING_EFFICIENCY, ADVANCED_ALLOY_VALUE
+
         Project.MANAGEMENT to setOf(Project.TELESCOPE_1),// Project.COLONIZATION),
         Project.TELESCOPE_1 to setOf(Project.BEACON, Project.TELESCOPE_2),
         Project.BEACON to setOf(),
@@ -72,16 +81,7 @@ private object ProjectGraph {
         Project.TELESCOPE_4 to setOf(Project.TELESCOPE_5, Project.CARGO_LOGISTICS),
         Project.CARGO_LOGISTICS to setOf(Project.ORE_TARGETING),
         Project.TELESCOPE_5 to setOf(Project.TELESCOPE_6),
-        Project.TELESCOPE_6 to setOf(Project.TELESCOPE_7),
-        Project.SMELTER to setOf(Project.CRAFTER, Project.ADVANCED_FURNACE),
-        Project.CRAFTER to setOf(Project.ADVANCED_CRAFTER),
-        Project.ADVANCED_MINING to setOf(Project.ADVANCED_THRUSTERS, Project.ADVANCED_CARGO_HANDLING),
-        Project.ADVANCED_THRUSTERS to setOf(),// Project.SUPERIOR_MINING),
-        Project.ADVANCED_CARGO_HANDLING to setOf()//, Project.SUPERIOR_MINING),
-
+        Project.TELESCOPE_6 to setOf(Project.TELESCOPE_7)
         // TODO fill in other project dependencies
     )
-
-    val parents: Map<Project, Set<Project>> = Project.values().toList()
-        .associateWith { child -> children.filterValues { child in it }.keys }
 }
