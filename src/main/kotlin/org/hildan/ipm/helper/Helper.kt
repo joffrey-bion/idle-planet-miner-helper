@@ -24,14 +24,17 @@ fun main() {
     val shipsBonus = Ships.DAUGHTERSHIP + Ships.ELDERSHIP + Ships.NO_ADS
 
     val roomsBonus =
-            Room.ENGINEERING.bonus(13) +
+            Room.ENGINEERING.bonus(15) +
             Room.AERONAUTICAL.bonus(6) +
-            Room.PACKAGING.bonus(3) +
-            Room.FORGE.bonus(10) +
-            Room.ASTRONOMY.bonus(7)
+            Room.PACKAGING.bonus(4) +
+            Room.FORGE.bonus(13) +
+            Room.ASTRONOMY.bonus(7) +
+            Room.LABORATORY.bonus(6)
 
     val beaconBonus = Beacon.bonus(
-        BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.24, 1.0, 1.0)
+        BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.30, 1.0, 1.0),
+        BeaconPlanetRange.RANGE_5_7 to PlanetBonus.of(1.22, 1.0, 1.0),
+        BeaconPlanetRange.RANGE_8_10 to PlanetBonus.of(1.20, 1.0, 1.0)
     )
 
     val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
@@ -91,8 +94,8 @@ fun main() {
     var gameTime: Duration = Duration.ZERO
     Optimizer(Galaxy(constantBonuses))
         .generateActions()
-        .take(100)
         .compact()
+        .take(600)
         .forEachIndexed { i, action ->
             gameTime += action.time
             println("$i.\t[${gameTime.format()}]\t${action.action}")
