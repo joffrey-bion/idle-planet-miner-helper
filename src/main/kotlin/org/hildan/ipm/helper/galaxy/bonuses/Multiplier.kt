@@ -2,8 +2,11 @@ package org.hildan.ipm.helper.galaxy.bonuses
 
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.Rate
+import org.hildan.ipm.helper.galaxy.resources.CountedResource
+import org.hildan.ipm.helper.galaxy.resources.Resources
 import java.time.Duration
 import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 inline class Multiplier(private val factor: Double) {
@@ -23,6 +26,9 @@ inline class Multiplier(private val factor: Double) {
     fun applyTo(rate: Rate): Rate = rate * factor
 
     fun applyAsSpeed(duration: Duration): Duration = Duration.ofMillis((duration.toMillis() / factor).roundToLong())
+
+    fun applyTo(resources: Resources): Resources =
+            Resources(resources.resources.map { CountedResource(it.resourceType, (it.quantity * factor).roundToInt()) })
 
     override fun toString(): String = String.format("x%.2f", factor)
 

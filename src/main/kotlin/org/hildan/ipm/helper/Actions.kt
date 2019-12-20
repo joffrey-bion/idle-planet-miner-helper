@@ -148,7 +148,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.withProject(project),
-            requiredResources = project.requiredResources
+            requiredResources = galaxy.constantBonuses.actualResourcesRequiredByProject.getValue(project)
         )
 
         override fun toString(): String = "Research project $project"
