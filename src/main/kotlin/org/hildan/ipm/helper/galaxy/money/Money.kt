@@ -5,13 +5,28 @@ import kotlin.math.roundToLong
 
 fun min(p1: Price, p2: Price) = if (p1 < p2) p1 else p2
 
+fun min(r1: Rate, r2: Rate) = if (r1 < r2) r1 else r2
+
 fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
 
 fun List<ValueRate>.sumRates() = fold(ValueRate.ZERO) { vr1, vr2 -> vr1 + vr2}
 
-fun Double.perSecond() = Rate(this)
+operator fun Int.div(rate: Rate): Duration = Duration.ofMillis((this * 1000.0 / rate.timesPerSecond).toLong())
 
-inline class Rate(val timesPerSecond: Double)
+inline class Rate(val timesPerSecond: Double): Comparable<Rate> {
+
+    operator fun plus(other: Rate): Rate = Rate(timesPerSecond + other.timesPerSecond)
+
+    operator fun minus(other: Rate): Rate = Rate(timesPerSecond - other.timesPerSecond)
+
+    operator fun times(factor: Double): Rate = Rate(timesPerSecond * factor)
+
+    operator fun div(factor: Double): Rate = Rate(timesPerSecond / factor)
+
+    override fun compareTo(other: Rate): Int = timesPerSecond.compareTo(other.timesPerSecond)
+
+    override fun toString(): String = String.format("%.2f/s", timesPerSecond)
+}
 
 inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate> {
 
@@ -23,7 +38,7 @@ inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate>
 
     override fun compareTo(other: ValueRate): Int = amountPerSec.compareTo(other.amountPerSec)
 
-    override fun toString(): String = String.format("+\$%.2f/s", amountPerSec)
+    override fun toString(): String = String.format("\$%.2f/s", amountPerSec)
 
     companion object {
         val ZERO = ValueRate(0.0)

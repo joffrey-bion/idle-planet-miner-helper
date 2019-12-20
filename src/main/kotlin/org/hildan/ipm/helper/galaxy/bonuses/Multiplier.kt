@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
 import org.hildan.ipm.helper.galaxy.money.Price
+import org.hildan.ipm.helper.galaxy.money.Rate
 import java.time.Duration
 import kotlin.math.pow
 import kotlin.math.roundToLong
@@ -19,7 +20,11 @@ inline class Multiplier(private val factor: Double) {
 
     fun applyTo(price: Price): Price = price * factor
 
+    fun applyTo(rate: Rate): Rate = rate * factor
+
     fun applyAsSpeed(duration: Duration): Duration = Duration.ofMillis((duration.toMillis() / factor).roundToLong())
+
+    override fun toString(): String = String.format("x%.2f", factor)
 
     companion object {
         val NONE = Multiplier(1.0)

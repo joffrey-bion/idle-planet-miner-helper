@@ -4,8 +4,9 @@ import org.hildan.ipm.helper.galaxy.bonuses.Bonus
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
+import org.hildan.ipm.helper.galaxy.money.Rate
 import org.hildan.ipm.helper.galaxy.money.ValueRate
-import org.hildan.ipm.helper.galaxy.money.perSecond
+import org.hildan.ipm.helper.galaxy.money.div
 import org.hildan.ipm.helper.galaxy.money.sum
 import org.hildan.ipm.helper.galaxy.money.sumRates
 import org.hildan.ipm.helper.galaxy.planets.Planet
@@ -16,6 +17,7 @@ import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.div
+import org.hildan.ipm.helper.galaxy.resources.sum
 import java.time.Duration
 import java.util.EnumSet
 
@@ -58,16 +60,22 @@ data class Galaxy(
         ItemType.values().filter { it <= highestUnlockedItemRecipe }.toSet()
     }
 
+    private val accessibleResources: Set<ResourceType> =
+            emptySet<ResourceType>() + accessibleOreTypes + accessibleAlloyTypes + accessibleItemTypes
+
     val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloyTypes.maxBy { getSmeltingIncome(it) }
 
     val maxIncomeCraftRecipe: ItemType? = accessibleItemTypes.maxBy { getCraftingIncome(it) }
 
+    private val oreRatesByType: Map<OreType, Rate> = planets
+        .flatMap {
+            planetStats.getValue(it.type).deliveryRateByOreType(it, Project.ORE_TARGETING in researchedProjects)
+        }
+        .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
+
     val totalIncomeRate: ValueRate
         get() {
-            val oreTargeting = Project.ORE_TARGETING in researchedProjects
-            val rates =  planets.flatMap { planetStats[it.type]!!.deliveryRateByOreType(it, oreTargeting) }
-            val oreIncome = rates.map { it.oreType.currentValue * it.rate.perSecond() }.sumRates()
-
+            val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
             val smeltIncome = maxIncomeSmeltRecipe?.let { getSmeltingIncome(it) } ?: ValueRate.ZERO
             val craftIncome = maxIncomeCraftRecipe?.let { getCraftingIncome(it) } ?: ValueRate.ZERO
             return oreIncome + smeltIncome + craftIncome
@@ -78,7 +86,7 @@ data class Galaxy(
         unlockedPlanets = unlockedPlanets - planet
     )
 
-    inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
+    private inline fun withChangedPlanet(planet: PlanetType, transform: (Planet) -> Planet) : Galaxy = copy(
         planets = planets.map { if (it.type == planet) transform(it) else it }
     )
 
@@ -117,12 +125,7 @@ data class Galaxy(
         return nextGalaxy
     }
 
-    fun Resources.areAccessible(): Boolean {
-        val oresAccessible = highestOre?.let { it in accessibleOreTypes } ?: true
-        val alloysAccessible = highestAlloy?.let { it in accessibleAlloyTypes } ?: true
-        val itemsAccessible = highestItem?.let { it in accessibleItemTypes } ?: true
-        return oresAccessible && alloysAccessible && itemsAccessible
-    }
+    fun Resources.areAccessible(): Boolean = resources.all { it.resourceType in accessibleResources }
 
     private val ResourceType.currentValue: Price
         get() = totalBonus.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue
@@ -131,11 +134,13 @@ data class Galaxy(
         get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()
 
     fun getApproximateTime(resources: Resources): Duration {
+        val ores = resources.resources.filter { it.resourceType is OreType }
+        val oreGatheringTime = ores.map { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }.sum()
         val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.totalCraftTimeFromOresAndAlloys/ nbCrafters else Duration.ZERO
         val reducedSmeltTime = totalBonus.production.smeltSpeed.applyAsSpeed(smeltTime)
         val reducedCraftTime = totalBonus.production.craftSpeed.applyAsSpeed(craftTime)
-        return if (reducedSmeltTime > reducedCraftTime) reducedSmeltTime else reducedCraftTime
+        return oreGatheringTime + if (reducedSmeltTime > reducedCraftTime) reducedSmeltTime else reducedCraftTime
     }
 
     private fun getSmeltingIncome(alloyType: AlloyType): ValueRate {

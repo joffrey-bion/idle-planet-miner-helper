@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
+import org.hildan.ipm.helper.galaxy.money.Rate
 import org.hildan.ipm.helper.galaxy.planets.PlanetStats
 import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import kotlin.test.Test
@@ -20,13 +21,13 @@ internal class GalaxyTest {
             .withProjects(ProjectSamples.ADVANCED_GATHERING_PROJECTS)
 
         val balorStats = galaxy.planetStats[PlanetType.BALOR]
-        assertPlanetStats(PlanetStats(1589.86, 116.10, 690.0), balorStats)
+        assertPlanetStats(PlanetStats(Rate(1589.86), Rate(116.10), 690.0), balorStats)
     }
 }
 
 private fun assertPlanetStats(expected: PlanetStats, actual: PlanetStats?) {
     assertNotNull(actual, "Planet stats should be available")
-    assertDoubleEquals(expected.mineRate, actual.mineRate, "Incorrect mine rate")
-    assertDoubleEquals(expected.shipSpeed, actual.shipSpeed, "Incorrect ship speed")
+    assertDoubleEquals(expected.mineRate.timesPerSecond, actual.mineRate.timesPerSecond, "Incorrect mine rate")
+    assertDoubleEquals(expected.shipSpeed.timesPerSecond, actual.shipSpeed.timesPerSecond, "Incorrect ship speed")
     assertDoubleEquals(expected.cargo, actual.cargo, "Incorrect cargo size")
 }

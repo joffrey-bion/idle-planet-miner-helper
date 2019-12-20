@@ -7,6 +7,8 @@ class EMap<K : Enum<K>, V>(private val map: Map<K, V>) : Map<K, V> by map {
 
     override operator fun get(key: K): V = map[key] ?: error("Missing enum value $key")
 
+    override fun toString(): String = map.toString()
+
     companion object {
 
         inline fun <K : Enum<K>, V> of(clazz: KClass<K>, createValue: (K) -> V): EMap<K, V> =
