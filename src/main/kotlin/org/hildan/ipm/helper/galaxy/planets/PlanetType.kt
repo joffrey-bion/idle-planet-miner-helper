@@ -54,27 +54,70 @@ enum class PlanetType(
         baseMineRate = 0.92,
         distance = 16,
         oreDistribution = listOf(0.2 of COPPER, 0.3 of IRON, 0.5 of LEAD)
+    ),
+    NEWTON(
+        unlockPrice = Price(9000),
+        telescopeLevel = TelescopeLevel(1),
+        baseMineRate = 1.18,
+        distance = 18,
+        oreDistribution = listOf(1.0 of LEAD)
+    ),
+    WIDOW(
+        unlockPrice = Price(15_000),
+        telescopeLevel = TelescopeLevel(1),
+        baseMineRate = 1.46,
+        distance = 20,
+        oreDistribution = listOf(0.4 of IRON, 0.4 of COPPER, 0.2 of SILICON)
+    ),
+    ACHERON(
+        unlockPrice = Price(25_000),
+        telescopeLevel = TelescopeLevel(2),
+        baseMineRate = 1.78,
+        distance = 22,
+        oreDistribution = listOf(0.6 of SILICON, 0.4 of COPPER)
+    ),
+    YANGZTE(
+        unlockPrice = Price(40_000),
+        telescopeLevel = TelescopeLevel(2),
+        baseMineRate = 2.14,
+        distance = 23,
+        oreDistribution = listOf(0.8 of SILICON, 0.2 of ALUMINUM)
+    ),
+    SOLVEIG(
+        unlockPrice = Price(75_000),
+        telescopeLevel = TelescopeLevel(2),
+        baseMineRate = 2.53,
+        distance = 25,
+        oreDistribution = listOf(0.5 of ALUMINUM, 0.3 of SILICON, 0.2 of LEAD)
+    ),
+    IMIR(
+        unlockPrice = Price(150_000),
+        telescopeLevel = TelescopeLevel(3),
+        baseMineRate = 2.95,
+        distance = 26,
+        oreDistribution = listOf(1.0 of ALUMINUM)
+    ),
+    RELIC(
+        unlockPrice = Price(250_000),
+        telescopeLevel = TelescopeLevel(3),
+        baseMineRate = 3.41,
+        distance = 28,
+        oreDistribution = listOf(0.45 of LEAD, 0.35 of SILICON, 0.2 of SILVER)
+    ),
+    NITH(
+        unlockPrice = Price(400_000),
+        telescopeLevel = TelescopeLevel(3),
+        baseMineRate = 3.90,
+        distance = 30,
+        oreDistribution = listOf(0.8 of SILVER, 0.2 of ALUMINUM)
     );
 
     private val baseUpgradeCost: Price = unlockPrice * 0.05
 
     fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
 }
-// Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)
-
 // No.	Planet	UnlockCost	TelescopeTierRequired	Resources	Yield(%)	DistanceReal	BaseMineRate
-//1	Balor	100	―	Copper	100	10.00	0.25
-//2	Drasta	200	―	Copper,Iron 80,20	12.00	0.37
-//3	Anadius	500	―	Copper,Iron	50,50	14.00	0.52
-//4	Dholen	1250	―	Iron,Lead	80,20	15.00	0.70
-//5	Verr	5k	1	Lead,Iron,Copper	50,30,20	16.00	0.92
-//6	Newton	9k	1	Lead	100	18.00	1.18
-//7	Widow	15k	1	Iron,Copper,Silica	40,40,20	20.00	1.46
-//8	Acheron	25k	2	Silica,Copper	60,40	22.00	1.78
-//9	Yangtze	40k	2	Silica,Aluminum	80,20	23.00	2.14
-//10	Solveig	75k	2	Aluminium,Silica,Lead	50,30,20	25.00	2.53
-//11	Imir	150k	3	Aluminium	100	26.00	2.95
-//12	Relic	250k	3	Lead,Silica,Silver	45,35,20	28.00	3.41
+
 //13	Nith	400k	3	Silver,Aluminium	80,20	30.00	3.90
 //14	Batalla	800k	4	Copper,Iron,Gold	40,40,20	33.00	4.42
 //15	Micah	1.5m	4	Gold,Silver	50,50	35.00	4.98
@@ -121,3 +164,6 @@ enum class PlanetType(
 //56	Elysium
 //57	Nyota
 //58	Doral
+
+// Regex for table: \d+\t((\w+\s)*\w+)\t(\S+)\t(\S+)\t((\w+,\s?)*\w+)\t\S+\t(\S+)\t(\S+)
+
