@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper
 
+import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.bonuses.Beacon
@@ -68,7 +69,7 @@ fun main() {
 
     val constantBonuses = ConstantBonuses(shipsBonus, roomsBonus, beaconBonus, managerAssignment, market, stars)
 
-    val galaxy = Galaxy(constantBonuses)
+    val galaxy = Galaxy(Bonuses(constantBonuses))
         .withBoughtPlanet(PlanetType.BALOR)
         .withBoughtPlanet(PlanetType.DRASTA)
         .withBoughtPlanet(PlanetType.ANADIUS)
@@ -95,7 +96,7 @@ fun main() {
 //    println(galaxy)
 
     var gameTime: Duration = Duration.ZERO
-    Optimizer(Galaxy(constantBonuses))
+    Optimizer(Galaxy(Bonuses(constantBonuses)))
         .generateActions()
         .compact()
         .take(600)

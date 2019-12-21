@@ -44,7 +44,8 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
 }
 
 private fun Galaxy.researchProjectActions(): List<AppliedAction> =
-        unlockedProjects
+        // not checking actual resources (after bonus) because resource types are the same
+        bonuses.unlockedProjects
             .filter { it.requiredResources.areAccessible() }
             .map { Action.Research(it).performOn(this) }
 
@@ -148,7 +149,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.withProject(project),
-            requiredResources = galaxy.constantBonuses.actualResourcesRequiredByProject.getValue(project)
+            requiredResources = galaxy.bonuses.constant.actualResourcesRequiredByProject.getValue(project)
         )
 
         override fun toString(): String = "Research project $project"

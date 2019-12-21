@@ -12,8 +12,7 @@ data class ConstantBonuses(
     private val market: Market,
     private val stars: ChallengeStars
 ) {
-    private val withoutBeacon =
-            shipsBonus + roomsBonus + managerAssignment.totalBonus + market.totalBonus + stars.totalBonus
+    private val withoutBeacon = shipsBonus + roomsBonus + managerAssignment.bonus + market.bonus + stars.bonus
 
     private val withBeacon = withoutBeacon + beaconBonus
 

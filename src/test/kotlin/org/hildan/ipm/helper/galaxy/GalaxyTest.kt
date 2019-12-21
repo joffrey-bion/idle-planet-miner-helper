@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper.galaxy
 
+import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Rate
 import org.hildan.ipm.helper.galaxy.planets.PlanetStats
@@ -13,7 +14,7 @@ internal class GalaxyTest {
     fun `planet stats are correct`() {
         val constantBonuses = ConstantBonusesSamples.SAMPLE_1
 
-        val galaxy = Galaxy(constantBonuses)
+        val galaxy = Galaxy(Bonuses(constantBonuses))
             .withBoughtPlanet(PlanetType.BALOR)
             .withLevels(PlanetType.BALOR, 50, 30, 30)
             .withColony(PlanetType.BALOR, 4, PlanetBonus.of(mineRate = 2.0))
