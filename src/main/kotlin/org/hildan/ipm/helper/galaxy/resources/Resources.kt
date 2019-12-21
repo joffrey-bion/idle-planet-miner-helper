@@ -25,10 +25,10 @@ data class Resources(
     val resources: List<CountedResource>
 ) {
     private val resourceTypes: Set<ResourceType>
-        get() = resources.map { it.resourceType }.toSet()
+        get() = resources.mapTo(HashSet()) { it.resourceType }
 
     private val allResourceTypes: Set<ResourceType>
-        get() = resourceTypes.flatMap { it.requiredResources.allResourceTypes + it }.toSet()
+        get() = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
 
     val hasAlloys = allResourceTypes.any { it is AlloyType }
 
