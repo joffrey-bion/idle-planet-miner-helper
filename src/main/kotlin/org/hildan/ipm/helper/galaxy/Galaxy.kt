@@ -133,6 +133,12 @@ data class Galaxy(
     private val Resources.totalValue: Price
         get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()
 
+    private val AlloyType.actualRequiredResources: Resources
+        get() = totalBonus.production.smeltIngredients.applyTo(requiredResources)
+
+    private val ItemType.actualRequiredResources: Resources
+        get() = totalBonus.production.craftIngredients.applyTo(requiredResources)
+
     fun getApproximateTime(resources: Resources): Duration {
         val ores = resources.resources.filter { it.resourceType is OreType }
         val oreGatheringTime = ores.map { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }.sum()
@@ -146,14 +152,14 @@ data class Galaxy(
     private fun getSmeltingIncome(alloyType: AlloyType): ValueRate {
         // TODO take into account number of smelters and limit recipes accordingly (offline VS online). For instance,
         //      bronze can only be smelted for a long time if we can also smelt copper and silver at the same time.
-        val consumedValue = alloyType.requiredResources.totalValue
+        val consumedValue = alloyType.actualRequiredResources.totalValue
         val producedValue = alloyType.currentValue
         return (producedValue - consumedValue) / alloyType.smeltTime
     }
 
     private fun getCraftingIncome(itemType: ItemType): ValueRate {
         // TODO consider computing this value for offline crafting (see TODO in smelting income)
-        val consumedValue = itemType.requiredResources.totalValue
+        val consumedValue = itemType.actualRequiredResources.totalValue
         val producedValue = itemType.currentValue
         return (producedValue - consumedValue) / itemType.craftTime
     }

@@ -39,20 +39,19 @@ data class PlanetBonus(
 
 data class ProductionBonus(
     val smeltSpeed: Multiplier = Multiplier.NONE,
-    val craftSpeed: Multiplier = Multiplier.NONE
+    val craftSpeed: Multiplier = Multiplier.NONE,
+    val smeltIngredients: Multiplier = Multiplier.NONE,
+    val craftIngredients: Multiplier = Multiplier.NONE
 ) {
     operator fun times(other: ProductionBonus): ProductionBonus = ProductionBonus(
         smeltSpeed = smeltSpeed * other.smeltSpeed,
-        craftSpeed = craftSpeed * other.craftSpeed
+        craftSpeed = craftSpeed * other.craftSpeed,
+        smeltIngredients = smeltIngredients * other.smeltIngredients,
+        craftIngredients = craftIngredients * other.craftIngredients
     )
 
     companion object {
         val NONE = ProductionBonus()
-
-        fun of(smeltSpeed: Double = 1.0, craftSpeed: Double = 1.0) = ProductionBonus(
-            smeltSpeed = Multiplier(smeltSpeed),
-            craftSpeed = Multiplier(craftSpeed)
-        )
     }
 }
 
@@ -126,8 +125,18 @@ data class Bonus(
             allPlanets = PlanetBonus.of(mineRate, shipSpeed, cargo)
         )
 
-        fun production(smeltSpeed: Double = 1.0, craftSpeed: Double = 1.0) = Bonus(
-            production = ProductionBonus.of(smeltSpeed, craftSpeed)
+        fun production(
+            smeltSpeed: Double = 1.0,
+            craftSpeed: Double = 1.0,
+            smeltIngredients: Double = 1.0,
+            craftIngredients: Double = 1.0
+        ) = Bonus(
+            production = ProductionBonus(
+                smeltSpeed = Multiplier(smeltSpeed),
+                craftSpeed = Multiplier(craftSpeed),
+                smeltIngredients = Multiplier(smeltIngredients),
+                craftIngredients = Multiplier(craftIngredients)
+            )
         )
 
         fun values(alloysMultiplier: Double = 1.0, itemsMultiplier: Double = 1.0) = Bonus(
