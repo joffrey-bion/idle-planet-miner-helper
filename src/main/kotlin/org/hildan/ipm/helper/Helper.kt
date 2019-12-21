@@ -18,6 +18,9 @@ import org.hildan.ipm.helper.galaxy.planets.PlanetType
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
+import org.hildan.ipm.helper.optimizer.AppliedAction
+import org.hildan.ipm.helper.optimizer.Optimizer
+import org.hildan.ipm.helper.optimizer.compact
 import java.time.Duration
 
 fun main() {

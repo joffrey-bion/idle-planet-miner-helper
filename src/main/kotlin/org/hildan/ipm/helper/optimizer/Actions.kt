@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.optimizer
 
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.planets.PlanetType

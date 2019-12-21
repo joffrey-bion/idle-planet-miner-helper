@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.optimizer
 
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.money.Price
@@ -59,13 +59,14 @@ data class State(
 
     fun expand(): List<State> = galaxy.possibleActions().map { transition(it) }
 
-    private fun transition(action: AppliedAction): State = State(
-        action.newGalaxy,
-        actionsFromStart + action,
-        requiredCashSoFar + action.requiredCash,
-        requiredResourcesSoFar + action.requiredResources,
-        timeToReach + action.time
-    )
+    private fun transition(action: AppliedAction): State =
+            State(
+                action.newGalaxy,
+                actionsFromStart + action,
+                requiredCashSoFar + action.requiredCash,
+                requiredResourcesSoFar + action.requiredResources,
+                timeToReach + action.time
+            )
 
     companion object {
 

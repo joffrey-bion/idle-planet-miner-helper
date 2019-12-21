@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.optimizer
 
 fun Sequence<AppliedAction>.compact() = sequence<AppliedAction> {
     var current: AppliedAction? = null

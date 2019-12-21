@@ -1,4 +1,4 @@
-package org.hildan.ipm.helper
+package org.hildan.ipm.helper.optimizer
 
 import org.hildan.ipm.helper.galaxy.ConstantBonusesSamples
 import org.hildan.ipm.helper.galaxy.Galaxy
