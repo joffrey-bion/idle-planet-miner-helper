@@ -15,7 +15,7 @@ import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.div
-import org.hildan.ipm.helper.galaxy.resources.sum
+import org.hildan.ipm.helper.galaxy.resources.sumBy
 import java.time.Duration
 
 data class Galaxy(
@@ -119,7 +119,7 @@ data class Galaxy(
 
     fun getApproximateTime(resources: Resources): Duration {
         val ores = resources.resources.filter { it.resourceType is OreType }
-        val oreGatheringTime = ores.map { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }.sum()
+        val oreGatheringTime = ores.sumBy { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }
         val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.totalCraftTimeFromOresAndAlloys/ nbCrafters else Duration.ZERO
         val reducedSmeltTime = bonuses.total.production.smeltSpeed.applyAsSpeed(smeltTime)

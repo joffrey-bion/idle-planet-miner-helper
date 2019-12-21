@@ -35,10 +35,10 @@ data class Resources(
     val hasItems = allResourceTypes.any { it is ItemType }
 
     val totalSmeltTimeFromOre: Duration =
-            resources.map { it.resourceType.smeltTimeFromOre * it.quantity }.sum()
+            resources.sumBy { it.resourceType.smeltTimeFromOre * it.quantity }
 
     val totalCraftTimeFromOresAndAlloys: Duration =
-            resources.map { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }.sum()
+            resources.sumBy { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }
 
     // TODO merge resources to have max one CountedResources per resource type (unless less efficient)
     operator fun plus(other: Resources) = Resources(resources + other.resources)
