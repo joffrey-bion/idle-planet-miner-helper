@@ -120,6 +120,7 @@ data class Galaxy(
     fun getApproximateTime(resources: Resources): Duration {
         val ores = resources.resources.filter { it.resourceType is OreType }
         val oreGatheringTime = ores.sumBy { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }
+        // FIXME account for ingredients reduction
         val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.totalCraftTimeFromOresAndAlloys/ nbCrafters else Duration.ZERO
         val reducedSmeltTime = bonuses.total.production.smeltSpeed.applyAsSpeed(smeltTime)
@@ -132,14 +133,14 @@ data class Galaxy(
         //      bronze can only be smelted for a long time if we can also smelt copper and silver at the same time.
         val consumedValue = with(bonuses) { alloyType.actualRequiredResources.totalValue }
         val producedValue = with(bonuses) { alloyType.currentValue }
-        return (producedValue - consumedValue) / alloyType.smeltTime
+        return (producedValue - consumedValue) / bonuses.total.production.smeltSpeed.applyAsSpeed(alloyType.smeltTime)
     }
 
     private fun getCraftingIncome(itemType: ItemType): ValueRate {
         // TODO consider computing this value for offline crafting (see TODO in smelting income)
         val consumedValue = with(bonuses) { itemType.actualRequiredResources.totalValue }
         val producedValue = with(bonuses) { itemType.currentValue }
-        return (producedValue - consumedValue) / itemType.craftTime
+        return (producedValue - consumedValue) / bonuses.total.production.craftSpeed.applyAsSpeed(itemType.craftTime)
     }
 
     private fun PlanetType.stateReport() = """
