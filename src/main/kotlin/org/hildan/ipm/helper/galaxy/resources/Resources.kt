@@ -24,11 +24,9 @@ interface ResourceType {
 data class Resources(
     val resources: List<CountedResource>
 ) {
-    private val resourceTypes: Set<ResourceType>
-        get() = resources.mapTo(HashSet()) { it.resourceType }
+    private val resourceTypes: Set<ResourceType> = resources.mapTo(HashSet()) { it.resourceType }
 
-    private val allResourceTypes: Set<ResourceType>
-        get() = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
+    private val allResourceTypes: Set<ResourceType> = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
 
     val hasAlloys = allResourceTypes.any { it is AlloyType }
 
