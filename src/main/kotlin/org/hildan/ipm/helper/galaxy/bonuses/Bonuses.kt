@@ -13,13 +13,8 @@ import java.util.EnumSet
 
 data class Bonuses(
     val constant: ConstantBonuses,
-    val researchedProjects: Set<Project> = EnumSet.noneOf(
-        Project::class.java
-    ),
-    val unlockedProjects: Set<Project> = EnumSet.of(
-        Project.ASTEROID_MINER,
-        Project.MANAGEMENT
-    )
+    val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
+    val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
 ) {
     private val beaconActive = Project.BEACON in researchedProjects
 
