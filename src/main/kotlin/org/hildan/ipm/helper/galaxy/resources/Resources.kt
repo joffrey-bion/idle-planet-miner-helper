@@ -34,12 +34,6 @@ data class Resources(
 
     val hasItems = allResourceTypes.any { it is ItemType }
 
-    val highestOre: OreType? = allResourceTypes.filterIsInstance<OreType>().max()
-
-    val highestAlloy: AlloyType? = allResourceTypes.filterIsInstance<AlloyType>().max()
-
-    val highestItem: ItemType? = allResourceTypes.filterIsInstance<ItemType>().max()
-
     val totalSmeltTimeFromOre: Duration =
             resources.map { it.resourceType.smeltTimeFromOre * it.quantity }.sum()
 
