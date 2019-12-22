@@ -101,7 +101,8 @@ data class Galaxy(
         return nextGalaxy
     }
 
-    fun Resources.areAccessible(): Boolean = accessibleResources.containsAll(allResourceTypes)
+    fun Resources.areAccessible(): Boolean =
+            accessibleResources.containsAll(allResourceTypes) && allResourceTypes.all { it in oreRatesByType.keys }
 
     private val Resources.dividedSmeltTimeFromOre: Duration
         get() = with(bonuses) { totalSmeltTimeFromOre / nbSmelters }

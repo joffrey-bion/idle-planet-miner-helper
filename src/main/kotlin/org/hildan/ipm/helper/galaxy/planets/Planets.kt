@@ -3,7 +3,6 @@ package org.hildan.ipm.helper.galaxy.planets
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.Rate
-import org.hildan.ipm.helper.galaxy.money.min
 import org.hildan.ipm.helper.galaxy.resources.OreType
 
 data class OreRate(val oreType: OreType, val rate: Rate)
@@ -27,7 +26,7 @@ data class PlanetStats(
                 it.ratio
             }
         }
-        val (preferred, others) = planet.type.oreDistribution
+        val (preferred, others) = planet.type.oreDistribution.asSequence()
                     .map { OreRate(it.oreType, mineRate * getRatio(it)) }
                     .partition { it.oreType == planet.preferredOreType }
         return preferred + others.sortedByDescending { it.oreType }
@@ -38,9 +37,12 @@ data class PlanetStats(
 
         val deliveryRates = mutableListOf<OreRate>()
         for (mr in mineRates) {
-            val deliveryRate = min(remainingRemovalRate, mr.rate)
-            remainingRemovalRate -= deliveryRate
-            deliveryRates.add(OreRate(mr.oreType, deliveryRate))
+            if (remainingRemovalRate <= mr.rate) {
+                deliveryRates.add(OreRate(mr.oreType, remainingRemovalRate))
+                break
+            }
+            remainingRemovalRate -= mr.rate
+            deliveryRates.add(mr)
         }
         return deliveryRates
     }
