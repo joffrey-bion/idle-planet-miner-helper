@@ -8,6 +8,8 @@ import org.hildan.ipm.helper.galaxy.resources.AlloyType.IRON_BAR
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.LEAD_BAR
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.SILICON_BAR
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.SILVER_BAR
+import org.hildan.ipm.helper.utils.h
+import org.hildan.ipm.helper.utils.min
 import java.time.Duration
 
 enum class ItemType(

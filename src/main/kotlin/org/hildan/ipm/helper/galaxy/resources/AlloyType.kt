@@ -2,6 +2,8 @@ package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.OreType.*
+import org.hildan.ipm.helper.utils.min
+import org.hildan.ipm.helper.utils.sec
 import java.time.Duration
 
 enum class AlloyType(

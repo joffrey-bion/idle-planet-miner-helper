@@ -14,9 +14,9 @@ import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.galaxy.resources.div
-import org.hildan.ipm.helper.galaxy.resources.sumBy
-import org.hildan.ipm.helper.galaxy.resources.times
+import org.hildan.ipm.helper.utils.div
+import org.hildan.ipm.helper.utils.sumBy
+import org.hildan.ipm.helper.utils.times
 import org.hildan.ipm.helper.utils.andBelow
 import org.hildan.ipm.helper.utils.max
 import java.time.Duration

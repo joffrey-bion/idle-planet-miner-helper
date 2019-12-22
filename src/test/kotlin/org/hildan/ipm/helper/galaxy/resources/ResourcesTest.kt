@@ -2,6 +2,8 @@ package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.resources.ItemType.BATTERY
 import org.hildan.ipm.helper.galaxy.resources.OreType.COPPER
+import org.hildan.ipm.helper.utils.min
+import org.hildan.ipm.helper.utils.sec
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
