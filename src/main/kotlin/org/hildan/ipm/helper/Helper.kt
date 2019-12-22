@@ -23,6 +23,7 @@ import org.hildan.ipm.helper.optimizer.AppliedAction
 import org.hildan.ipm.helper.optimizer.Optimizer
 import org.hildan.ipm.helper.optimizer.compact
 import java.time.Duration
+import kotlin.system.measureTimeMillis
 
 fun main() {
     val shipsBonus = Ships.DAUGHTERSHIP + Ships.ELDERSHIP + Ships.NO_ADS
@@ -95,19 +96,22 @@ fun main() {
 
 //    println(galaxy)
 
-    var gameTime: Duration = Duration.ZERO
-    Optimizer(Galaxy(Bonuses(constantBonuses)))
-        .generateActions()
-        .compact()
-        .take(600)
-        .forEachIndexed { i, action ->
-            gameTime += action.time
-            println(formatAction(i, gameTime, action))
-        }
+    val time = measureTimeMillis {
+        var gameTime: Duration = Duration.ZERO
+        Optimizer(Galaxy(Bonuses(constantBonuses)))
+            .generateActions()
+            .compact()
+            .take(200)
+            .forEachIndexed { i, action ->
+                gameTime += action.time
+                println(formatAction(i, gameTime, action))
+            }
+    }
+    println("Executed in ${Duration.ofMillis(time).format()}")
 }
 
 private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction): String {
-    val formattedIndex = index.leftPadded(3, false)
+    val formattedIndex = (index + 1).leftPadded(3, false)
     return "$formattedIndex. [${gameTime.format()}]  ${action.action}"
 }
 
