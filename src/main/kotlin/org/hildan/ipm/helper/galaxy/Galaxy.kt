@@ -103,7 +103,7 @@ data class Galaxy(
         return nextGalaxy
     }
 
-    fun Resources.areAccessible(): Boolean = resources.all { it.resourceType in accessibleResources }
+    fun Resources.areAccessible(): Boolean = accessibleResources.containsAll(allResourceTypes)
 
     fun getApproximateTime(resources: Resources): Duration {
         val ores = resources.resources.filter { it.resourceType is OreType }

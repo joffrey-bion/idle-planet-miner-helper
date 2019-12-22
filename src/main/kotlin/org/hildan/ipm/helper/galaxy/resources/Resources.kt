@@ -26,7 +26,7 @@ data class Resources(
 ) {
     private val resourceTypes: Set<ResourceType> = resources.mapTo(HashSet()) { it.resourceType }
 
-    private val allResourceTypes: Set<ResourceType> = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
+    val allResourceTypes: Set<ResourceType> = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
 
     val hasAlloys = allResourceTypes.any { it is AlloyType }
 
