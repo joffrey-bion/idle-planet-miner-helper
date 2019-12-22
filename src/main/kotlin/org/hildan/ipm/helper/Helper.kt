@@ -101,7 +101,7 @@ fun main() {
         Optimizer(Galaxy(Bonuses(constantBonuses)))
             .generateActions()
             .compact()
-            .take(200)
+            .take(400)
             .forEachIndexed { i, action ->
                 gameTime += action.time
                 println(formatAction(i, gameTime, action))
