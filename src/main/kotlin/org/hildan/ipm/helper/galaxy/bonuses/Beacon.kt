@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
 import org.hildan.ipm.helper.galaxy.planets.PlanetType
-import org.hildan.ipm.helper.utils.asEMap
+import org.hildan.ipm.helper.utils.completedBy
 
 private val planets = PlanetType.values()
 
@@ -19,6 +19,6 @@ object Beacon {
         perPlanet = bonuses
             .flatMap { (r, b) -> r.planets.map { it to b } }
             .toMap()
-            .asEMap { PlanetBonus.NONE } // TODO remove this default when all planets are covered
+            .completedBy { PlanetBonus.NONE } // TODO remove this default when all planets are covered
     )
 }

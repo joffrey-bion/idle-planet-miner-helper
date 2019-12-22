@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
 import org.hildan.ipm.helper.galaxy.planets.PlanetType
-import org.hildan.ipm.helper.utils.asEMap
+import org.hildan.ipm.helper.utils.completedBy
 import java.util.EnumMap
 
 data class Manager(
@@ -10,7 +10,7 @@ data class Manager(
     val globalBonus: Bonus = Bonus.NONE
 ) {
     fun toBonus(associatedPlanet: PlanetType): Bonus =
-            globalBonus + Bonus(perPlanet = mapOf(associatedPlanet to planetBonus).asEMap { PlanetBonus.NONE })
+            globalBonus + Bonus(perPlanet = mapOf(associatedPlanet to planetBonus).completedBy { PlanetBonus.NONE })
 }
 
 data class ManagerAssignment(

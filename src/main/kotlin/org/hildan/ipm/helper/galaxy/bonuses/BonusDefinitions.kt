@@ -6,7 +6,7 @@ import org.hildan.ipm.helper.galaxy.planets.PlanetUpgradeCosts
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
-import org.hildan.ipm.helper.utils.EMap
+import org.hildan.ipm.helper.utils.completeEnumMap
 import org.hildan.ipm.helper.utils.mergedWith
 
 data class PlanetBonus(
@@ -85,14 +85,14 @@ data class ResourceValuesBonus(
 
 data class Bonus(
     val allPlanets: PlanetBonus = PlanetBonus.NONE,
-    val perPlanet: EMap<PlanetType, PlanetBonus> = EMap.of { PlanetBonus.NONE },
+    val perPlanet: Map<PlanetType, PlanetBonus> = completeEnumMap { PlanetBonus.NONE },
     val production: ProductionBonus = ProductionBonus.NONE,
     val values: ResourceValuesBonus = ResourceValuesBonus.NONE,
     val projectCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCost5pReductions: Int = 0
 ) {
-    fun forPlanet(planet: PlanetType): PlanetBonus = allPlanets * perPlanet[planet]
+    fun forPlanet(planet: PlanetType): PlanetBonus = allPlanets * perPlanet.getValue(planet)
 
     fun reduceUpgradeCosts(costs: PlanetUpgradeCosts, colonyLevel: Int): PlanetUpgradeCosts {
         val colonyMultiplier = Multiplier(0.95).repeat(colonyLevel).pow(planetUpgradeCost5pReductions)
@@ -109,7 +109,7 @@ data class Bonus(
         other === NONE -> this
         else -> Bonus(
             allPlanets = allPlanets * other.allPlanets,
-            perPlanet = EMap.of { perPlanet[it] * other.perPlanet[it] },
+            perPlanet = completeEnumMap { perPlanet.getValue(it) * other.perPlanet.getValue(it) },
             production = production * other.production,
             values = values * other.values,
             projectCostMultiplier = projectCostMultiplier * other.projectCostMultiplier,

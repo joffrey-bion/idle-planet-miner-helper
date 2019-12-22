@@ -11,7 +11,7 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.sumBy
 import org.hildan.ipm.helper.galaxy.resources.times
-import org.hildan.ipm.helper.utils.EMap
+import org.hildan.ipm.helper.utils.completeEnumMap
 import java.time.Duration
 import java.util.EnumSet
 
@@ -27,10 +27,10 @@ data class Bonuses(
     val total = constant.total(beaconActive) + researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
 
     private val reducedSmeltIngredientsByAlloy: Map<AlloyType, Resources> =
-            EMap.of { total.production.smeltIngredients.applyTo(it.requiredResources) }
+            completeEnumMap { total.production.smeltIngredients.applyTo(it.requiredResources) }
 
     private val reducedCraftIngredientsByItem: Map<ItemType, Resources> =
-            EMap.of { total.production.craftIngredients.applyTo(it.requiredResources) }
+            completeEnumMap { total.production.craftIngredients.applyTo(it.requiredResources) }
 
     private val smeltTimeFromOreByResourceType: Map<ResourceType, Duration> = computeRecursiveTimeByResource {
         total.production.smeltSpeed.applyAsSpeed(it.smeltTime)

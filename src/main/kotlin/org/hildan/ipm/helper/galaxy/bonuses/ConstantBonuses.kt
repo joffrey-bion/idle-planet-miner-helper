@@ -2,7 +2,7 @@ package org.hildan.ipm.helper.galaxy.bonuses
 
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.utils.EMap
+import org.hildan.ipm.helper.utils.completeEnumMap
 
 data class ConstantBonuses(
     private val shipsBonus: Bonus,
@@ -16,7 +16,7 @@ data class ConstantBonuses(
 
     private val withBeacon = withoutBeacon + beaconBonus
 
-    val actualResourcesRequiredByProject: Map<Project, Resources> = EMap.of<Project, Resources> {
+    val actualResourcesRequiredByProject: Map<Project, Resources> = completeEnumMap {
         withoutBeacon.projectCostMultiplier.applyTo(it.requiredResources)
     }
 
