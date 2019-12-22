@@ -14,10 +14,10 @@ import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.utils.div
-import org.hildan.ipm.helper.utils.sumBy
 import org.hildan.ipm.helper.utils.andBelow
+import org.hildan.ipm.helper.utils.div
 import org.hildan.ipm.helper.utils.max
+import org.hildan.ipm.helper.utils.sumBy
 import java.time.Duration
 
 data class Galaxy(
@@ -51,15 +51,12 @@ data class Galaxy(
         .flatMap { planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive) }
         .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
 
-    val totalIncomeRate: ValueRate
-        get() {
-            with(bonuses) {
-                val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
-                val smeltIncome = maxIncomeSmeltRecipe?.let { getSmeltingIncome(it) } ?: ValueRate.ZERO
-                val craftIncome = maxIncomeCraftRecipe?.let { getCraftingIncome(it) } ?: ValueRate.ZERO
-                return oreIncome + smeltIncome + craftIncome
-            }
-        }
+    val totalIncomeRate: ValueRate = with(bonuses) {
+        val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
+        val smeltIncome = maxIncomeSmeltRecipe?.let { getSmeltingIncome(it) } ?: ValueRate.ZERO
+        val craftIncome = maxIncomeCraftRecipe?.let { getCraftingIncome(it) } ?: ValueRate.ZERO
+        oreIncome + smeltIncome + craftIncome
+    }
 
     fun withBoughtPlanet(planet: PlanetType) : Galaxy = copy(
         planets = planets + Planet(planet),
