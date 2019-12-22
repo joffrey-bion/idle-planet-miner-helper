@@ -16,13 +16,14 @@ In order for the algorithm to give relevant results, the whole current state of 
     - bought ships/upgrades
     - mothership room levels
     - beacon levels
+    - stars earned during challenges
 - galaxy status
     - bought planets
     - planet mine/ship/cargo levels
     - planet colony levels/bonuses
     - researched projects
     - assigned managers (and the planet they're assigned to)
-    - current market (including resource stars earned via challenges)
+    - current market
 
 Also some "configuration" inputs are necessary:
 
@@ -45,12 +46,12 @@ Also some "configuration" inputs are necessary:
     - build a new smelter (only if the SMELTER project is unlocked)
     - build a new crafter (only if the CRAFTER project is unlocked)
 2. for each available action:
-    - calculate its cost in money and the time it takes
-        - if it requires cash, then take the price as cost, and the time is 0 
+    - calculate its cost in money/resources and the equivalent time it takes
+        - if it requires cash
+            - compute the time to get that money based on the current income rate
         - if it requires resources
-            - find the equivalent cash given the current market
             - compute the time it takes to smelt/craft all the resources (recursively)
-                - it is roughly the max between craft time and smelt time (because they run in parallel)
+                - it is roughly `ore gathering time + max(craft time, smelt time)` (because they run in parallel)
                 - each of craft time and smelt time can be roughly divided by the number of smelters/crafters available
                 - accurate calculation of this may not be necessary, estimates will be easier to implement
     - compute the galaxy's state if the action is taken (if this step turns out to be slow -which is yet to be
@@ -58,7 +59,7 @@ Also some "configuration" inputs are necessary:
         - cash income is calculated by converting the total ore production into money using the current market 
     - compute the difference between the current galaxy's income and the target galaxy's income
         - find the time at which we get back the investment made (ROI=1 time) from the difference alone (remember to add
-         the time taken to smelt/craft stuff for all actions)
+         the time taken to perform the actions)
         - note that the diff may be 0 (in case the action just unlocks something without improving revenue directly), 
         hence the need for considering more actions from here (even for non-0 diffs, because combined actions can
          yield more)
@@ -82,7 +83,7 @@ Things to consider:
 Some actions require resources, like researching projects or colonizing a planet.
 The algorithm does not track stocks for these products, but there are still a bunch of constraints that can rule out
  these actions for the search:
-- all the recipes for all ores/alloys/items need to be unlocked, recursively
+- all the recipes for all alloys/items (recursively required) need to be unlocked
 - for all ores appearing in all these recipes, at least one of the bought planets needs to produce it
 - if there are alloys in the recipes, then the SMELTER project needs to be researched already
 - if there are items in the recipes, then the CRAFTER project needs to be researched already
