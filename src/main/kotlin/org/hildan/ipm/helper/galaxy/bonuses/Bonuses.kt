@@ -6,9 +6,13 @@ import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.sum
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
+import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.galaxy.resources.sumBy
+import org.hildan.ipm.helper.galaxy.resources.times
 import org.hildan.ipm.helper.utils.EMap
+import java.time.Duration
 import java.util.EnumSet
 
 data class Bonuses(
@@ -28,11 +32,43 @@ data class Bonuses(
     private val reducedCraftIngredientsByItem: Map<ItemType, Resources> =
             EMap.of { total.production.craftIngredients.applyTo(it.requiredResources) }
 
+    private val smeltTimeFromOreByResourceType: Map<ResourceType, Duration> = computeRecursiveTimeByResource {
+        total.production.smeltSpeed.applyAsSpeed(it.smeltTime)
+    }
+
+    private val craftTimeFromAlloysByResourceType: Map<ResourceType, Duration> = computeRecursiveTimeByResource {
+        total.production.craftSpeed.applyAsSpeed(it.craftTime)
+    }
+
+    private fun computeRecursiveTimeByResource(selfTime: (ResourceType) -> Duration): Map<ResourceType, Duration> {
+        val map = HashMap<ResourceType, Duration>()
+        ResourceType.all().forEach { res ->
+            map[res] = selfTime(res) + res.actualRequiredResources.resources.sumBy { cr ->
+                map.getValue(cr.resourceType) * cr.quantity
+            }
+        }
+        return map
+    }
+
+    private val ResourceType.actualRequiredResources: Resources
+        get() = when(this) {
+            is AlloyType -> actualRequiredResources
+            is ItemType -> actualRequiredResources
+            is OreType -> Resources.NOTHING
+            else -> error("Unsupported resource type")
+        }
+
     val AlloyType.actualRequiredResources: Resources
         get() = reducedSmeltIngredientsByAlloy.getValue(this)
 
     val ItemType.actualRequiredResources: Resources
         get() = reducedCraftIngredientsByItem.getValue(this)
+
+    val ResourceType.actualSmeltTimeFromOre: Duration
+        get() = smeltTimeFromOreByResourceType.getValue(this)
+
+    val ResourceType.actualCraftTimeFromOresAndAlloys: Duration
+        get() = craftTimeFromAlloysByResourceType.getValue(this)
 
     val ResourceType.currentValue: Price
         get() = total.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue

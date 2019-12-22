@@ -11,11 +11,6 @@ interface ResourceType {
     val smeltTime: Duration
     val craftTime: Duration
 
-    val smeltTimeFromOre: Duration
-        get() = requiredResources.totalSmeltTimeFromOre + smeltTime
-    val craftTimeFromOresAndAlloys: Duration
-        get() = requiredResources.totalCraftTimeFromOresAndAlloys + craftTime
-
     companion object {
         fun all(): List<ResourceType> = emptyList<ResourceType>() + OreType.values() + AlloyType.values() + ItemType.values()
     }
@@ -31,12 +26,6 @@ data class Resources(
     val hasAlloys = allResourceTypes.any { it is AlloyType }
 
     val hasItems = allResourceTypes.any { it is ItemType }
-
-    val totalSmeltTimeFromOre: Duration =
-            resources.sumBy { it.resourceType.smeltTimeFromOre * it.quantity }
-
-    val totalCraftTimeFromOresAndAlloys: Duration =
-            resources.sumBy { it.resourceType.craftTimeFromOresAndAlloys * it.quantity }
 
     // TODO merge resources to have max one CountedResources per resource type (unless less efficient)
     operator fun plus(other: Resources) = Resources(resources + other.resources)
