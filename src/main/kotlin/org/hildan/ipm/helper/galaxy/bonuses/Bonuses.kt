@@ -76,6 +76,12 @@ data class Bonuses(
     val Resources.totalValue: Price
         get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()
 
+    val Resources.totalSmeltTimeFromOre: Duration
+        get() = resources.sumBy { it.resourceType.actualSmeltTimeFromOre * it.quantity }
+
+    val Resources.totalCraftTimeFromOresAndAlloys: Duration
+        get() = resources.sumBy { it.resourceType.actualCraftTimeFromOresAndAlloys * it.quantity }
+
     fun withProject(project: Project) : Bonuses = copy(
         researchedProjects = researchedProjects + project,
         unlockedProjects = unlockedProjects + project.children - project

@@ -16,7 +16,6 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.utils.div
 import org.hildan.ipm.helper.utils.sumBy
-import org.hildan.ipm.helper.utils.times
 import org.hildan.ipm.helper.utils.andBelow
 import org.hildan.ipm.helper.utils.max
 import java.time.Duration
@@ -107,19 +106,17 @@ data class Galaxy(
 
     fun Resources.areAccessible(): Boolean = accessibleResources.containsAll(allResourceTypes)
 
-    private val Resources.totalSmeltTimeFromOre: Duration get() = with(bonuses) {
-        resources.sumBy { it.resourceType.actualSmeltTimeFromOre * it.quantity }
-    }
+    private val Resources.dividedSmeltTimeFromOre: Duration
+        get() = with(bonuses) { totalSmeltTimeFromOre / nbSmelters }
 
-    private val Resources.totalCraftTimeFromOresAndAlloys: Duration get() = with(bonuses) {
-        resources.sumBy { it.resourceType.actualCraftTimeFromOresAndAlloys * it.quantity }
-    }
+    private val Resources.dividedCraftTimeFromOresAndAlloys: Duration
+        get() = with(bonuses) { totalCraftTimeFromOresAndAlloys / nbCrafters }
 
     fun getApproximateTime(resources: Resources): Duration {
         val ores = resources.resources.filter { it.resourceType is OreType }
         val oreGatheringTime = ores.sumBy { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }
-        val smeltTime = if (resources.hasAlloys) resources.totalSmeltTimeFromOre / nbSmelters else Duration.ZERO
-        val craftTime = if (resources.hasItems) resources.totalCraftTimeFromOresAndAlloys/ nbCrafters else Duration.ZERO
+        val smeltTime = if (resources.hasAlloys) resources.dividedSmeltTimeFromOre else Duration.ZERO
+        val craftTime = if (resources.hasItems) resources.dividedCraftTimeFromOresAndAlloys else Duration.ZERO
         return oreGatheringTime + max(smeltTime, craftTime)
     }
 
