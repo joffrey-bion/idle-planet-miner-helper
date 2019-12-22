@@ -16,6 +16,7 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.div
 import org.hildan.ipm.helper.galaxy.resources.sumBy
+import org.hildan.ipm.helper.utils.andBelow
 import java.time.Duration
 
 data class Galaxy(
@@ -32,34 +33,21 @@ data class Galaxy(
 
     val planetCosts = planets.associate { it.type to bonuses.total.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
 
-    private val accessibleOreTypes: Set<OreType> = planets
-        .flatMap { it.type.oreDistribution }
-        .map { it.oreType }
-        .toSet()
+    private val accessibleOres: Set<OreType> = planets.flatMap { it.type.oreDistribution }.mapTo(HashSet()) { it.oreType }
 
-    private val accessibleAlloyTypes: Set<AlloyType> = if (nbSmelters == 0) {
-        emptySet()
-    } else {
-        AlloyType.values().filter { it <= highestUnlockedAlloyRecipe }.toSet()
-    }
+    private val accessibleAlloys: Set<AlloyType> = if (nbSmelters == 0) emptySet() else highestUnlockedAlloyRecipe.andBelow()
 
-    private val accessibleItemTypes: Set<ItemType> = if (nbCrafters == 0) {
-        emptySet()
-    } else {
-        ItemType.values().filter { it <= highestUnlockedItemRecipe }.toSet()
-    }
+    private val accessibleItems: Set<ItemType> = if (nbCrafters == 0) emptySet() else highestUnlockedItemRecipe.andBelow()
 
     private val accessibleResources: Set<ResourceType> =
-            emptySet<ResourceType>() + accessibleOreTypes + accessibleAlloyTypes + accessibleItemTypes
+            emptySet<ResourceType>() + accessibleOres + accessibleAlloys + accessibleItems
 
-    val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloyTypes.maxBy { getSmeltingIncome(it) }
+    val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloys.maxBy { getSmeltingIncome(it) }
 
-    val maxIncomeCraftRecipe: ItemType? = accessibleItemTypes.maxBy { getCraftingIncome(it) }
+    val maxIncomeCraftRecipe: ItemType? = accessibleItems.maxBy { getCraftingIncome(it) }
 
     private val oreRatesByType: Map<OreType, Rate> = planets
-        .flatMap {
-            planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive)
-        }
+        .flatMap { planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive) }
         .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
 
     val totalIncomeRate: ValueRate

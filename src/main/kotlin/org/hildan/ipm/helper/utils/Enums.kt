@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.utils
 
 import java.util.EnumMap
+import java.util.EnumSet
 import kotlin.reflect.KClass
 
 class EMap<K : Enum<K>, V>(private val map: Map<K, V>) : Map<K, V> by map {
@@ -30,3 +31,9 @@ fun <T : Enum<T>> T.nextIn(clazz: KClass<T>): T? {
 }
 
 inline fun <reified T : Enum<T>> T.next(): T? = nextIn(T::class)
+
+fun <T : Enum<T>> T.andBelowIn(clazz: KClass<T>): Set<T> {
+    return clazz.java.enumConstants.sliceArray(0..ordinal).toCollection(EnumSet.noneOf(clazz.java))
+}
+
+inline fun <reified T : Enum<T>> T.andBelow(): Set<T> = andBelowIn(T::class)
