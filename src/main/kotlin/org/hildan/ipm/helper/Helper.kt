@@ -118,11 +118,11 @@ private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction):
 private fun Duration.format(): String {
     val sec = toSecondsPart().leftPadded(2)
     val min = toMinutesPart().leftPadded(2)
-    val hours = toHoursPart().leftPadded(2)
+    val hours = toHours().leftPadded(2)
     return "${hours}:${min}:${sec}"
 }
 
-private fun Int.leftPadded(width: Int, zeroes: Boolean = true): String {
+private fun Number.leftPadded(width: Int, zeroes: Boolean = true): String {
     val zero = if (zeroes) "0" else ""
     return String.format("%$zero${width}d", this)
 }
