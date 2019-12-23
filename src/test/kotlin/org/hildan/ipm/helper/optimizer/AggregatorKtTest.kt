@@ -1,6 +1,5 @@
 package org.hildan.ipm.helper.optimizer
 
-import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
 import org.hildan.ipm.helper.galaxy.ConstantBonusesSamples
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.money.Price
@@ -17,7 +16,7 @@ internal class AggregatorKtTest {
 
     private val upgradeBalorMine3 = AppliedAction(
         action = Action.Upgrade.Mine(PlanetType.BALOR, 3),
-        newGalaxy = Galaxy(Bonuses(ConstantBonusesSamples.SAMPLE_1)),
+        newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(10),
         requiredResources = Resources.of(2 of OreType.COPPER, 2 of OreType.IRON),
         time = Duration.ofSeconds(1),
@@ -26,7 +25,7 @@ internal class AggregatorKtTest {
 
     private val upgradeBalorMine4 = AppliedAction(
         action = Action.Upgrade.Mine(PlanetType.BALOR, 4),
-        newGalaxy = Galaxy(Bonuses(ConstantBonusesSamples.SAMPLE_1)),
+        newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),
         time = Duration.ofSeconds(2),
@@ -35,7 +34,7 @@ internal class AggregatorKtTest {
 
     private val upgradeBalorMine3Then4 = AppliedAction(
         action = Action.Upgrade.Mine(PlanetType.BALOR, 4),
-        newGalaxy = Galaxy(Bonuses(ConstantBonusesSamples.SAMPLE_1)),
+        newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(30),
         requiredResources = Resources.of(3 of OreType.COPPER, 2 of OreType.IRON, 4 of OreType.LEAD),
         time = Duration.ofSeconds(3),
@@ -44,7 +43,7 @@ internal class AggregatorKtTest {
 
     private val upgradeBalorShip4 = AppliedAction(
         action = Action.Upgrade.Ship(PlanetType.BALOR, 4),
-        newGalaxy = Galaxy(Bonuses(ConstantBonusesSamples.SAMPLE_1)),
+        newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(21),
         requiredResources = Resources.of(21 of OreType.IRON),
         time = Duration.ofSeconds(21),
@@ -53,7 +52,7 @@ internal class AggregatorKtTest {
 
     private val upgradeAnadiusMine4 = AppliedAction(
         action = Action.Upgrade.Mine(PlanetType.ANADIUS, 4),
-        newGalaxy = Galaxy(Bonuses(ConstantBonusesSamples.SAMPLE_1)),
+        newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),
         time = Duration.ofSeconds(2),

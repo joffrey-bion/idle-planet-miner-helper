@@ -147,3 +147,5 @@ data class Bonus(
         )
     }
 }
+
+fun Iterable<Bonus>.sum() = fold(Bonus.NONE, Bonus::plus)

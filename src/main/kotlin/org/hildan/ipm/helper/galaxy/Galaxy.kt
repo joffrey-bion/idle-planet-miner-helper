@@ -1,6 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
+import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.Rate
@@ -20,7 +21,7 @@ import org.hildan.ipm.helper.utils.max
 import org.hildan.ipm.helper.utils.sumBy
 import java.time.Duration
 
-data class Galaxy(
+data class Galaxy private constructor(
     val bonuses: Bonuses,
     val currentCash: Price = Price(180),
     val planets: List<Planet> = emptyList(),
@@ -140,4 +141,9 @@ data class Galaxy(
     """.trimIndent()
 
     override fun toString(): String = PlanetType.values().joinToString("\n") { it.stateReport() }
+
+    companion object {
+
+        fun init(constantBonuses: ConstantBonuses): Galaxy = Galaxy(Bonuses(constantBonuses))
+    }
 }

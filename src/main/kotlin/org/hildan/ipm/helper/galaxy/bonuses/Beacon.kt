@@ -15,7 +15,7 @@ enum class BeaconPlanetRange(val planets: List<PlanetType>) {
 
 object Beacon {
 
-    fun bonus(vararg bonuses: Pair<BeaconPlanetRange, PlanetBonus>) = Bonus(
+    fun bonus(bonuses: Map<BeaconPlanetRange, PlanetBonus>) = Bonus(
         perPlanet = bonuses
             .flatMap { (r, b) -> r.planets.map { it to b } }
             .toMap()
