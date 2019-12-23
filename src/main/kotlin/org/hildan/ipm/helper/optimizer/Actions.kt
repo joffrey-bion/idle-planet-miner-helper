@@ -9,7 +9,6 @@ import org.hildan.ipm.helper.galaxy.money.min
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.utils.INFINITE_TIME
 import org.hildan.ipm.helper.utils.next
 import java.time.Duration
 

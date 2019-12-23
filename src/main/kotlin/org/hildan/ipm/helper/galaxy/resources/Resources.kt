@@ -2,6 +2,7 @@ package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
 import java.time.Duration
+import java.util.EnumSet
 
 infix fun Int.of(resourceType: ResourceType): CountedResource = CountedResource(resourceType, this)
 
@@ -23,9 +24,18 @@ data class Resources(
 
     val allResourceTypes: Set<ResourceType> = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
 
-    val hasAlloys = allResourceTypes.any { it is AlloyType }
+    val allOreTypes: Set<OreType> by lazy {
+        allResourceTypes.filterIsInstanceTo(EnumSet.noneOf(OreType::class.java))
+    }
 
-    val hasItems = allResourceTypes.any { it is ItemType }
+    val allAlloyTypes: Set<AlloyType> by lazy {
+        allResourceTypes.filterIsInstanceTo(EnumSet.noneOf(AlloyType::class.java))
+    }
+
+    val hasAlloys: Boolean
+        get() = allOreTypes.isNotEmpty()
+
+    val hasItems: Boolean = allResourceTypes.any { it is ItemType }
 
     // TODO merge resources to have max one CountedResources per resource type (unless less efficient)
     operator fun plus(other: Resources) = Resources(resources + other.resources)

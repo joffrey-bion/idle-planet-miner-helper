@@ -20,6 +20,7 @@ import org.hildan.ipm.helper.utils.div
 import org.hildan.ipm.helper.utils.max
 import org.hildan.ipm.helper.utils.sumBy
 import java.time.Duration
+import java.util.EnumSet
 
 data class Galaxy private constructor(
     val bonuses: Bonuses,
@@ -35,11 +36,22 @@ data class Galaxy private constructor(
 
     val planetCosts = planets.associate { it.type to bonuses.total.reduceUpgradeCosts(it.upgradeCosts, it.colonyLevel) }
 
-    private val accessibleOres: Set<OreType> = planets.flatMap { it.type.oreDistribution }.mapTo(HashSet()) { it.oreType }
+    private val oreRatesByType: Map<OreType, Rate> = planets
+        .flatMap { planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive) }
+        .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
 
-    private val accessibleAlloys: Set<AlloyType> = if (nbSmelters == 0) emptySet() else highestUnlockedAlloyRecipe.andBelow()
+    private val accessibleOres: Set<OreType>
+            get() = oreRatesByType.keys
 
-    private val accessibleItems: Set<ItemType> = if (nbCrafters == 0) emptySet() else highestUnlockedItemRecipe.andBelow()
+    private val accessibleAlloys: Set<AlloyType> = if (nbSmelters == 0) emptySet() else highestUnlockedAlloyRecipe
+        .andBelow()
+        .filterTo(EnumSet.noneOf(AlloyType::class.java)) { accessibleOres.containsAll(it.requiredResources.allOreTypes) }
+
+    private val accessibleItems: Set<ItemType> = if (nbCrafters == 0) emptySet() else highestUnlockedItemRecipe
+        .andBelow()
+        .filterTo(EnumSet.noneOf(ItemType::class.java)) {
+            accessibleAlloys.containsAll(it.requiredResources.allAlloyTypes)
+        }
 
     private val accessibleResources: Set<ResourceType> =
             emptySet<ResourceType>() + accessibleOres + accessibleAlloys + accessibleItems
@@ -47,10 +59,6 @@ data class Galaxy private constructor(
     val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloys.maxBy { getSmeltingIncome(it) }
 
     val maxIncomeCraftRecipe: ItemType? = accessibleItems.maxBy { getCraftingIncome(it) }
-
-    private val oreRatesByType: Map<OreType, Rate> = planets
-        .flatMap { planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive) }
-        .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
 
     val totalIncomeRate: ValueRate = with(bonuses) {
         val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
@@ -103,7 +111,7 @@ data class Galaxy private constructor(
     }
 
     fun Resources.areAccessible(): Boolean =
-            accessibleResources.containsAll(allResourceTypes) && allResourceTypes.all { it in oreRatesByType.keys }
+            accessibleResources.containsAll(allResourceTypes) && oreRatesByType.keys.containsAll(allOreTypes)
 
     private val Resources.dividedSmeltTimeFromOre: Duration
         get() = with(bonuses) { totalSmeltTimeFromOre / nbSmelters }
