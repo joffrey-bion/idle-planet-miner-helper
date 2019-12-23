@@ -30,7 +30,9 @@ data class AppliedAction(
 }
 
 fun Galaxy.possibleActions(): List<AppliedAction> {
-    val buyPlanetActions = unlockedPlanets.map { Action.BuyPlanet(it).performOn(this) }
+    val buyPlanetActions = unlockedPlanets
+        .filter { totalIncomeRate > ValueRate.ZERO || it.unlockPrice <= currentCash }
+        .map { Action.BuyPlanet(it).performOn(this) }
     val upgradeActions = planets.flatMap {
         listOf(
             Action.Upgrade.Mine(it.type, it.mineLevel + 1).performOn(this),
@@ -72,7 +74,7 @@ private fun Galaxy.createAction(
     val remainingToPay = requiredCash - cashInstantlySpent
     val timeWaitingForCash = when {
         remainingToPay == Price.ZERO -> Duration.ZERO
-        totalIncomeRate == ValueRate.ZERO -> INFINITE_TIME
+        totalIncomeRate == ValueRate.ZERO -> error("action costing extra money in 0-income galaxy")
         else -> remainingToPay / totalIncomeRate
     }
     val timeWaitingForResources = getApproximateTime(requiredResources)
