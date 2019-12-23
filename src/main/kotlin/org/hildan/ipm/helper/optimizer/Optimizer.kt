@@ -1,5 +1,9 @@
 package org.hildan.ipm.helper.optimizer
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.ValueRate
@@ -15,7 +19,7 @@ class Optimizer(
 
     fun generateActions(): Sequence<AppliedAction> = sequence {
         while (true) {
-            val appliedAction = computeNextBestAction()
+            val appliedAction = runBlocking { computeNextBestAction() }
             val newGalaxy = appliedAction.newGalaxy
             yield(appliedAction)
 
@@ -31,10 +35,12 @@ class Optimizer(
         }
     }
 
-    private fun computeNextBestAction(): AppliedAction {
+    private suspend fun computeNextBestAction(): AppliedAction {
         var states = listOf(State.initial(currentGalaxy))
-        repeat(searchDepth) {
-            states = states.flatMap { it.expand() }
+        withContext(Dispatchers.Default) {
+            repeat(searchDepth) {
+                states = states.map { async { it.expand() } }.flatMap { it.await() }
+            }
         }
         val bestEndState = states.minBy { it.timeToRoi1(currentGalaxy) }!!
         return bestEndState.actionsFromStart.first()
