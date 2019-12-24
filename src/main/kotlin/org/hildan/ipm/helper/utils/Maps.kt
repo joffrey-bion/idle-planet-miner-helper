@@ -7,3 +7,11 @@ fun <K, V> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, 
     }
     return result
 }
+
+inline fun <T, K, V> Iterable<T>.associateMerging(
+    keyGetter: (T) -> K,
+    valueGetter: (T) -> V,
+    noinline merge: (V, V) -> V
+): Map<K, V> {
+    return fold(mutableMapOf()) { m, elt -> m.merge(keyGetter(elt), valueGetter(elt), merge); m }
+}

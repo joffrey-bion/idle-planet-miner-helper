@@ -26,11 +26,13 @@ data class Bonuses(
 
     val total = constant.total(beaconActive) + researchedProjects.map { it.bonus }.fold(Bonus.NONE, Bonus::plus)
 
-    private val reducedSmeltIngredientsByAlloy: Map<AlloyType, Resources> =
-            completeEnumMap { total.production.smeltIngredients.applyTo(it.requiredResources) }
+    private val reducedSmeltIngredientsByAlloy: Map<AlloyType, Resources> = completeEnumMap {
+        total.production.smeltIngredients.applyTo(it.requiredResources)
+    }
 
-    private val reducedCraftIngredientsByItem: Map<ItemType, Resources> =
-            completeEnumMap { total.production.craftIngredients.applyTo(it.requiredResources) }
+    private val reducedCraftIngredientsByItem: Map<ItemType, Resources> = completeEnumMap {
+        total.production.craftIngredients.applyTo(it.requiredResources)
+    }
 
     private val smeltTimeFromOreByResourceType: Map<ResourceType, Duration> = computeRecursiveTimeByResource {
         total.production.smeltSpeed.applyAsSpeed(it.smeltTime)
@@ -43,8 +45,8 @@ data class Bonuses(
     private fun computeRecursiveTimeByResource(selfTime: (ResourceType) -> Duration): Map<ResourceType, Duration> {
         val map = HashMap<ResourceType, Duration>()
         ResourceType.all().forEach { res ->
-            map[res] = selfTime(res) + res.actualRequiredResources.resources.sumBy { cr ->
-                map.getValue(cr.resourceType) * cr.quantity
+            map[res] = selfTime(res) + res.actualRequiredResources.resources.entries.sumBy { (type, qty) ->
+                map.getValue(type) * qty
             }
         }
         return map
@@ -73,14 +75,14 @@ data class Bonuses(
     val ResourceType.currentValue: Price
         get() = total.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue
 
-    val Resources.totalValue: Price
-        get() = resources.map { it.resourceType.currentValue * it.quantity }.sum()
+    private val Resources.totalValue: Price
+        get() = resources.map { (type, qty) -> type.currentValue * qty }.sum()
 
     val Resources.totalSmeltTimeFromOre: Duration
-        get() = resources.sumBy { it.resourceType.actualSmeltTimeFromOre * it.quantity }
+        get() = resources.entries.sumBy { (type, qty) -> type.actualSmeltTimeFromOre * qty }
 
     val Resources.totalCraftTimeFromOresAndAlloys: Duration
-        get() = resources.sumBy { it.resourceType.actualCraftTimeFromOresAndAlloys * it.quantity }
+        get() = resources.entries.sumBy { (type, qty) -> type.actualCraftTimeFromOresAndAlloys * qty }
 
     fun withProject(project: Project) : Bonuses = copy(
         researchedProjects = researchedProjects + project,

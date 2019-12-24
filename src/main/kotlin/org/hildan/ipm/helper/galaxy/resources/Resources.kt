@@ -1,8 +1,10 @@
 package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
+import org.hildan.ipm.helper.utils.mergedWith
 import java.time.Duration
 import java.util.EnumSet
+import kotlin.math.roundToInt
 
 infix fun Int.of(resourceType: ResourceType): CountedResource = CountedResource(resourceType, this)
 
@@ -18,11 +20,14 @@ interface ResourceType {
 }
 
 data class Resources(
-    val resources: List<CountedResource>
+    val resources: Map<ResourceType, Int>
 ) {
-    private val resourceTypes: Set<ResourceType> = resources.mapTo(HashSet()) { it.resourceType }
+    private val resourceTypes: Set<ResourceType>
+        get() = resources.keys
 
-    val allResourceTypes: Set<ResourceType> = resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes + it }
+    val allResourceTypes: Set<ResourceType> by lazy {
+        resourceTypes + resourceTypes.flatMapTo(HashSet<ResourceType>()) { it.requiredResources.allResourceTypes }
+    }
 
     val allOreTypes: Set<OreType> by lazy {
         allResourceTypes.filterIsInstanceTo(EnumSet.noneOf(OreType::class.java))
@@ -35,26 +40,28 @@ data class Resources(
     val hasAlloys: Boolean
         get() = allOreTypes.isNotEmpty()
 
-    val hasItems: Boolean = allResourceTypes.any { it is ItemType }
+    val hasItems: Boolean
+        get() = allResourceTypes.any { it is ItemType }
 
-    // TODO merge resources to have max one CountedResources per resource type (unless less efficient)
-    operator fun plus(other: Resources) = Resources(resources + other.resources)
+    operator fun plus(other: Resources) = Resources(resources.mergedWith(other.resources, Int::plus))
+
+    operator fun times(factor: Double): Resources =
+            Resources(resources.mapValues { (_, qty) -> (qty * factor).roundToInt() })
 
     override fun toString(): String = if (resources.isEmpty()) {
         "no resources"
     } else {
-        resources.joinToString(", ") { "${it.quantity} ${it.resourceType}" }
+        resources.entries.joinToString(", ") { (type, qty) -> "$qty $type" }
     }
 
-    override fun equals(other: Any?): Boolean =
-            other is Resources && resources.normalized() == other.resources.normalized()
-
-    override fun hashCode(): Int = resources.normalized().hashCode()
-
     companion object {
-        val NOTHING = Resources(emptyList())
+        val NOTHING = Resources(emptyMap())
 
-        fun of(vararg countedResources: CountedResource): Resources = Resources(countedResources.toList())
+        fun of(vararg countedResources: CountedResource): Resources {
+            val map = countedResources.associate { it.resourceType to it.quantity }
+            require(map.size == countedResources.size) { "Duplicate entries found in resources list" }
+            return Resources(map)
+        }
     }
 }
 
@@ -62,27 +69,3 @@ data class CountedResource(
     val resourceType: ResourceType,
     val quantity: Int
 )
-
-private fun List<CountedResource>.normalized(): List<CountedResource> {
-    val quantities = mutableMapOf<ResourceType, Int>()
-    forEach { quantities.merge(it.resourceType, it.quantity) { q1, q2 -> q1 + q2 } }
-    return quantities.map { CountedResource(it.key, it.value) }.sortedWith(countedResourceComparator)
-}
-
-private val countedResourceComparator = Comparator<CountedResource> { cr1, cr2 ->
-    resourcesComparator.compare(cr1.resourceType, cr2.resourceType)
-}
-
-private val resourcesComparator: Comparator<ResourceType> =
-        Comparator { rt1, rt2 ->
-            when (rt1) {
-                is OreType -> if (rt2 is OreType) rt1.compareTo(rt2) else -1
-                is AlloyType -> when (rt2) {
-                    is OreType -> 1
-                    is AlloyType -> rt1.compareTo(rt2)
-                    else -> -1
-                }
-                is ItemType -> if (rt2 is ItemType) rt1.compareTo(rt2) else 1
-                else -> throw IllegalArgumentException("Unknown resource type ${rt1::class}")
-            }
-        }

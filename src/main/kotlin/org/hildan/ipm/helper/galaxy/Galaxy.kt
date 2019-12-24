@@ -16,6 +16,7 @@ import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.utils.andBelow
+import org.hildan.ipm.helper.utils.associateMerging
 import org.hildan.ipm.helper.utils.div
 import org.hildan.ipm.helper.utils.max
 import org.hildan.ipm.helper.utils.sumBy
@@ -38,7 +39,7 @@ data class Galaxy private constructor(
 
     private val oreRatesByType: Map<OreType, Rate> = planets
         .flatMap { planetStats.getValue(it.type).deliveryRateByOreType(it, bonuses.oreTargetingActive) }
-        .fold(mutableMapOf()) { m, or -> m.merge(or.oreType, or.rate, Rate::plus); m }
+        .associateMerging({ it.oreType }, { it.rate }, Rate::plus)
 
     private val accessibleOres: Set<OreType>
             get() = oreRatesByType.keys
@@ -120,8 +121,8 @@ data class Galaxy private constructor(
         get() = with(bonuses) { totalCraftTimeFromOresAndAlloys / nbCrafters }
 
     fun getApproximateTime(resources: Resources): Duration {
-        val ores = resources.resources.filter { it.resourceType is OreType }
-        val oreGatheringTime = ores.sumBy { it.quantity / oreRatesByType.getValue(it.resourceType as OreType) }
+        val ores = resources.resources.filterKeys { it is OreType }
+        val oreGatheringTime = ores.entries.sumBy { (type, qty) -> qty / oreRatesByType.getValue(type as OreType) }
         val smeltTime = if (resources.hasAlloys) resources.dividedSmeltTimeFromOre else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.dividedCraftTimeFromOresAndAlloys else Duration.ZERO
         return oreGatheringTime + max(smeltTime, craftTime)

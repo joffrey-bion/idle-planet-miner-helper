@@ -27,8 +27,7 @@ inline class Multiplier(private val factor: Double) {
 
     fun applyAsSpeed(duration: Duration): Duration = Duration.ofMillis((duration.toMillis() / factor).roundToLong())
 
-    fun applyTo(resources: Resources): Resources =
-            Resources(resources.resources.map { CountedResource(it.resourceType, (it.quantity * factor).roundToInt()) })
+    fun applyTo(resources: Resources): Resources = resources * factor
 
     override fun toString(): String = String.format("x%.2f", factor)
 
