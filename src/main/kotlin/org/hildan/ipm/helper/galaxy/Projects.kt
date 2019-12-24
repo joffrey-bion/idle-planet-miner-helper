@@ -7,15 +7,18 @@ import org.hildan.ipm.helper.galaxy.resources.AlloyType.*
 import org.hildan.ipm.helper.galaxy.resources.ItemType.*
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.of
-import java.util.EnumSet
+import org.hildan.ipm.helper.utils.associateMerging
 
 val Project.children: Set<Project> get() = ProjectGraph.children[this] ?: emptySet()
 
-inline class TelescopeLevel(val value: Int) {
+inline class TelescopeLevel(private val value: Int) {
 
-    val unlockedPlanets: Set<PlanetType> get() = PlanetType.values()
-        .filterTo(EnumSet.noneOf(PlanetType::class.java)) { it.telescopeLevel == this }
+    val unlockedPlanets: Set<PlanetType>
+        get() = unlockedPlanetsByTelescopeLevel.getValue(this)
 }
+
+private val unlockedPlanetsByTelescopeLevel: Map<TelescopeLevel, Set<PlanetType>> =
+        PlanetType.values().toList().associateMerging({ it.telescopeLevel }, { setOf(it) }, { s1, s2 -> s1 + s2 })
 
 enum class Project(
     val requiredResources: Resources,
