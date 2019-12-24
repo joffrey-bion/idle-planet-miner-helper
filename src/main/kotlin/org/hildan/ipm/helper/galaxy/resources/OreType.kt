@@ -20,7 +20,7 @@ enum class OreType(
     PALADIUM(Price(3_500)),
     OSMIUM(Price(7_800)),
     RHODIUM(Price(17_500)),
-    INETON(Price(40_000)),
+    INERTON(Price(40_000)),
     QUADIUM(Price(92_000)),
     SCRITH(Price(215_000)),
     URU(Price(510_000)),

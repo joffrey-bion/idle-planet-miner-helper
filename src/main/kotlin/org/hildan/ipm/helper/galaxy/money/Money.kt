@@ -49,6 +49,8 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     constructor(amount: Int) : this(amount.toDouble())
 
+    constructor(amount: Long) : this(amount.toDouble())
+
     operator fun plus(other: Price) = Price(amount + other.amount)
 
     operator fun minus(other: Price) = Price(amount - other.amount)
