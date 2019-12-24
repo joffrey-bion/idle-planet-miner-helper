@@ -322,7 +322,10 @@ enum class PlanetType(
 //        oreDistribution = listOf(0.60 of QUADIUM, 0.25 of INERTON, 0.15 of SCRITH)
 //    );
 
+    private val index: Int = ordinal + 1
     private val baseUpgradeCost: Price = unlockPrice * 0.05
 
     fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
+
+    override fun toString(): String = "$index.$name"
 }
