@@ -39,7 +39,7 @@ enum class Project(
     TELESCOPE_3(Resources.of(10 of IRON_NAIL, 15 of SILICON_BAR), telescope = TelescopeLevel(3)),
     TELESCOPE_4(Resources.of(5 of HAMMER, 20 of ALUMINUM_BAR), telescope = TelescopeLevel(4)),
     TELESCOPE_5(Resources.of(3 of CIRCUIT, 10 of GOLD_BAR), telescope = TelescopeLevel(5)),
-    TELESCOPE_6(Resources.of(3 of LASER, 25 of BRONZE), telescope = TelescopeLevel(6)),
+    TELESCOPE_6(Resources.of(3 of LASER, 25 of BRONZE_BAR), telescope = TelescopeLevel(6)),
     TELESCOPE_7(Resources.of(3 of SOLAR_PANEL, 20 of PLATINUM), telescope = TelescopeLevel(7)),
 
     ADVANCED_MINING(Resources.of(5 of BATTERY, 20 of ALUMINUM_BAR), Bonus.allPlanets(mineRate = 1.25)),
@@ -49,7 +49,7 @@ enum class Project(
     COLONY_TAX_INCENTIVES(Resources.of(60 of ALUMINUM_BAR),
         Bonus(planetUpgradeCost5pReductions = 1)
     ),
-    COLONY_ADVANCED_TAX_INCENTIVES(Resources.of(60 of BRONZE),
+    COLONY_ADVANCED_TAX_INCENTIVES(Resources.of(60 of BRONZE_BAR),
         Bonus(planetUpgradeCost5pReductions = 1)
     ),
 
