@@ -24,7 +24,7 @@ enum class AlloyType(
     PLATINUM_BAR(Price(780_000), Price(4_000_000), 10.min(), Resources.of(2 of GOLD_BAR, 1000 of PLATINUM)),
     TITANIUM_BAR(Price(1_630_000), Price(8_000_000), 720.sec(), Resources.of(2 of BRONZE_BAR, 1000 of TITANIUM)),
     IRIDIUM_BAR(Price(3_110_000), Price(15_000_000), 840.sec(), Resources.of(2 of STEEL_BAR, 1000 of IRIDIUM)),
-    PALADIUM_BAR(Price(7_000_000), Price(30_000_000), 960.sec(), Resources.of(2 of PLATINUM_BAR, 1000 of PALADIUM_BAR)),
+    PALADIUM_BAR(Price(7_000_000), Price(30_000_000), 960.sec(), Resources.of(2 of PLATINUM_BAR, 1000 of PALADIUM)),
     OSMIUM_BAR(Price(14_500_000), Price(60_000_000), 1080.sec(), Resources.of(2 of TITANIUM_BAR, 1000 of OSMIUM)),
     RHODIUM_BAR(Price(31_000_000), Price(120_000_000), 1200.sec(), Resources.of(2 of IRIDIUM_BAR, 1000 of RHODIUM)),
     INERTON_BAR(Price(68_000_000), Price(250_000_000), 1440.sec(), Resources.of(2 of PALADIUM_BAR, 1000 of INERTON)),
