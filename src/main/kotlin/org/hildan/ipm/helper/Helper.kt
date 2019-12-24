@@ -73,7 +73,11 @@ fun main() {
 
     val time = measureTimeMillis {
         var gameTime: Duration = Duration.ZERO
-        Optimizer(input.galaxy).generateActions().compact().take(500).forEachIndexed { i, action ->
+        Optimizer(input.galaxy)
+            .generateActions()
+            .compact()
+            .take(500)
+            .forEachIndexed { i, action ->
                 gameTime += action.time
                 println(formatAction(i, gameTime, action))
             }
