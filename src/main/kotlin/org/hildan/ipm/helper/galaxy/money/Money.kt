@@ -5,8 +5,6 @@ import kotlin.math.roundToLong
 
 fun min(p1: Price, p2: Price) = if (p1 < p2) p1 else p2
 
-fun min(r1: Rate, r2: Rate) = if (r1 < r2) r1 else r2
-
 fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
 
 fun List<ValueRate>.sumRates() = fold(ValueRate.ZERO) { vr1, vr2 -> vr1 + vr2}
