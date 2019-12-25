@@ -46,7 +46,9 @@ data class Galaxy private constructor(
 
     private val accessibleAlloys: Set<AlloyType> = if (nbSmelters == 0) emptySet() else highestUnlockedAlloyRecipe
         .andBelow()
-        .filterTo(EnumSet.noneOf(AlloyType::class.java)) { accessibleOres.containsAll(it.requiredResources.allOreTypes) }
+        .filterTo(EnumSet.noneOf(AlloyType::class.java)) {
+            accessibleOres.containsAll(it.requiredResources.allOreTypes)
+        }
 
     private val accessibleItems: Set<ItemType> = if (nbCrafters == 0) emptySet() else highestUnlockedItemRecipe
         .andBelow()
@@ -55,16 +57,16 @@ data class Galaxy private constructor(
         }
 
     private val accessibleResources: Set<ResourceType> =
-            emptySet<ResourceType>() + accessibleOres + accessibleAlloys + accessibleItems
+            accessibleOres as Set<ResourceType> + accessibleAlloys + accessibleItems
 
-    val maxIncomeSmeltRecipe: AlloyType? = accessibleAlloys.maxBy { getSmeltingIncome(it) }
+    val maxIncomeSmeltRecipe: AlloyType? = with(bonuses) { accessibleAlloys.maxBy { it.smeltIncome } }
 
-    val maxIncomeCraftRecipe: ItemType? = accessibleItems.maxBy { getCraftingIncome(it) }
+    val maxIncomeCraftRecipe: ItemType? = with(bonuses) { accessibleItems.maxBy { it.craftIncome } }
 
     val totalIncomeRate: ValueRate = with(bonuses) {
         val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
-        val smeltIncome = maxIncomeSmeltRecipe?.let { getSmeltingIncome(it) } ?: ValueRate.ZERO
-        val craftIncome = maxIncomeCraftRecipe?.let { getCraftingIncome(it) } ?: ValueRate.ZERO
+        val smeltIncome = maxIncomeSmeltRecipe?.let { with(bonuses) { it.smeltIncome } } ?: ValueRate.ZERO
+        val craftIncome = maxIncomeCraftRecipe?.let { with(bonuses) { it.craftIncome } } ?: ValueRate.ZERO
         oreIncome + smeltIncome + craftIncome
     }
 
@@ -126,21 +128,6 @@ data class Galaxy private constructor(
         val smeltTime = if (resources.hasAlloys) resources.dividedSmeltTimeFromOre else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.dividedCraftTimeFromOresAndAlloys else Duration.ZERO
         return oreGatheringTime + max(smeltTime, craftTime)
-    }
-
-    private fun getSmeltingIncome(alloyType: AlloyType): ValueRate {
-        // TODO take into account number of smelters and limit recipes accordingly (offline VS online). For instance,
-        //      bronze can only be smelted for a long time if we can also smelt copper and silver at the same time.
-        val consumedValue = with(bonuses) { alloyType.actualRequiredResources.totalValue }
-        val producedValue = with(bonuses) { alloyType.currentValue }
-        return (producedValue - consumedValue) / bonuses.total.production.smeltSpeed.applyAsSpeed(alloyType.smeltTime)
-    }
-
-    private fun getCraftingIncome(itemType: ItemType): ValueRate {
-        // TODO consider computing this value for offline crafting (see TODO in smelting income)
-        val consumedValue = with(bonuses) { itemType.actualRequiredResources.totalValue }
-        val producedValue = with(bonuses) { itemType.currentValue }
-        return (producedValue - consumedValue) / bonuses.total.production.craftSpeed.applyAsSpeed(itemType.craftTime)
     }
 
     private fun PlanetType.stateReport() = """
