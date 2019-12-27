@@ -7,8 +7,10 @@ import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.min
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
+import org.hildan.ipm.helper.galaxy.resources.Crafters
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.galaxy.resources.Smelters
 import org.hildan.ipm.helper.utils.next
 import java.time.Duration
 
@@ -40,8 +42,8 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
         )
     }
     val researchActions = researchProjectActions()
-    val unlockRecipeActions = unlockRecipeActions()
-    return buyPlanetActions + upgradeActions + researchActions + unlockRecipeActions
+    val productionActions = productionActions()
+    return buyPlanetActions + upgradeActions + researchActions + productionActions
 }
 
 private fun Galaxy.researchProjectActions(): List<AppliedAction> =
@@ -50,17 +52,27 @@ private fun Galaxy.researchProjectActions(): List<AppliedAction> =
             .filter { it.requiredResources.areAccessible() }
             .map { Action.Research(it).performOn(this) }
 
-private fun Galaxy.unlockRecipeActions(): List<AppliedAction> {
-    val unlockRecipeActions = mutableListOf<AppliedAction>()
-    val nextAlloyRecipe = highestUnlockedAlloyRecipe.next()
-    val nextItemRecipe = highestUnlockedItemRecipe.next()
-    if (nbSmelters > 0 && nextAlloyRecipe != null) {
-        unlockRecipeActions.add(Action.UnlockSmeltRecipe(nextAlloyRecipe).performOn(this))
+private fun Galaxy.productionActions(): List<AppliedAction> {
+    val productionActions = mutableListOf<AppliedAction>()
+    if (nbSmelters > 0) {
+        if (nbSmelters < Smelters.MAX) {
+            productionActions.add(Action.BuySmelter.performOn(this))
+        }
+        val nextAlloyRecipe = highestUnlockedAlloyRecipe.next()
+        if (nextAlloyRecipe != null) {
+            productionActions.add(Action.UnlockSmeltRecipe(nextAlloyRecipe).performOn(this))
+        }
     }
-    if (nbCrafters > 0 && nextItemRecipe != null) {
-        unlockRecipeActions.add(Action.UnlockCraftRecipe(nextItemRecipe).performOn(this))
+    if (nbCrafters > 0) {
+        if (nbCrafters < Crafters.MAX) {
+            productionActions.add(Action.BuyCrafter.performOn(this))
+        }
+        val nextItemRecipe = highestUnlockedItemRecipe.next()
+        if (nextItemRecipe != null) {
+            productionActions.add(Action.UnlockCraftRecipe(nextItemRecipe).performOn(this))
+        }
     }
-    return unlockRecipeActions
+    return productionActions
 }
 
 private fun Galaxy.createAction(
@@ -154,6 +166,28 @@ sealed class Action {
         )
 
         override fun toString(): String = "Research project $project"
+    }
+
+    object BuySmelter : Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy.copy(nbSmelters = galaxy.nbSmelters + 1),
+            requiredCash = Smelters.priceForOneMore(galaxy.nbSmelters)
+        )
+
+        override fun toString(): String = "Buy one more smelter"
+    }
+
+    object BuyCrafter : Action() {
+
+        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
+            action = this,
+            newGalaxy = galaxy.copy(nbSmelters = galaxy.nbCrafters + 1),
+            requiredCash = Crafters.priceForOneMore(galaxy.nbCrafters)
+        )
+
+        override fun toString(): String = "Buy one more crafter"
     }
 
     data class UnlockSmeltRecipe(val alloy: AlloyType): Action() {
