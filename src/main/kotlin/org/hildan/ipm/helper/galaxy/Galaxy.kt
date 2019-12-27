@@ -65,8 +65,8 @@ data class Galaxy private constructor(
 
     val totalIncomeRate: ValueRate = with(bonuses) {
         val oreIncome = oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
-        val smeltIncome = maxIncomeSmeltRecipe?.let { with(bonuses) { it.smeltIncome } } ?: ValueRate.ZERO
-        val craftIncome = maxIncomeCraftRecipe?.let { with(bonuses) { it.craftIncome } } ?: ValueRate.ZERO
+        val smeltIncome = maxIncomeSmeltRecipe?.smeltIncome ?: ValueRate.ZERO
+        val craftIncome = maxIncomeCraftRecipe?.craftIncome ?: ValueRate.ZERO
         oreIncome + smeltIncome + craftIncome
     }
 
