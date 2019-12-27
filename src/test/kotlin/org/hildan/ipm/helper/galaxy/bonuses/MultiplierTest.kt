@@ -8,13 +8,6 @@ import kotlin.test.assertEquals
 
 class MultiplierTest {
 
-    private val copper10 = Resources.of(10 of COPPER)
-    private val copper9 = Resources.of(9 of COPPER)
-    private val copper8 = Resources.of(8 of COPPER)
-    private val copper7 = Resources.of(7 of COPPER)
-    private val copper5 = Resources.of(5 of COPPER)
-    private val copper4 = Resources.of(4 of COPPER)
-
     @Test
     fun `multiply double`() {
         assertEquals(0.8, Multiplier(0.8).applyTo(1.0))
