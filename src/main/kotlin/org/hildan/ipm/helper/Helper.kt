@@ -87,7 +87,8 @@ fun main() {
 
 private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction): String {
     val formattedIndex = (index + 1).leftPadded(3, false)
-    return "$formattedIndex. [${gameTime.format()}]  ${action.action}"
+    val incomePerMinute = action.newGalaxy.totalIncomeRate.formatPerMinute()
+    return "$formattedIndex. [${gameTime.format()}]  ${action.action}\t\tNow: $incomePerMinute"
 }
 
 private fun Duration.format(): String {

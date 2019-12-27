@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper.galaxy.money
 
+import org.hildan.ipm.helper.utils.formatWithSuffix
 import java.time.Duration
 import kotlin.math.roundToLong
 
@@ -36,6 +37,8 @@ inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate>
 
     override fun compareTo(other: ValueRate): Int = amountPerSec.compareTo(other.amountPerSec)
 
+    fun formatPerMinute(): String = String.format("\$%s/min", (amountPerSec * 60).formatWithSuffix())
+
     override fun toString(): String = String.format("\$%.2f/s", amountPerSec)
 
     companion object {
@@ -65,6 +68,8 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     operator fun times(rate: Rate): ValueRate = ValueRate(amount * rate.timesPerSecond)
 
+    override fun compareTo(other: Price): Int = amount.compareTo(other.amount)
+
     override fun toString(): String = when {
         amount < 1_000 -> format(amount, "")
         amount < 1_000_000 -> format(amount / 1_000, "k")
@@ -77,7 +82,5 @@ inline class Price(private val amount: Double) : Comparable<Price> {
     companion object {
         val ZERO = Price(0.0)
     }
-
-    override fun compareTo(other: Price): Int = amount.compareTo(other.amount)
 }
 
