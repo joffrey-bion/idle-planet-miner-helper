@@ -18,7 +18,7 @@ enum class BeaconPlanetRange(val planets: List<PlanetType>) {
     RANGE_29_31(29, 31);
     // TODO complete ranges when PlanetType is complete
 
-    constructor(from: Int, to: Int): this(allPlanets.slice(from..to))
+    constructor(from: Int, to: Int): this(allPlanets.slice((from - 1) until to))
 }
 
 object Beacon {
