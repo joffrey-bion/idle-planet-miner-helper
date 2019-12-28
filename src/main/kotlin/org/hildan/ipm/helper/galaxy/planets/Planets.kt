@@ -4,6 +4,8 @@ import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.Rate
 import org.hildan.ipm.helper.galaxy.resources.OreType
+import org.hildan.ipm.helper.utils.LazyMap
+import org.hildan.ipm.helper.utils.lazyHashMap
 
 data class OreRate(val oreType: OreType, val rate: Rate)
 
@@ -46,6 +48,25 @@ data class PlanetStats(
         }
         return deliveryRates
     }
+
+    companion object {
+        private val cache: LazyMap<Int, LazyMap<Int, LazyMap<Int, PlanetStats>>> = lazyHashMap { mineLevel ->
+            lazyHashMap { shipLevel ->
+                lazyHashMap { cargoLevel ->
+                    PlanetStats(
+                        mineRate = Rate(computeStat(0.25, 0.1, 0.017, mineLevel)),
+                        shipSpeed = Rate(computeStat(1.0, 0.2, 1.0 / 75, shipLevel)),
+                        cargo = computeStat(5.1, 2.0, 0.1, cargoLevel)
+                    )
+                }
+            }
+        }
+
+        private fun computeStat(base: Double, c1: Double, c2: Double, level: Int) =
+                base + c1 * (level - 1) + (c2 * (level - 1) * (level - 1))
+
+        fun forLevels(mine: Int, ship: Int, cargo: Int): PlanetStats = cache[mine][ship][cargo]
+    }
 }
 
 data class PlanetUpgradeCosts(
@@ -63,16 +84,7 @@ data class Planet(
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE
 ) {
-    val stats = colonyBonus.applyTo(
-        PlanetStats(
-            mineRate = Rate(computeStat(0.25, 0.1, 0.017, mineLevel)),
-            shipSpeed = Rate(computeStat(1.0, 0.2, 1.0 / 75, shipLevel)),
-            cargo = computeStat(5.1, 2.0, 0.1, cargoLevel)
-        )
-    )
-
-    private fun computeStat(base: Double, c1: Double, c2: Double, level: Int) =
-            base + c1 * (level - 1) + (c2 * (level - 1) * (level - 1))
+    val stats = colonyBonus.applyTo(PlanetStats.forLevels(mineLevel, shipLevel, cargoLevel))
 
     val upgradeCosts = PlanetUpgradeCosts(
         mineUpgrade = type.upgradeCost(mineLevel),
