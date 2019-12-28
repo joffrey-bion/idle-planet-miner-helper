@@ -183,7 +183,7 @@ sealed class Action {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy.copy(nbSmelters = galaxy.nbCrafters + 1),
+            newGalaxy = galaxy.copy(nbCrafters = galaxy.nbCrafters + 1),
             requiredCash = Crafters.priceForOneMore(galaxy.nbCrafters)
         )
 
