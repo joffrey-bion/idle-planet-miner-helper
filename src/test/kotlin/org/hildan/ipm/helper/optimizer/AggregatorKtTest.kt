@@ -4,7 +4,7 @@ import org.hildan.ipm.helper.galaxy.ConstantBonusesSamples
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.ValueRate
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.of
@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 internal class AggregatorKtTest {
 
     private val upgradeBalorMine3 = AppliedAction(
-        action = Action.Upgrade.Mine(PlanetType.BALOR, 3),
+        action = Action.Upgrade.Mine(Planet.BALOR, 3),
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(10),
         requiredResources = Resources.of(2 of OreType.COPPER, 2 of OreType.IRON),
@@ -24,7 +24,7 @@ internal class AggregatorKtTest {
     )
 
     private val upgradeBalorMine4 = AppliedAction(
-        action = Action.Upgrade.Mine(PlanetType.BALOR, 4),
+        action = Action.Upgrade.Mine(Planet.BALOR, 4),
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),
@@ -33,7 +33,7 @@ internal class AggregatorKtTest {
     )
 
     private val upgradeBalorMine3Then4 = AppliedAction(
-        action = Action.Upgrade.Mine(PlanetType.BALOR, 4),
+        action = Action.Upgrade.Mine(Planet.BALOR, 4),
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(30),
         requiredResources = Resources.of(3 of OreType.COPPER, 2 of OreType.IRON, 4 of OreType.LEAD),
@@ -42,7 +42,7 @@ internal class AggregatorKtTest {
     )
 
     private val upgradeBalorShip4 = AppliedAction(
-        action = Action.Upgrade.Ship(PlanetType.BALOR, 4),
+        action = Action.Upgrade.Ship(Planet.BALOR, 4),
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(21),
         requiredResources = Resources.of(21 of OreType.IRON),
@@ -51,7 +51,7 @@ internal class AggregatorKtTest {
     )
 
     private val upgradeAnadiusMine4 = AppliedAction(
-        action = Action.Upgrade.Mine(PlanetType.ANADIUS, 4),
+        action = Action.Upgrade.Mine(Planet.ANADIUS, 4),
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),

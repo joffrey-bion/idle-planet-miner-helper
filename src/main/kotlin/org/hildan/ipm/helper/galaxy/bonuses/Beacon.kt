@@ -1,11 +1,11 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.utils.completedBy
 
-private val allPlanets = PlanetType.values()
+private val allPlanets = Planet.values()
 
-enum class BeaconPlanetRange(val planets: List<PlanetType>) {
+enum class BeaconPlanetRange(val planets: List<Planet>) {
     RANGE_1_4(1, 4),
     RANGE_5_7(5, 7),
     RANGE_8_10(8, 10),

@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
-import org.hildan.ipm.helper.galaxy.planets.PlanetStats
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.PlanetProduction
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.planets.PlanetUpgradeCosts
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
@@ -20,10 +20,10 @@ data class PlanetBonus(
         cargo = cargo * other.cargo
     )
 
-    fun applyTo(planetStats: PlanetStats) = PlanetStats(
-        mineRate = mineRate.applyTo(planetStats.mineRate),
-        shipSpeed = shipSpeed.applyTo(planetStats.shipSpeed),
-        cargo = cargo.applyTo(planetStats.cargo)
+    fun applyTo(planetProduction: PlanetProduction) = PlanetProduction(
+        mineRate = mineRate.applyTo(planetProduction.mineRate),
+        shipSpeed = shipSpeed.applyTo(planetProduction.shipSpeed),
+        cargo = cargo.applyTo(planetProduction.cargo)
     )
 
     companion object {
@@ -85,14 +85,14 @@ data class ResourceValuesBonus(
 
 data class Bonus(
     val allPlanets: PlanetBonus = PlanetBonus.NONE,
-    val perPlanet: Map<PlanetType, PlanetBonus> = completeEnumMap { PlanetBonus.NONE },
+    val perPlanet: Map<Planet, PlanetBonus> = completeEnumMap { PlanetBonus.NONE },
     val production: ProductionBonus = ProductionBonus.NONE,
     val values: ResourceValuesBonus = ResourceValuesBonus.NONE,
     val projectCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
     val planetUpgradeCost5pReductions: Int = 0
 ) {
-    fun forPlanet(planet: PlanetType): PlanetBonus = allPlanets * perPlanet.getValue(planet)
+    fun forPlanet(planet: Planet): PlanetBonus = allPlanets * perPlanet.getValue(planet)
 
     fun reduceUpgradeCosts(costs: PlanetUpgradeCosts, colonyLevel: Int): PlanetUpgradeCosts {
         val colonyMultiplier = Multiplier(0.95).repeat(colonyLevel).pow(planetUpgradeCost5pReductions)

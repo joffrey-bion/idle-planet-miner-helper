@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.galaxy
 
 import org.hildan.ipm.helper.galaxy.bonuses.Bonus
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType.*
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.*
 import org.hildan.ipm.helper.galaxy.resources.ItemType.*
@@ -13,12 +13,12 @@ val Project.children: Set<Project> get() = ProjectGraph.children[this] ?: emptyS
 
 inline class TelescopeLevel(private val value: Int) {
 
-    val unlockedPlanets: Set<PlanetType>
+    val unlockedPlanets: Set<Planet>
         get() = unlockedPlanetsByTelescopeLevel.getValue(this)
 }
 
-private val unlockedPlanetsByTelescopeLevel: Map<TelescopeLevel, Set<PlanetType>> =
-        PlanetType.values().toList().associateMerging({ it.telescopeLevel }, { setOf(it) }, { s1, s2 -> s1 + s2 })
+private val unlockedPlanetsByTelescopeLevel: Map<TelescopeLevel, Set<Planet>> =
+        Planet.values().toList().associateMerging({ it.telescopeLevel }, { setOf(it) }, { s1, s2 -> s1 + s2 })
 
 enum class Project(
     val requiredResources: Resources,

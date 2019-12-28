@@ -6,7 +6,7 @@ import org.hildan.ipm.helper.galaxy.bonuses.Manager
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Room
 import org.hildan.ipm.helper.galaxy.bonuses.Upgrade
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.OreType
@@ -38,9 +38,9 @@ fun main() {
             BeaconPlanetRange.RANGE_8_10 to PlanetBonus.of(1.20, 1.0, 1.0)
         ),
         assignedManagers = mapOf(
-            PlanetType.ANADIUS to lukas,
-            PlanetType.DHOLEN to angela,
-            PlanetType.DRASTA to nicole
+            Planet.ANADIUS to lukas,
+            Planet.DHOLEN to angela,
+            Planet.DRASTA to nicole
         ),
         market = mapOf(
             AlloyType.IRON_BAR to 2.0,

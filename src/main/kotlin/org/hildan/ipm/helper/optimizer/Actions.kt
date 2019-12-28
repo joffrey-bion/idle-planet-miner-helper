@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.optimizer
 
 import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.planets.PlanetType
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.money.ValueRate
@@ -34,11 +34,11 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
     val buyPlanetActions = unlockedPlanets
         .filter { totalIncomeRate > ValueRate.ZERO || it.unlockPrice <= currentCash }
         .map { Action.BuyPlanet(it).performOn(this) }
-    val upgradeActions = planets.flatMap {
+    val upgradeActions = planets.states.flatMap {
         listOf(
-            Action.Upgrade.Mine(it.type, it.mineLevel + 1).performOn(this),
-            Action.Upgrade.Ship(it.type, it.shipLevel + 1).performOn(this),
-            Action.Upgrade.Cargo(it.type, it.cargoLevel + 1).performOn(this)
+            Action.Upgrade.Mine(it.planet, it.mineLevel + 1).performOn(this),
+            Action.Upgrade.Ship(it.planet, it.shipLevel + 1).performOn(this),
+            Action.Upgrade.Cargo(it.planet, it.cargoLevel + 1).performOn(this)
         )
     }
     val researchActions = researchProjectActions()
@@ -105,7 +105,7 @@ sealed class Action {
 
     abstract fun performOn(galaxy: Galaxy): AppliedAction
 
-    data class BuyPlanet(val planet: PlanetType) : Action() {
+    data class BuyPlanet(val planet: Planet) : Action() {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
@@ -117,40 +117,40 @@ sealed class Action {
     }
 
     sealed class Upgrade(
-        open val planet: PlanetType,
+        open val planet: Planet,
         open val targetLevel: Int
     ) : Action() {
         fun toString(upgradedElementName: String): String =
                 "Upgrade $planet's $upgradedElementName to level $targetLevel"
 
-        data class Mine(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
+        data class Mine(override val planet: Planet, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withMineLevel(planet, targetLevel),
-                requiredCash = galaxy.planetCosts[planet]!!.mineUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).mineUpgrade
             )
 
             override fun toString(): String = super.toString("MINE")
         }
 
-        data class Ship(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
+        data class Ship(override val planet: Planet, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withShipLevel(planet, targetLevel),
-                requiredCash = galaxy.planetCosts[planet]!!.shipUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).shipUpgrade
             )
 
             override fun toString(): String = super.toString("SHIP")
         }
 
-        data class Cargo(override val planet: PlanetType, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
+        data class Cargo(override val planet: Planet, override val targetLevel: Int) : Upgrade(planet, targetLevel) {
 
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withCargoLevel(planet, targetLevel),
-                requiredCash = galaxy.planetCosts[planet]!!.cargoUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).cargoUpgrade
             )
 
             override fun toString(): String = super.toString("CARGO")

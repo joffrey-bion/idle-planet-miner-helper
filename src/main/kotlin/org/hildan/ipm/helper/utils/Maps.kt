@@ -22,6 +22,10 @@ inline fun <reified K : Enum<K>, V> lazyEnumMap(crossinline computeValue: (K) ->
     return LazyMap(EnumMap(K::class.java)) { key, _ -> computeValue(key) }
 }
 
+inline fun <K, V> lazyHashMap(crossinline computeValue: (K) -> V): LazyMap<K, V> {
+    return LazyMap(HashMap()) { key, _ -> computeValue(key) }
+}
+
 class LazyMap<K, V>(
     private val map: MutableMap<K, V> = mutableMapOf(),
     private val computeValue: (K, LazyMap<K, V>) -> V
