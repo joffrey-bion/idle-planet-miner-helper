@@ -20,8 +20,8 @@ internal class GalaxyTest {
             .withProjects(ProjectSamples.BASIC_PROJECTS)
             .withProjects(ProjectSamples.ADVANCED_GATHERING_PROJECTS)
 
-        val balorStats = galaxy.planetStats[Planet.BALOR]
-        assertPlanetStats(PlanetProduction(Rate(1589.86), Rate(116.10), 690.0), balorStats)
+        val balorProduction = galaxy.planets.production[Planet.BALOR]
+        assertPlanetStats(PlanetProduction(Rate(1589.86), Rate(116.10), 690.0), balorProduction)
     }
 }
 
