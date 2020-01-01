@@ -23,6 +23,8 @@ enum class Room(
     PACKAGING({ l -> Bonus.allPlanets(cargo = 1.5 + (l - 1) * 0.25) }),
     WORKSHOP({ l -> Bonus.production(craftSpeed = 1.1 + (l - 1) * 0.1) }),
     LABORATORY({ l -> Bonus(projectCostMultiplier = Multiplier(0.9 + (l - 1) * (-0.04))) }),
+    UNDERFORGE({ l -> Bonus.production(smeltIngredients = 0.9 + (l - 1) * (-0.04)) }),
+    DORMS({ l -> Bonus.production(craftIngredients = 0.9 + (l - 1) * -0.04) })
 }
 
 /*
@@ -32,8 +34,6 @@ Robotics	Decrease rover time	87	221	X0.9
 Lounge	Increase credits earned	133	354	X1.15
 Backup Generator	Increase max idle time	200	554
 Terrarium	Decrease colonization cost	298	852
-Underforge	Decrease smelter ingredients	439	1291
-Dorm	Decrease crafter ingredients	642	1933
 Sales	Increase alloy and item value	934	2867
 Classroom	All manager bonuses	1351	4218
 Marketing	Increase Market Bonuses	-	-
