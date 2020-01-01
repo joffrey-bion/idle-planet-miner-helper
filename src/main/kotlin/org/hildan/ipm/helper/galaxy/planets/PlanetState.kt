@@ -1,6 +1,6 @@
 package org.hildan.ipm.helper.galaxy.planets
 
-import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
+import org.hildan.ipm.helper.galaxy.GalaxyBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.Rate
@@ -21,7 +21,7 @@ data class PlanetState(
     val preferredOreType: OreType = planet.oreDistribution.map { it.oreType }.maxBy { it.baseValue }!!,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE,
-    val galaxyBonuses: Bonuses
+    val galaxyBonuses: GalaxyBonuses
 ) {
     private val totalBonus = colonyBonus * galaxyBonuses.total.forPlanet(planet)
 
@@ -52,12 +52,12 @@ data class Planets(
     val accessibleOres: Set<OreType>
         get() = oreRatesByType.keys
 
-    fun withBoughtPlanet(planet: Planet, bonuses: Bonuses): Planets =
-            copy(states = states + PlanetState(planet, galaxyBonuses = bonuses))
+    fun withBoughtPlanet(planet: Planet, galaxyBonuses: GalaxyBonuses): Planets =
+            copy(states = states + PlanetState(planet, galaxyBonuses = galaxyBonuses))
 
     inline fun withChangedPlanet(planet: Planet, transform: (PlanetState) -> PlanetState): Planets = copy(
         states = states.map { if (it.planet == planet) transform(it) else it }
     )
 
-    fun withBonuses(bonuses: Bonuses) = copy(states = states.map { it.copy(galaxyBonuses = bonuses) })
+    fun withBonuses(galaxyBonuses: GalaxyBonuses) = copy(states = states.map { it.copy(galaxyBonuses = galaxyBonuses) })
 }

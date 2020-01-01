@@ -1,6 +1,5 @@
 package org.hildan.ipm.helper.galaxy
 
-import org.hildan.ipm.helper.galaxy.bonuses.Bonuses
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.money.Price
@@ -23,7 +22,7 @@ import java.time.Duration
 import java.util.EnumSet
 
 data class Galaxy private constructor(
-    val bonuses: Bonuses,
+    val bonuses: GalaxyBonuses,
     val currentCash: Price = Price(180),
     val planets: Planets = Planets(),
     val unlockedPlanets: Set<Planet> = TelescopeLevel(0).unlockedPlanets,
@@ -133,6 +132,6 @@ data class Galaxy private constructor(
 
     companion object {
 
-        fun init(constantBonuses: ConstantBonuses): Galaxy = Galaxy(Bonuses(constantBonuses))
+        fun init(constantBonuses: ConstantBonuses): Galaxy = Galaxy(GalaxyBonuses(constantBonuses))
     }
 }

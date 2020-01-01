@@ -1,7 +1,7 @@
-package org.hildan.ipm.helper.galaxy.bonuses
+package org.hildan.ipm.helper.galaxy
 
-import org.hildan.ipm.helper.galaxy.Project
-import org.hildan.ipm.helper.galaxy.children
+import org.hildan.ipm.helper.galaxy.bonuses.Bonus
+import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.sum
@@ -17,7 +17,7 @@ import org.hildan.ipm.helper.utils.lazyEnumMap
 import java.time.Duration
 import java.util.EnumSet
 
-data class Bonuses(
+data class GalaxyBonuses(
     val constant: ConstantBonuses,
     val researchedProjects: Set<Project> = EnumSet.noneOf(Project::class.java),
     val unlockedProjects: Set<Project> = EnumSet.of(Project.ASTEROID_MINER, Project.MANAGEMENT)
@@ -104,7 +104,7 @@ data class Bonuses(
     val Resources.totalCraftTimeFromOresAndAlloys: Duration
         get() = resources.entries.sumBy { (type, qty) -> type.actualCraftTimeFromOresAndAlloys * qty }
 
-    fun withProject(project: Project) : Bonuses = copy(
+    fun withProject(project: Project) : GalaxyBonuses = copy(
         researchedProjects = researchedProjects + project,
         unlockedProjects = unlockedProjects + project.children - project
     )
