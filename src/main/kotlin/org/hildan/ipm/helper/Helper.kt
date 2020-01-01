@@ -1,6 +1,6 @@
 package org.hildan.ipm.helper
 
-import org.hildan.ipm.helper.galaxy.bonuses.BeaconBonus
+import org.hildan.ipm.helper.galaxy.bonuses.BeaconRangeBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Bonus
 import org.hildan.ipm.helper.galaxy.bonuses.Manager
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
@@ -33,9 +33,9 @@ fun main() {
             Room.LABORATORY to 6
         ),
         beacon = listOf(
-            BeaconBonus(1, 4, PlanetBonus.of(1.30, 1.0, 1.0)),
-            BeaconBonus(5, 7, PlanetBonus.of(1.22, 1.0, 1.0)),
-            BeaconBonus(8, 10, PlanetBonus.of(1.20, 1.0, 1.0))
+            BeaconRangeBonus(1, 4, PlanetBonus.of(1.30, 1.0, 1.0)),
+            BeaconRangeBonus(5, 7, PlanetBonus.of(1.22, 1.0, 1.0)),
+            BeaconRangeBonus(8, 10, PlanetBonus.of(1.20, 1.0, 1.0))
         ),
         assignedManagers = mapOf(
             Planet.ANADIUS to lukas,

@@ -3,7 +3,7 @@ package org.hildan.ipm.helper.optimizer
 import org.hildan.ipm.helper.galaxy.Galaxy
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.bonuses.Beacon
-import org.hildan.ipm.helper.galaxy.bonuses.BeaconBonus
+import org.hildan.ipm.helper.galaxy.bonuses.BeaconRangeBonus
 import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.Manager
@@ -21,7 +21,7 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 data class Input(
     val upgrades: List<Upgrade>,
     val mothershipRoomLevels: Map<Room, Int>,
-    val beacon: List<BeaconBonus>,
+    val beacon: List<BeaconRangeBonus>,
     val assignedManagers: Map<Planet, Manager>,
     val market: Map<ResourceType, Double>,
     val stars: Map<ResourceType, Int>,
