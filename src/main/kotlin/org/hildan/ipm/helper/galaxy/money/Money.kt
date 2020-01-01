@@ -70,14 +70,7 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     override fun compareTo(other: Price): Int = amount.compareTo(other.amount)
 
-    override fun toString(): String = when {
-        amount < 1_000 -> format(amount, "")
-        amount < 1_000_000 -> format(amount / 1_000, "k")
-        amount < 1_000_000_000 -> format(amount / 1_000_000, "M")
-        else -> format(amount / 1_000_000_000, "B")
-    }
-
-    private fun format(x: Double, unit: String): String = String.format("\$%.2f$unit", x)
+    override fun toString(): String = "\$${amount.formatWithSuffix()}"
 
     companion object {
         val ZERO = Price(0.0)
