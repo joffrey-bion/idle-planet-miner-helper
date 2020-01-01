@@ -42,17 +42,11 @@ data class PlanetState(
 data class Planets(
     val states: List<PlanetState> = emptyList()
 ) {
-    val production = computePlanetStats()
+    val production by lazy { states.associate { it.planet to it.production } }
 
-    private fun computePlanetStats() = states.associate { it.planet to it.production }
+    val upgradeCosts by lazy { states.associate { it.planet to it.upgradeCosts } }
 
-    val upgradeCosts = computePlanetCosts()
-
-    private fun computePlanetCosts() = states.associate { it.planet to it.upgradeCosts }
-
-    val oreRatesByType: Map<OreType, Rate> = computeOreRates()
-
-    private fun computeOreRates(): Map<OreType, Rate> =
+    val oreRatesByType: Map<OreType, Rate> =
             states.flatMap { it.oreRates }.associateMerging({ it.oreType }, { it.rate }, Rate::plus)
 
     val accessibleOres: Set<OreType>
@@ -65,5 +59,5 @@ data class Planets(
         states = states.map { if (it.planet == planet) transform(it) else it }
     )
 
-    fun withBonuses(bonuses: Bonuses) = Planets(states = states.map { it.copy(galaxyBonuses = bonuses) })
+    fun withBonuses(bonuses: Bonuses) = copy(states = states.map { it.copy(galaxyBonuses = bonuses) })
 }
