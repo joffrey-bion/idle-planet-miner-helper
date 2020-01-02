@@ -1,15 +1,13 @@
 package org.hildan.ipm.helper.galaxy
 
-import org.hildan.ipm.helper.galaxy.bonuses.Beacon
-import org.hildan.ipm.helper.galaxy.bonuses.BeaconPlanetRange
+import org.hildan.ipm.helper.galaxy.bonuses.BeaconRangeBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Bonus
-import org.hildan.ipm.helper.galaxy.bonuses.ChallengeStars
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.bonuses.ManagerAssignment
 import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Room
-import org.hildan.ipm.helper.galaxy.bonuses.Market
 import org.hildan.ipm.helper.galaxy.bonuses.Upgrade
+import org.hildan.ipm.helper.galaxy.bonuses.asSingleBonus
 
 object ConstantBonusesSamples {
 
@@ -24,23 +22,19 @@ object ConstantBonusesSamples {
             Room.ASTRONOMY.bonus(7) +
             Room.LABORATORY.bonus(4)
 
-    private val beaconBonus1 = Beacon.bonus(
-        mapOf(
-            BeaconPlanetRange.RANGE_1_4 to PlanetBonus.of(1.26, 1.0, 1.0)
-        )
-    )
+    private val beaconBonus1 = listOf(BeaconRangeBonus(1, 4, PlanetBonus.of(1.26, 1.0, 1.0))).asSingleBonus()
 
     val NONE = ConstantBonuses(
         shipsBonus = Bonus.NONE,
         roomsBonus = Bonus.NONE,
         beaconBonus = Bonus.NONE,
         managerAssignment = ManagerAssignment(),
-        market = Market(),
-        stars = ChallengeStars()
+        marketBonus = Bonus.NONE,
+        starsBonus = Bonus.NONE
     )
 
     val SAMPLE_1 = ConstantBonuses(
-        shipsBonus, roomsBonus1, beaconBonus1, ManagerAssignment(), Market(), ChallengeStars()
+        shipsBonus, roomsBonus1, beaconBonus1, ManagerAssignment(), Bonus.NONE, Bonus.NONE
     )
 
 }

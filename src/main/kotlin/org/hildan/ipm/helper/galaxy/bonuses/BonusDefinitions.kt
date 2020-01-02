@@ -7,6 +7,7 @@ import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.utils.completeEnumMap
+import org.hildan.ipm.helper.utils.completedBy
 import org.hildan.ipm.helper.utils.mergedWith
 
 data class PlanetBonus(
@@ -144,6 +145,16 @@ data class Bonus(
                 alloysMultiplier = Multiplier(alloysMultiplier),
                 itemsMultiplier = Multiplier(itemsMultiplier)
             )
+        )
+
+        fun values(multipliers: Map<ResourceType, Double>) = Bonus(
+            values = ResourceValuesBonus(
+                resourceMultipliers = multipliers.mapValues { Multiplier(it.value) }
+            )
+        )
+
+        fun perPlanet(bonusByPlanet: Map<Planet, PlanetBonus>) =  Bonus(
+            perPlanet = bonusByPlanet.completedBy { PlanetBonus.NONE }
         )
     }
 }

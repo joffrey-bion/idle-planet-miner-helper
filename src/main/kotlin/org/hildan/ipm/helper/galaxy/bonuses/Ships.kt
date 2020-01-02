@@ -1,6 +1,8 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
-enum class Upgrade(val bonus: Bonus) {
+enum class Upgrade(
+    val bonus: Bonus
+) {
     NO_ADS(Bonus.allPlanets(mineRate = 1.2)),
     DAUGHTERSHIP(Bonus.allPlanets(mineRate = 1.5, shipSpeed = 1.25, cargo = 1.25)),
     ELDERSHIP(
@@ -9,9 +11,7 @@ enum class Upgrade(val bonus: Bonus) {
     ),
 }
 
-object Rooms {
-    fun bonus(roomLevels: Map<Room, Int>) = roomLevels.map { (room, level) -> room.bonus(level) }.sum()
-}
+fun Map<Room, Int>.asSingleBonus() = map { (room, level) -> room.bonus(level) }.sum()
 
 enum class Room(
     val bonus: (level: Int) -> Bonus
