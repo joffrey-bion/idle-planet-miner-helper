@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.3.61"
+    application
 }
 
 repositories {
@@ -12,4 +13,9 @@ dependencies {
 
     testImplementation(kotlin("test-junit"))
     testImplementation("junit:junit:4.12")
+}
+
+application {
+    mainClassName = "org.hildan.ipm.helper.MainKt"
+    applicationDefaultJvmArgs = listOf("-XX:+UnlockExperimentalVMOptions", "-XX:+UseZGC", "-Xlog:gc")
 }
