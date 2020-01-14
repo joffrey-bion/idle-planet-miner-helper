@@ -39,6 +39,8 @@ class Optimizer(
         var states = listOf(State.initial(currentGalaxy))
         withContext(Dispatchers.Default) {
             repeat(searchDepth) {
+                // TODO prioritize expanding states with little timeToRoi1, and don't expand if already exceeding the
+                // timeToRoi1 of a fully expanded path
                 states = states.map { async { it.expand() } }.flatMap { it.await() }
             }
         }
@@ -65,6 +67,10 @@ data class State(
 
     fun expand(): List<State> = galaxy.possibleActions().map { transition(it) }
 
+    // TODO cache states by set of actions applied since initial state to avoid unnecessary allocations and computations
+    // TODO evict cache using the size of the set of actions (if we output 5 actions so far, we can evict cache
+    //  elements with 5 or less actions because the exploration of new states will always have more). Maybe use a
+    //  2-level map based on size then set?
     private fun transition(action: Action): State {
         val appliedAction = action.performOn(galaxy)
         return State(
