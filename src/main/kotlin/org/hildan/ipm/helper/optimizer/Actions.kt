@@ -11,6 +11,7 @@ import org.hildan.ipm.helper.galaxy.resources.Crafters
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.Smelters
+import org.hildan.ipm.helper.utils.max
 import org.hildan.ipm.helper.utils.next
 import java.time.Duration
 
@@ -30,15 +31,15 @@ data class AppliedAction(
     """.trimIndent()
 }
 
-fun Galaxy.possibleActions(): List<AppliedAction> {
+fun Galaxy.possibleActions(): List<Action> {
     val buyPlanetActions = unlockedPlanets
         .filter { totalIncomeRate > ValueRate.ZERO || it.unlockPrice <= currentCash }
-        .map { Action.BuyPlanet(it).performOn(this) }
+        .map { Action.BuyPlanet(it) }
     val upgradeActions = planets.states.flatMap {
         listOf(
-            Action.Upgrade.Mine(it.planet, it.mineLevel + 1).performOn(this),
-            Action.Upgrade.Ship(it.planet, it.shipLevel + 1).performOn(this),
-            Action.Upgrade.Cargo(it.planet, it.cargoLevel + 1).performOn(this)
+            Action.Upgrade.Mine(it.planet, it.mineLevel + 1),
+            Action.Upgrade.Ship(it.planet, it.shipLevel + 1),
+            Action.Upgrade.Cargo(it.planet, it.cargoLevel + 1)
         )
     }
     val researchActions = researchProjectActions()
@@ -46,30 +47,30 @@ fun Galaxy.possibleActions(): List<AppliedAction> {
     return buyPlanetActions + upgradeActions + researchActions + productionActions
 }
 
-private fun Galaxy.researchProjectActions(): List<AppliedAction> =
+private fun Galaxy.researchProjectActions(): List<Action> =
         // not checking actual resources (after bonus) because resource types are the same
         bonuses.unlockedProjects
             .filter { it.requiredResources.areAccessible() }
-            .map { Action.Research(it).performOn(this) }
+            .map { Action.Research(it) }
 
-private fun Galaxy.productionActions(): List<AppliedAction> {
-    val productionActions = mutableListOf<AppliedAction>()
+private fun Galaxy.productionActions(): List<Action> {
+    val productionActions = mutableListOf<Action>()
     if (nbSmelters > 0) {
         if (nbSmelters < Smelters.MAX) {
-            productionActions.add(Action.BuySmelter.performOn(this))
+            productionActions.add(Action.BuySmelter)
         }
         val nextAlloyRecipe = highestUnlockedAlloyRecipe.next()
         if (nextAlloyRecipe != null) {
-            productionActions.add(Action.UnlockSmeltRecipe(nextAlloyRecipe).performOn(this))
+            productionActions.add(Action.UnlockSmeltRecipe(nextAlloyRecipe))
         }
     }
     if (nbCrafters > 0) {
         if (nbCrafters < Crafters.MAX) {
-            productionActions.add(Action.BuyCrafter.performOn(this))
+            productionActions.add(Action.BuyCrafter)
         }
         val nextItemRecipe = highestUnlockedItemRecipe.next()
         if (nextItemRecipe != null) {
-            productionActions.add(Action.UnlockCraftRecipe(nextItemRecipe).performOn(this))
+            productionActions.add(Action.UnlockCraftRecipe(nextItemRecipe))
         }
     }
     return productionActions
@@ -98,8 +99,6 @@ private fun Galaxy.createAction(
         incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate
     )
 }
-
-private fun max(d1: Duration, d2: Duration) = if (d1 < d2) d2 else d1
 
 sealed class Action {
 

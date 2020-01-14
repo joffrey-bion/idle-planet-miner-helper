@@ -65,14 +65,16 @@ data class State(
 
     fun expand(): List<State> = galaxy.possibleActions().map { transition(it) }
 
-    private fun transition(action: AppliedAction): State =
-            State(
-                action.newGalaxy,
-                actionsFromStart + action,
-                requiredCashSoFar + action.requiredCash,
-                requiredResourcesSoFar + action.requiredResources,
-                timeToReach + action.time
-            )
+    private fun transition(action: Action): State {
+        val appliedAction = action.performOn(galaxy)
+        return State(
+            appliedAction.newGalaxy,
+            actionsFromStart + appliedAction,
+            requiredCashSoFar + appliedAction.requiredCash,
+            requiredResourcesSoFar + appliedAction.requiredResources,
+            timeToReach + appliedAction.time
+        )
+    }
 
     companion object {
 
