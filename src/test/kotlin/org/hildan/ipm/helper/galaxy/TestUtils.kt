@@ -8,6 +8,8 @@ import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
 import org.hildan.ipm.helper.galaxy.bonuses.Room
 import org.hildan.ipm.helper.galaxy.bonuses.Upgrade
 import org.hildan.ipm.helper.galaxy.bonuses.asSingleBonus
+import kotlin.math.abs
+import kotlin.test.assertTrue
 
 object ConstantBonusesSamples {
 
@@ -63,5 +65,5 @@ object ProjectSamples {
 }
 
 fun assertDoubleEquals(expected: Double, actual: Double, message: String? = null) {
-    org.junit.Assert.assertEquals(message, expected, actual, 0.01)
+    assertTrue(abs(expected - actual) < 0.01, message)
 }

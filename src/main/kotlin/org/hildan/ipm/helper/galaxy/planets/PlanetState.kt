@@ -18,7 +18,7 @@ data class PlanetState(
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = planet.oreDistribution.map { it.oreType }.maxBy { it.baseValue }!!,
+    val preferredOreType: OreType = planet.oreDistribution.map { it.oreType }.maxByOrNull { it.baseValue }!!,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE,
     val galaxyBonuses: GalaxyBonuses
