@@ -38,7 +38,7 @@ enum class Project(
     CRAFTER(Resources.of(5000 of LEAD, 5 of IRON_BAR)),
 
     TELESCOPE_1(Resources.of(5 of COPPER_BAR, 1_500 of IRON), telescope = TelescopeLevel(1)),
-    TELESCOPE_2(Resources.of(10 of LEAD_BAR, 500 of SILICON), telescope = TelescopeLevel(2)),
+    TELESCOPE_2(Resources.of(10 of LEAD_BAR, 500 of SILICA), telescope = TelescopeLevel(2)),
     TELESCOPE_3(Resources.of(10 of IRON_NAIL, 15 of SILICON_BAR), telescope = TelescopeLevel(3)),
     TELESCOPE_4(Resources.of(5 of HAMMER, 20 of ALUMINUM_BAR), telescope = TelescopeLevel(4)),
     TELESCOPE_5(Resources.of(3 of CIRCUIT, 10 of GOLD_BAR), telescope = TelescopeLevel(5)),

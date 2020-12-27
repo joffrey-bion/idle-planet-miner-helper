@@ -9,7 +9,7 @@ enum class OreType(
     COPPER(Price(1)),
     IRON(Price(2)),
     LEAD(Price(4)),
-    SILICON(Price(8)),
+    SILICA(Price(8)),
     ALUMINUM(Price(17)),
     SILVER(Price(36)),
     GOLD(Price(75)),

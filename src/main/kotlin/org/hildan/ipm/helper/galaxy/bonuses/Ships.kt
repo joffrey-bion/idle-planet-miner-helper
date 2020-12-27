@@ -1,5 +1,7 @@
 package org.hildan.ipm.helper.galaxy.bonuses
 
+import org.hildan.ipm.helper.galaxy.resources.ResourceType
+
 enum class Upgrade(
     val bonus: Bonus
 ) {
@@ -9,6 +11,8 @@ enum class Upgrade(
         Bonus.allPlanets(mineRate = 2.0, shipSpeed = 1.5, cargo = 1.5) +
         Bonus.production(smeltSpeed = 1.5, craftSpeed = 1.5)
     ),
+    THUNDERHORSE(Bonus.production(smeltSpeed = 2.0, craftSpeed = 2.0)),
+    MERCHANT(Bonus.values(multipliers = ResourceType.all().associateWith { 2.0 })),
 }
 
 fun Map<Room, Int>.asSingleBonus() = map { (room, level) -> room.bonus(level) }.sum()
@@ -24,7 +28,9 @@ enum class Room(
     WORKSHOP({ l -> Bonus.production(craftSpeed = 1.1 + (l - 1) * 0.1) }),
     LABORATORY({ l -> Bonus(projectCostMultiplier = Multiplier(0.9 + (l - 1) * (-0.04))) }),
     UNDERFORGE({ l -> Bonus.production(smeltIngredients = 0.9 + (l - 1) * (-0.04)) }),
-    DORMS({ l -> Bonus.production(craftIngredients = 0.9 + (l - 1) * -0.04) })
+    DORMS({ l -> Bonus.production(craftIngredients = 0.9 + (l - 1) * -0.04) }),
+    SALES({ l -> (1.1 + (l-1) * 0.05).let { m -> Bonus.values(alloysMultiplier = m, itemsMultiplier = m) }}),
+    CLASSROOM({ l -> Bonus.NONE }), // TODO
 }
 
 /*

@@ -1,11 +1,6 @@
 package org.hildan.ipm.helper
 
-import org.hildan.ipm.helper.galaxy.bonuses.BeaconRangeBonus
-import org.hildan.ipm.helper.galaxy.bonuses.Bonus
-import org.hildan.ipm.helper.galaxy.bonuses.Manager
-import org.hildan.ipm.helper.galaxy.bonuses.PlanetBonus
-import org.hildan.ipm.helper.galaxy.bonuses.Room
-import org.hildan.ipm.helper.galaxy.bonuses.Upgrade
+import org.hildan.ipm.helper.galaxy.bonuses.*
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
 import org.hildan.ipm.helper.galaxy.resources.ItemType
@@ -23,36 +18,73 @@ fun main() {
     val nicole = Manager("Nicole", PlanetBonus.of(cargo = 2.0))
 
     val input = Input(
-        upgrades = listOf(Upgrade.NO_ADS, Upgrade.DAUGHTERSHIP, Upgrade.ELDERSHIP),
+        upgrades = listOf(
+            Upgrade.NO_ADS,
+            Upgrade.DAUGHTERSHIP,
+            Upgrade.ELDERSHIP,
+            Upgrade.MERCHANT,
+            Upgrade.THUNDERHORSE,
+        ),
         mothershipRoomLevels = mapOf(
-            Room.ENGINEERING to 15,
-            Room.AERONAUTICAL to 6,
-            Room.PACKAGING to 4,
-            Room.FORGE to 13,
-            Room.ASTRONOMY to 7,
-            Room.LABORATORY to 6
+            Room.ENGINEERING to 26,
+            Room.AERONAUTICAL to 18,
+            Room.PACKAGING to 22,
+            Room.FORGE to 26,
+            Room.WORKSHOP to 25,
+            Room.ASTRONOMY to 11,
+            Room.LABORATORY to 11,
+//            Room.TERRARIUM to 11,
+//            Room.LOUNGE to 26,
+//            Room.BACKUP_GENERATOR to 26,
+            Room.UNDERFORGE to 11,
+            Room.DORMS to 11,
+            Room.SALES to 20,
+            Room.CLASSROOM to 19,
+//            Room.MARKETING to 16,
+//            Room.PLANET_RELATIONS to 18,
         ),
         beacon = listOf(
-            BeaconRangeBonus(1, 4, PlanetBonus.of(1.30, 1.0, 1.0)),
-            BeaconRangeBonus(5, 7, PlanetBonus.of(1.22, 1.0, 1.0)),
-            BeaconRangeBonus(8, 10, PlanetBonus.of(1.20, 1.0, 1.0))
+            BeaconRangeBonus(1, 40, PlanetBonus.of(1.5, 1.0, 1.0)),
+//            BeaconRangeBonus(44, 46, PlanetBonus.of(1.48, 1.03, 1.0)),
+//            BeaconRangeBonus(47, 58, PlanetBonus.of(1.5, 1.0, 1.0)),
         ),
         assignedManagers = mapOf(
             Planet.ANADIUS to lukas,
             Planet.DHOLEN to angela,
-            Planet.DRASTA to nicole
+            Planet.DRASTA to nicole,
         ),
         market = mapOf(
             AlloyType.IRON_BAR to 2.0,
             OreType.SILVER to 2.0,
-            ItemType.HAMMER to 0.5
+            ItemType.HAMMER to 0.5,
         ),
         stars = mapOf(
-            OreType.SILVER to 2,
-            OreType.GOLD to 1,
-            AlloyType.COPPER_BAR to 1,
-            AlloyType.IRON_BAR to 1,
-            AlloyType.ALUMINUM_BAR to 1
+            OreType.COPPER to 20,
+            OreType.IRON to 12,
+            OreType.LEAD to 13,
+            OreType.SILICA to 11,
+            OreType.ALUMINUM to 9,
+            OreType.SILVER to 10,
+            OreType.GOLD to 15,
+            OreType.DIAMOND to 6,
+            OreType.PLATINUM to 12,
+            OreType.TITANIUM to 4,
+            AlloyType.COPPER_BAR to 16,
+            AlloyType.IRON_BAR to 13,
+            AlloyType.LEAD_BAR to 9,
+            AlloyType.SILICON_BAR to 18,
+            AlloyType.ALUMINUM_BAR to 12,
+            AlloyType.SILVER_BAR to 12,
+            AlloyType.GOLD_BAR to 9,
+            AlloyType.BRONZE_BAR to 7,
+            ItemType.COPPER_WIRE to 14,
+            ItemType.IRON_NAIL to 15,
+            ItemType.BATTERY to 10,
+            ItemType.HAMMER to 15,
+            ItemType.GLASS to 11,
+            ItemType.CIRCUIT to 7,
+            ItemType.LENSE to 7,
+            ItemType.LASER to 0,
         ),
         researchedProjects = listOf(
             //            Project.ASTEROID_MINER,
@@ -92,10 +124,11 @@ private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction):
 }
 
 private fun Duration.format(): String {
-    val sec = toSecondsPart().leftPadded(2)
-    val min = toMinutesPart().leftPadded(2)
     val hours = toHours().leftPadded(2)
-    return "${hours}:${min}:${sec}"
+    val min = toMinutesPart().leftPadded(2)
+    val sec = toSecondsPart().leftPadded(2)
+    val ms = toMillisPart().leftPadded(3)
+    return "${hours}:${min}:${sec}.${ms}"
 }
 
 private fun Number.leftPadded(width: Int, zeroes: Boolean = true): String {

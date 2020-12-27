@@ -67,28 +67,28 @@ enum class Planet(
         telescopeLevel = TelescopeLevel(1),
         baseMineRate = 1.46,
         distance = 20,
-        oreDistribution = listOf(0.4 of IRON, 0.4 of COPPER, 0.2 of SILICON)
+        oreDistribution = listOf(0.4 of IRON, 0.4 of COPPER, 0.2 of SILICA)
     ),
     ACHERON(
         unlockPrice = Price(25_000),
         telescopeLevel = TelescopeLevel(2),
         baseMineRate = 1.78,
         distance = 22,
-        oreDistribution = listOf(0.6 of SILICON, 0.4 of COPPER)
+        oreDistribution = listOf(0.6 of SILICA, 0.4 of COPPER)
     ),
     YANGZTE(
         unlockPrice = Price(40_000),
         telescopeLevel = TelescopeLevel(2),
         baseMineRate = 2.14,
         distance = 23,
-        oreDistribution = listOf(0.8 of SILICON, 0.2 of ALUMINUM)
+        oreDistribution = listOf(0.8 of SILICA, 0.2 of ALUMINUM)
     ),
     SOLVEIG(
         unlockPrice = Price(75_000),
         telescopeLevel = TelescopeLevel(2),
         baseMineRate = 2.53,
         distance = 25,
-        oreDistribution = listOf(0.5 of ALUMINUM, 0.3 of SILICON, 0.2 of LEAD)
+        oreDistribution = listOf(0.5 of ALUMINUM, 0.3 of SILICA, 0.2 of LEAD)
     ),
     IMIR(
         unlockPrice = Price(150_000),
@@ -102,7 +102,7 @@ enum class Planet(
         telescopeLevel = TelescopeLevel(3),
         baseMineRate = 3.41,
         distance = 28,
-        oreDistribution = listOf(0.45 of LEAD, 0.35 of SILICON, 0.2 of SILVER)
+        oreDistribution = listOf(0.45 of LEAD, 0.35 of SILICA, 0.2 of SILVER)
     ),
     NITH(
         unlockPrice = Price(400_000),
@@ -137,7 +137,7 @@ enum class Planet(
         telescopeLevel = TelescopeLevel(5),
         baseMineRate = 6.20,
         distance = 40,
-        oreDistribution = listOf(0.40 of ALUMINUM, 0.35 of SILICON, 0.25 of DIAMOND)
+        oreDistribution = listOf(0.40 of ALUMINUM, 0.35 of SILICA, 0.25 of DIAMOND)
     ),
     GORGON(
         unlockPrice = Price(12_000_000),

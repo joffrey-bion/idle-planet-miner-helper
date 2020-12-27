@@ -15,7 +15,7 @@ enum class AlloyType(
     COPPER_BAR(Price(1_450), Price(0), 20.sec(), Resources.of(1000 of COPPER)),
     IRON_BAR(Price(3_000), Price(3_000), 30.sec(), Resources.of(1000 of IRON)),
     LEAD_BAR(Price(6_100), Price(9_000), 40.sec(), Resources.of(1000 of LEAD)),
-    SILICON_BAR(Price(12_500), Price(25_000), 1.min(), Resources.of(1000 of SILICON)),
+    SILICON_BAR(Price(12_500), Price(25_000), 1.min(), Resources.of(1000 of SILICA)),
     ALUMINUM_BAR(Price(27_600), Price(75_000), 80.sec(), Resources.of(1000 of ALUMINUM)),
     SILVER_BAR(Price(60_000), Price(225_000), 2.min(), Resources.of(1000 of SILVER)),
     GOLD_BAR(Price(120_000), Price(500_000), 3.min(), Resources.of(1000 of GOLD)),
