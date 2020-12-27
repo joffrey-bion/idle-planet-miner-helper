@@ -5,9 +5,9 @@ import org.hildan.ipm.helper.utils.completedBy
 import java.util.EnumMap
 
 data class Manager(
-    val name: String,
-    val planetBonus: PlanetBonus,
-    val globalBonus: Bonus = Bonus.NONE
+    private val name: String,
+    private val planetBonus: PlanetBonus,
+    private val globalBonus: Bonus = Bonus.NONE
 ) {
     fun toBonus(associatedPlanet: Planet): Bonus =
             globalBonus + Bonus(perPlanet = mapOf(associatedPlanet to planetBonus).completedBy { PlanetBonus.NONE })

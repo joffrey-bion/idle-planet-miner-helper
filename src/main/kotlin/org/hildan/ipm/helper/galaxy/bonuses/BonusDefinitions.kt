@@ -11,9 +11,9 @@ import org.hildan.ipm.helper.utils.completedBy
 import org.hildan.ipm.helper.utils.mergedWith
 
 data class PlanetBonus(
-    val mineRate: Multiplier = Multiplier.NONE,
-    val shipSpeed: Multiplier = Multiplier.NONE,
-    val cargo: Multiplier = Multiplier.NONE
+    private val mineRate: Multiplier = Multiplier.NONE,
+    private val shipSpeed: Multiplier = Multiplier.NONE,
+    private val cargo: Multiplier = Multiplier.NONE
 ) {
     operator fun times(other: PlanetBonus): PlanetBonus = PlanetBonus(
         mineRate = mineRate * other.mineRate,
@@ -57,9 +57,9 @@ data class ProductionBonus(
 }
 
 data class ResourceValuesBonus(
-    val alloysMultiplier: Multiplier = Multiplier.NONE,
-    val itemsMultiplier: Multiplier = Multiplier.NONE,
-    val resourceMultipliers: Map<ResourceType, Multiplier> = emptyMap()
+    private val alloysMultiplier: Multiplier = Multiplier.NONE,
+    private val itemsMultiplier: Multiplier = Multiplier.NONE,
+    private val resourceMultipliers: Map<ResourceType, Multiplier> = emptyMap()
 ) {
     val totalMultiplier: Map<ResourceType, Multiplier> = ResourceType.all().associateWith { getValue(it) }
 
@@ -85,13 +85,13 @@ data class ResourceValuesBonus(
 }
 
 data class Bonus(
-    val allPlanets: PlanetBonus = PlanetBonus.NONE,
-    val perPlanet: Map<Planet, PlanetBonus> = completeEnumMap { PlanetBonus.NONE },
+    private val allPlanets: PlanetBonus = PlanetBonus.NONE,
+    private val perPlanet: Map<Planet, PlanetBonus> = completeEnumMap { PlanetBonus.NONE },
     val production: ProductionBonus = ProductionBonus.NONE,
     val values: ResourceValuesBonus = ResourceValuesBonus.NONE,
     val projectCostMultiplier: Multiplier = Multiplier.NONE,
-    val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
-    val planetUpgradeCost5pReductions: Int = 0
+    private val planetUpgradeCostMultiplier: Multiplier = Multiplier.NONE,
+    private val planetUpgradeCost5pReductions: Int = 0
 ) {
     fun forPlanet(planet: Planet): PlanetBonus = allPlanets * perPlanet.getValue(planet)
 
