@@ -52,19 +52,19 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     constructor(amount: Long) : this(amount.toDouble())
 
-    operator fun plus(other: Price) = Price(amount + other.amount)
+    operator fun plus(other: Price): Price = Price(amount + other.amount)
 
-    operator fun minus(other: Price) = Price(amount - other.amount)
+    operator fun minus(other: Price): Price = Price(amount - other.amount)
 
-    operator fun div(other: Price) = amount / other.amount
+    operator fun div(other: Price): Double = amount / other.amount
 
     operator fun div(time: Duration): ValueRate = ValueRate(amount / time.toSeconds())
 
     operator fun div(rate: ValueRate): Duration = Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
 
-    operator fun times(factor: Double) = Price(amount * factor)
+    operator fun times(factor: Double): Price = Price(amount * factor)
 
-    operator fun times(factor: Int) = Price(amount * factor)
+    operator fun times(factor: Int): Price = Price(amount * factor)
 
     operator fun times(rate: Rate): ValueRate = ValueRate(amount * rate.timesPerSecond)
 
