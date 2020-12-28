@@ -17,7 +17,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "org.hildan.ipm.helper.MainKt"
+    mainClass.set("org.hildan.ipm.helper.MainKt")
     applicationDefaultJvmArgs = listOf("-XX:+UnlockExperimentalVMOptions", "-XX:+UseZGC", "-Xlog:gc")
 }
 
