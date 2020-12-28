@@ -10,15 +10,13 @@ import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import kotlin.time.Duration
 
-class Optimizer(
-    initialGalaxy: Galaxy,
-    private val searchDepth: Int = 4,
-) {
+class Optimizer(initialGalaxy: Galaxy) {
+
     private var currentGalaxy = initialGalaxy
 
-    fun generateActions(): Sequence<AppliedAction> = sequence {
+    fun generateActions(searchDepth: Int): Sequence<AppliedAction> = sequence {
         while (true) {
-            val appliedAction = runBlocking { computeNextBestAction() }
+            val appliedAction = runBlocking { computeNextBestAction(searchDepth) }
             val newGalaxy = appliedAction.newGalaxy
             yield(appliedAction)
 
@@ -34,7 +32,7 @@ class Optimizer(
         }
     }
 
-    private suspend fun computeNextBestAction(): AppliedAction {
+    private suspend fun computeNextBestAction(searchDepth: Int): AppliedAction {
         var states = listOf(State.initial(currentGalaxy))
         withContext(Dispatchers.Default) {
             repeat(searchDepth) {

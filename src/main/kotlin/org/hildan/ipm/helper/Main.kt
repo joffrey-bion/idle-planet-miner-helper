@@ -106,7 +106,7 @@ fun main() {
     val time = measureTime {
         var gameTime: Duration = Duration.ZERO
         Optimizer(input.galaxy)
-            .generateActions()
+            .generateActions(searchDepth = 5)
             .compact()
             .take(500)
             .forEachIndexed { i, action ->
