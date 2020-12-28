@@ -18,7 +18,7 @@ enum class Planet(
     val telescopeLevel: TelescopeLevel,
     val baseMineRate: Double,
     val distance: Int,
-    val oreDistribution: List<OrePart>
+    oreDistribution: List<OrePart>
 ) {
     BALOR(
         unlockPrice = Price(100),
@@ -324,6 +324,7 @@ enum class Planet(
 
     private val index: Int = ordinal + 1
     private val baseUpgradeCost: Price = unlockPrice * 0.05
+    val orderedOreDistribution = oreDistribution.sortedByDescending { it.oreType.baseValue }
 
     fun upgradeCost(currentLevel: Int) = baseUpgradeCost * 1.3.pow(currentLevel - 1)
 

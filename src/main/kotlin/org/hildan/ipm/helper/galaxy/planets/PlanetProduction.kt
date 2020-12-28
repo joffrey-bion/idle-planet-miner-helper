@@ -12,28 +12,30 @@ data class PlanetProduction(
     val shipSpeed: Rate,
     val cargo: Double
 ) {
-    fun deliveryRateByOreType(planetState: PlanetState, oreTargeting: Boolean): List<OreRate> {
-        val removalRate = shipSpeed * cargo / (planetState.planet.distance * 2.0)
-        val mineRates = mineRateByType(oreTargeting, planetState)
+    fun deliveryRateByOreType(oreTargeting: Boolean, planet: Planet, preferredOreType: OreType): List<OreRate> {
+        val removalRate = shipSpeed * cargo / (planet.distance * 2.0)
+        val mineRates = orderedMineRates(oreTargeting, planet, preferredOreType)
         return computeDeliveryRates(removalRate, mineRates)
     }
 
-    private fun mineRateByType(oreTargeting: Boolean, planetState: PlanetState): List<OreRate> {
-        val getRatio = { it: OrePart ->
-            if (oreTargeting && it.oreType == planetState.preferredOreType) {
-                it.ratio + 0.15
-            } else {
-                it.ratio
-            }
+    private fun orderedMineRates(oreTargeting: Boolean, planet: Planet, preferredOreType: OreType): Sequence<OreRate> =
+        when {
+            oreTargeting -> planet.orderedOreDistribution.asSequence()
+                .sortedByDescending {
+                    if (oreTargeting && it.oreType == preferredOreType) {
+                        OreType.LAST // maximum value, so that the preferred ore is placed first
+                    } else {
+                        it.oreType
+                    }
+                }
+                .map {
+                    val actualRatio = if (it.oreType == preferredOreType) it.ratio + 0.15 else it.ratio
+                    OreRate(it.oreType, mineRate * actualRatio)
+                }
+            else -> planet.orderedOreDistribution.asSequence().map { OreRate(it.oreType, mineRate * it.ratio) }
         }
-        val (preferred, others) = planetState.planet.oreDistribution
-            .asSequence()
-            .map { OreRate(it.oreType, mineRate * getRatio(it)) }
-            .partition { it.oreType == planetState.preferredOreType }
-        return preferred + others.sortedByDescending { it.oreType }
-    }
 
-    private fun computeDeliveryRates(totalRemovalRate: Rate, mineRates: List<OreRate>): List<OreRate> {
+    private fun computeDeliveryRates(totalRemovalRate: Rate, mineRates: Sequence<OreRate>): List<OreRate> {
         var remainingRemovalRate = totalRemovalRate
 
         val deliveryRates = mutableListOf<OreRate>()

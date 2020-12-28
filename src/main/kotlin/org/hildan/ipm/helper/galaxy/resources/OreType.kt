@@ -30,4 +30,8 @@ enum class OreType(
     override val requiredResources: Resources = Resources.NOTHING
     override val craftTime: Duration = Duration.ZERO
     override val smeltTime: Duration = Duration.ZERO
+
+    companion object {
+        val LAST = values().last()
+    }
 }

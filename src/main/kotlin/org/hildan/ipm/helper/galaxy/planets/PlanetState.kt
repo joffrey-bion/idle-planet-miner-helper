@@ -18,7 +18,7 @@ data class PlanetState(
     val mineLevel: Int = 1,
     val shipLevel: Int = 1,
     val cargoLevel: Int = 1,
-    val preferredOreType: OreType = planet.oreDistribution.map { it.oreType }.maxByOrNull { it.baseValue }!!,
+    val preferredOreType: OreType = planet.orderedOreDistribution.first().oreType,
     val colonyLevel: Int = 0,
     val colonyBonus: PlanetBonus = PlanetBonus.NONE,
     val galaxyBonuses: GalaxyBonuses
@@ -27,7 +27,7 @@ data class PlanetState(
 
     val production = totalBonus.applyTo(PlanetProduction.forLevels(mineLevel, shipLevel, cargoLevel))
 
-    val oreRates = production.deliveryRateByOreType(this, galaxyBonuses.oreTargetingActive)
+    val oreRates = production.deliveryRateByOreType(galaxyBonuses.oreTargetingActive, planet, preferredOreType)
 
     val upgradeCosts = galaxyBonuses.total.reduceUpgradeCosts(
         costs = PlanetUpgradeCosts(
