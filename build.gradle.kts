@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.4.21"
     application
 }
 
@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
@@ -18,7 +18,6 @@ dependencies {
 
 application {
     mainClass.set("org.hildan.ipm.helper.MainKt")
-    applicationDefaultJvmArgs = listOf("-XX:+UnlockExperimentalVMOptions", "-XX:+UseZGC", "-Xlog:gc")
 }
 
 tasks {
