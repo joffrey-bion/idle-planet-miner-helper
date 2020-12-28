@@ -118,20 +118,15 @@ fun main() {
 }
 
 private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction): String {
-    val formattedIndex = (index + 1).leftPadded(3, false)
+    val formattedIndex = "${(index + 1)}".padStart(3, ' ')
     val incomePerMinute = action.newGalaxy.totalIncomeRate.formatPerMinute()
     return "$formattedIndex. [${gameTime.format()}]  ${action.action}\t\tNow: $incomePerMinute"
 }
 
 private fun Duration.format(): String = toComponents { hours, minutes, seconds, nanoseconds ->
-    val h = hours.leftPadded(2)
-    val min = minutes.leftPadded(2)
-    val sec = seconds.leftPadded(2)
-    val ms = (nanoseconds / 1_000_000).leftPadded(3)
+    val h = "$hours".padStart(2, '0')
+    val min = "$minutes".padStart(2, '0')
+    val sec = "$seconds".padStart(2, '0')
+    val ms = "${(nanoseconds / 1_000_000)}".padStart(3, '0')
     "${h}:${min}:${sec}.${ms}"
-}
-
-private fun Number.leftPadded(width: Int, zeroes: Boolean = true): String {
-    val zero = if (zeroes) "0" else ""
-    return String.format("%$zero${width}d", this)
 }
