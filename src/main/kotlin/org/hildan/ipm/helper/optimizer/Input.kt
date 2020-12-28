@@ -23,7 +23,7 @@ data class Input(
     val market: Map<ResourceType, Double>,
     val stars: Map<ResourceType, Int>,
     val researchedProjects: List<Project>,
-    val planets: List<PlanetState>
+    val planets: List<PlanetState>,
 ) {
     private val constantBonuses = ConstantBonuses(
         shipsBonus = upgrades.map { it.bonus }.sum(),
@@ -31,7 +31,7 @@ data class Input(
         beaconBonus = beacon.asSingleBonus(),
         managerAssignment = ManagerAssignment(assignedManagers),
         marketBonus = Bonus.values(market),
-        starsBonus = Bonus.values(stars.mapValues { 1 + 0.2 * it.value })
+        starsBonus = Bonus.values(stars.mapValues { 1 + 0.2 * it.value }),
     )
     val galaxy = Galaxy.init(constantBonuses).withProjects(researchedProjects).withPlanets(planets)
 }

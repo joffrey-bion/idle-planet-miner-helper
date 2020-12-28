@@ -13,7 +13,7 @@ import java.time.Duration
 
 class Optimizer(
     initialGalaxy: Galaxy,
-    private val searchDepth: Int = 4
+    private val searchDepth: Int = 4,
 ) {
     private var currentGalaxy = initialGalaxy
 
@@ -54,7 +54,7 @@ data class State(
     val actionsFromStart: List<AppliedAction>,
     val requiredCashSoFar: Price,
     val requiredResourcesSoFar: Resources,
-    val timeToReach: Duration
+    val timeToReach: Duration,
 ) {
     fun timeToRoi1(initialGalaxy: Galaxy): Duration {
         val incomeRateDiff = galaxy.totalIncomeRate - initialGalaxy.totalIncomeRate
@@ -78,7 +78,7 @@ data class State(
             actionsFromStart + appliedAction,
             requiredCashSoFar + appliedAction.requiredCash,
             requiredResourcesSoFar + appliedAction.requiredResources,
-            timeToReach + appliedAction.time
+            timeToReach + appliedAction.time,
         )
     }
 
@@ -89,7 +89,7 @@ data class State(
             actionsFromStart = emptyList(),
             requiredCashSoFar = Price.ZERO,
             requiredResourcesSoFar = Resources.NOTHING,
-            timeToReach = Duration.ZERO
+            timeToReach = Duration.ZERO,
         )
     }
 }

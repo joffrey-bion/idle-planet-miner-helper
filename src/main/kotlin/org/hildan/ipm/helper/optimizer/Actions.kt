@@ -21,7 +21,7 @@ data class AppliedAction(
     val requiredCash: Price,
     val requiredResources: Resources,
     val time: Duration,
-    val incomeRateGain: ValueRate
+    val incomeRateGain: ValueRate,
 ) {
     override fun toString(): String = """
         $action
@@ -39,7 +39,7 @@ fun Galaxy.possibleActions(): List<Action> {
         listOf(
             Action.Upgrade.Mine(it.planet, it.mineLevel + 1),
             Action.Upgrade.Ship(it.planet, it.shipLevel + 1),
-            Action.Upgrade.Cargo(it.planet, it.cargoLevel + 1)
+            Action.Upgrade.Cargo(it.planet, it.cargoLevel + 1),
         )
     }
     val researchActions = researchProjectActions()
@@ -96,7 +96,7 @@ private fun Galaxy.createAction(
         requiredCash = requiredCash,
         requiredResources = requiredResources,
         time = max(timeWaitingForCash, timeWaitingForResources),
-        incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate
+        incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate,
     )
 }
 
@@ -109,7 +109,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.withBoughtPlanet(planet),
-            requiredCash = planet.unlockPrice
+            requiredCash = planet.unlockPrice,
         )
 
         override fun toString(): String = "Buy planet $planet"
@@ -117,7 +117,7 @@ sealed class Action {
 
     sealed class Upgrade(
         open val planet: Planet,
-        open val targetLevel: Int
+        open val targetLevel: Int,
     ) : Action() {
         fun toString(upgradedElementName: String): String =
                 "Upgrade $planet's $upgradedElementName to level $targetLevel"
@@ -127,7 +127,7 @@ sealed class Action {
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withMineLevel(planet, targetLevel),
-                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).mineUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).mineUpgrade, // FIXME this is only valid for one level up
             )
 
             override fun toString(): String = super.toString("MINE")
@@ -138,7 +138,7 @@ sealed class Action {
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withShipLevel(planet, targetLevel),
-                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).shipUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).shipUpgrade, // FIXME this is only valid for one level up
             )
 
             override fun toString(): String = super.toString("SHIP")
@@ -149,7 +149,7 @@ sealed class Action {
             override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
                 action = this,
                 newGalaxy = galaxy.withCargoLevel(planet, targetLevel),
-                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).cargoUpgrade
+                requiredCash = galaxy.planets.upgradeCosts.getValue(planet).cargoUpgrade, // FIXME this is only valid for one level up
             )
 
             override fun toString(): String = super.toString("CARGO")
@@ -161,7 +161,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.withProject(project),
-            requiredResources = galaxy.bonuses.constant.actualResourcesRequiredByProject.getValue(project)
+            requiredResources = galaxy.bonuses.constant.actualResourcesRequiredByProject.getValue(project),
         )
 
         override fun toString(): String = "Research project $project"
@@ -172,7 +172,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.copy(nbSmelters = galaxy.nbSmelters + 1),
-            requiredCash = Smelters.priceForOneMore(galaxy.nbSmelters)
+            requiredCash = Smelters.priceForOneMore(galaxy.nbSmelters),
         )
 
         override fun toString(): String = "Buy one more smelter"
@@ -183,7 +183,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.copy(nbCrafters = galaxy.nbCrafters + 1),
-            requiredCash = Crafters.priceForOneMore(galaxy.nbCrafters)
+            requiredCash = Crafters.priceForOneMore(galaxy.nbCrafters),
         )
 
         override fun toString(): String = "Buy one more crafter"
@@ -194,7 +194,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.copy(highestUnlockedAlloyRecipe = alloy),
-            requiredCash = alloy.recipeUnlockPrice
+            requiredCash = alloy.recipeUnlockPrice,
         )
 
         override fun toString(): String = "Unlock smelter recipe $alloy"
@@ -205,7 +205,7 @@ sealed class Action {
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy.copy(highestUnlockedItemRecipe = item),
-            requiredCash = item.recipeUnlockPrice
+            requiredCash = item.recipeUnlockPrice,
         )
 
         override fun toString(): String = "Unlock crafter recipe $item"
@@ -215,7 +215,7 @@ sealed class Action {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy
+            newGalaxy = galaxy,
         )
 
         override fun toString(): String = "Switch all smelters to $alloy"
@@ -225,7 +225,7 @@ sealed class Action {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
-            newGalaxy = galaxy
+            newGalaxy = galaxy,
         )
 
         override fun toString(): String = "Switch all crafters to $item"

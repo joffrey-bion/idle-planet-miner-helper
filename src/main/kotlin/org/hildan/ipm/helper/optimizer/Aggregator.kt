@@ -32,7 +32,7 @@ private fun AppliedAction.combineWith(next: AppliedAction, mergeActions: (Action
             requiredCash = requiredCash + next.requiredCash,
             requiredResources = requiredResources + next.requiredResources,
             time = time + next.time,
-            incomeRateGain = incomeRateGain + next.incomeRateGain
+            incomeRateGain = incomeRateGain + next.incomeRateGain,
         )
 
 private fun areCombinableUpgrades(action: Action, next: Action): Boolean {
