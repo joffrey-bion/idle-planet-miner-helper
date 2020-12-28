@@ -1,8 +1,8 @@
 package org.hildan.ipm.helper.galaxy.money
 
 import org.hildan.ipm.helper.utils.formatWithSuffix
-import java.time.Duration
-import kotlin.math.roundToLong
+import kotlin.time.Duration
+import kotlin.time.seconds
 
 fun min(p1: Price, p2: Price) = if (p1 < p2) p1 else p2
 
@@ -10,7 +10,7 @@ fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
 
 fun List<ValueRate>.sumRates() = fold(ValueRate.ZERO) { vr1, vr2 -> vr1 + vr2}
 
-operator fun Int.div(rate: Rate): Duration = Duration.ofMillis((this * 1000.0 / rate.timesPerSecond).toLong())
+operator fun Int.div(rate: Rate): Duration = (this / rate.timesPerSecond).seconds
 
 inline class Rate(val timesPerSecond: Double): Comparable<Rate> {
 
@@ -27,9 +27,7 @@ inline class Rate(val timesPerSecond: Double): Comparable<Rate> {
     override fun toString(): String = String.format("%.2f/s", timesPerSecond)
 }
 
-inline class ValueRate(private val amountPerSec: Double) : Comparable<ValueRate> {
-
-    val amountPerMillisecond: Price get() = Price(amountPerSec / 1000)
+inline class ValueRate(val amountPerSec: Double) : Comparable<ValueRate> {
 
     operator fun plus(other: ValueRate) = ValueRate(amountPerSec + other.amountPerSec)
 
@@ -58,9 +56,9 @@ inline class Price(private val amount: Double) : Comparable<Price> {
 
     operator fun div(other: Price): Double = amount / other.amount
 
-    operator fun div(time: Duration): ValueRate = ValueRate(amount / time.toSeconds())
+    operator fun div(time: Duration): ValueRate = ValueRate(amount / time.inSeconds)
 
-    operator fun div(rate: ValueRate): Duration = Duration.ofMillis((this / rate.amountPerMillisecond).roundToLong())
+    operator fun div(rate: ValueRate): Duration = (amount / rate.amountPerSec).seconds
 
     operator fun times(factor: Double): Price = Price(amount * factor)
 

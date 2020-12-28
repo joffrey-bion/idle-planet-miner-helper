@@ -15,10 +15,9 @@ import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.utils.andBelow
-import org.hildan.ipm.helper.utils.div
-import org.hildan.ipm.helper.utils.max
+import org.hildan.ipm.helper.utils.fastMaxOf
 import org.hildan.ipm.helper.utils.sumBy
-import java.time.Duration
+import kotlin.time.Duration
 import java.util.EnumSet
 
 data class Galaxy private constructor(
@@ -119,7 +118,7 @@ data class Galaxy private constructor(
         val oreGatheringTime = ores.entries.sumBy { (type, qty) -> qty / planets.oreRatesByType.getValue(type as OreType) }
         val smeltTime = if (resources.hasAlloys) resources.dividedSmeltTimeFromOre else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.dividedCraftTimeFromOresAndAlloys else Duration.ZERO
-        return oreGatheringTime + max(smeltTime, craftTime)
+        return oreGatheringTime + fastMaxOf(smeltTime, craftTime)
     }
 
     private fun Planet.stateReport() = """

@@ -9,8 +9,8 @@ import org.hildan.ipm.helper.optimizer.AppliedAction
 import org.hildan.ipm.helper.optimizer.Input
 import org.hildan.ipm.helper.optimizer.Optimizer
 import org.hildan.ipm.helper.optimizer.compact
-import java.time.Duration
-import kotlin.system.measureTimeMillis
+import kotlin.time.Duration
+import kotlin.time.measureTime
 
 fun main() {
     val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
@@ -103,7 +103,7 @@ fun main() {
 
     //    println(galaxy)
 
-    val time = measureTimeMillis {
+    val time = measureTime {
         var gameTime: Duration = Duration.ZERO
         Optimizer(input.galaxy)
             .generateActions()
@@ -114,7 +114,7 @@ fun main() {
                 println(formatAction(i, gameTime, action))
             }
     }
-    println("Executed in ${Duration.ofMillis(time).format()}")
+    println("Executed in ${time.format()}")
 }
 
 private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction): String {
@@ -123,12 +123,12 @@ private fun formatAction(index: Int, gameTime: Duration, action: AppliedAction):
     return "$formattedIndex. [${gameTime.format()}]  ${action.action}\t\tNow: $incomePerMinute"
 }
 
-private fun Duration.format(): String {
-    val hours = toHours().leftPadded(2)
-    val min = toMinutesPart().leftPadded(2)
-    val sec = toSecondsPart().leftPadded(2)
-    val ms = toMillisPart().leftPadded(3)
-    return "${hours}:${min}:${sec}.${ms}"
+private fun Duration.format(): String = toComponents { hours, minutes, seconds, nanoseconds ->
+    val h = hours.leftPadded(2)
+    val min = minutes.leftPadded(2)
+    val sec = seconds.leftPadded(2)
+    val ms = (nanoseconds / 1_000_000).leftPadded(3)
+    "${h}:${min}:${sec}.${ms}"
 }
 
 private fun Number.leftPadded(width: Int, zeroes: Boolean = true): String {

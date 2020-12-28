@@ -1,7 +1,7 @@
 package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
-import java.time.Duration
+import kotlin.time.Duration
 
 enum class OreType(
     override val baseValue: Price

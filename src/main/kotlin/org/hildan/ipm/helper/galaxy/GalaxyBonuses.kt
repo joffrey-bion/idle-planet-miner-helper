@@ -12,9 +12,8 @@ import org.hildan.ipm.helper.galaxy.resources.ResourceType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.utils.LazyMap
 import org.hildan.ipm.helper.utils.sumBy
-import org.hildan.ipm.helper.utils.times
 import org.hildan.ipm.helper.utils.lazyEnumMap
-import java.time.Duration
+import kotlin.time.Duration
 import java.util.EnumSet
 
 data class GalaxyBonuses(

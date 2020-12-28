@@ -1,8 +1,9 @@
 package org.hildan.ipm.helper.galaxy.money
 
-import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.milliseconds
+import kotlin.time.seconds
 
 class MoneyTest {
 
@@ -38,8 +39,9 @@ class MoneyTest {
         val twentyDollarsPerSec = ValueRate(20.0)
 
         assertEquals(twentyDollarsPerSec, tenDollars * twoPerSec)
-        assertEquals(tenDollarsPerSec, tenDollars / Duration.ofSeconds(1))
-        assertEquals(Duration.ofSeconds(1), tenDollars / tenDollarsPerSec)
-        assertEquals(Duration.ofMillis(500), tenDollars / twentyDollarsPerSec)
+        assertEquals(tenDollarsPerSec, tenDollars / 1.seconds)
+        assertEquals(1.seconds, tenDollars / tenDollarsPerSec)
+        assertEquals(0.5.seconds, tenDollars / twentyDollarsPerSec)
+        assertEquals(500.milliseconds, tenDollars / twentyDollarsPerSec)
     }
 }

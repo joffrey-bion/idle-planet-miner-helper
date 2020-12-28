@@ -11,9 +11,9 @@ import org.hildan.ipm.helper.galaxy.resources.Crafters
 import org.hildan.ipm.helper.galaxy.resources.ItemType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.Smelters
-import org.hildan.ipm.helper.utils.max
+import org.hildan.ipm.helper.utils.fastMaxOf
 import org.hildan.ipm.helper.utils.next
-import java.time.Duration
+import kotlin.time.Duration
 
 data class AppliedAction(
     val action: Action,
@@ -95,7 +95,7 @@ private fun Galaxy.createAction(
         newGalaxy = newGalaxy.copy(currentCash = currentCash - cashInstantlySpent),
         requiredCash = requiredCash,
         requiredResources = requiredResources,
-        time = max(timeWaitingForCash, timeWaitingForResources),
+        time = fastMaxOf(timeWaitingForCash, timeWaitingForResources),
         incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate,
     )
 }

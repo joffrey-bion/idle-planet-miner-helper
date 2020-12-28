@@ -4,11 +4,11 @@ import org.hildan.ipm.helper.galaxy.resources.ItemType.BATTERY
 import org.hildan.ipm.helper.galaxy.resources.OreType.COPPER
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.of
-import org.hildan.ipm.helper.utils.min
-import org.hildan.ipm.helper.utils.sec
-import java.time.Duration
+import kotlin.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.minutes
+import kotlin.time.seconds
 
 class GalaxyBonusesTest {
 
@@ -25,8 +25,8 @@ class GalaxyBonusesTest {
         val bonuses = GalaxyBonuses(ConstantBonusesSamples.NONE)
         val resources = Resources.of(1 of BATTERY)
         // 20s x (10 + 2x5)
-        assertEquals(400.sec(), with(bonuses) { resources.totalSmeltTimeFromOre })
+        assertEquals(400.seconds, with(bonuses) { resources.totalSmeltTimeFromOre })
         // 4min + 2x 1min
-        assertEquals(6.min(), with(bonuses) {resources.totalCraftTimeFromOresAndAlloys })
+        assertEquals(6.minutes, with(bonuses) { resources.totalCraftTimeFromOresAndAlloys })
     }
 }

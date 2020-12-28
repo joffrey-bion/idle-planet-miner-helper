@@ -21,8 +21,12 @@ application {
 }
 
 tasks {
+    val compilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.time.ExperimentalTime")
     compileKotlin {
-        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+        kotlinOptions.freeCompilerArgs += compilerArgs
+    }
+    compileTestKotlin {
+        kotlinOptions.freeCompilerArgs += compilerArgs
     }
     test {
         useJUnitPlatform()

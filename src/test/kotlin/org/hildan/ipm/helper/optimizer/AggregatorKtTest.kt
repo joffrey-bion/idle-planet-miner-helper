@@ -8,9 +8,9 @@ import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import org.hildan.ipm.helper.galaxy.resources.Resources
 import org.hildan.ipm.helper.galaxy.resources.of
-import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.*
 
 internal class AggregatorKtTest {
 
@@ -19,7 +19,7 @@ internal class AggregatorKtTest {
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(10),
         requiredResources = Resources.of(2 of OreType.COPPER, 2 of OreType.IRON),
-        time = Duration.ofSeconds(1),
+        time = 1.seconds,
         incomeRateGain = ValueRate(1.0)
     )
 
@@ -28,7 +28,7 @@ internal class AggregatorKtTest {
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),
-        time = Duration.ofSeconds(2),
+        time = 2.seconds,
         incomeRateGain = ValueRate(2.0)
     )
 
@@ -37,7 +37,7 @@ internal class AggregatorKtTest {
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(30),
         requiredResources = Resources.of(3 of OreType.COPPER, 2 of OreType.IRON, 4 of OreType.LEAD),
-        time = Duration.ofSeconds(3),
+        time = 3.seconds,
         incomeRateGain = ValueRate(3.0)
     )
 
@@ -46,7 +46,7 @@ internal class AggregatorKtTest {
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(21),
         requiredResources = Resources.of(21 of OreType.IRON),
-        time = Duration.ofSeconds(21),
+        time = 21.seconds,
         incomeRateGain = ValueRate(2.1)
     )
 
@@ -55,7 +55,7 @@ internal class AggregatorKtTest {
         newGalaxy = Galaxy.init(ConstantBonusesSamples.SAMPLE_1),
         requiredCash = Price(20),
         requiredResources = Resources.of(1 of OreType.COPPER, 4 of OreType.LEAD),
-        time = Duration.ofSeconds(2),
+        time = 2.seconds,
         incomeRateGain = ValueRate(2.0)
     )
 

@@ -2,7 +2,7 @@ package org.hildan.ipm.helper.galaxy.resources
 
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.utils.mergedWith
-import java.time.Duration
+import kotlin.time.Duration
 import java.util.EnumSet
 import kotlin.math.roundToInt
 
