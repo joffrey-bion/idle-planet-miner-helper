@@ -2,7 +2,7 @@ package org.hildan.ipm.helper.utils
 
 import java.util.EnumMap
 
-fun <K, V> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, V> {
+fun <K, V : Any> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, V> {
     val result = this.toMutableMap()
     for ((k,v) in other) {
         result.merge(k, v, combine)
@@ -10,7 +10,7 @@ fun <K, V> Map<K, V>.mergedWith(other: Map<K, V>, combine: (V, V) -> V): Map<K, 
     return result
 }
 
-inline fun <T, K, V> Iterable<T>.associateMerging(
+inline fun <T, K, V : Any> Iterable<T>.associateMerging(
     keyGetter: (T) -> K,
     valueGetter: (T) -> V,
     noinline merge: (V, V) -> V
