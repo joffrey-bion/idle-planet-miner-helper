@@ -38,7 +38,7 @@ data class Resources(
     }
 
     val hasAlloys: Boolean
-        get() = allOreTypes.isNotEmpty()
+        get() = allAlloyTypes.isNotEmpty()
 
     val hasItems: Boolean
         get() = allResourceTypes.any { it is ItemType }
