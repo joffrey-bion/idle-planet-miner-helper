@@ -6,11 +6,15 @@ import kotlin.time.seconds
 
 fun min(p1: Price, p2: Price) = if (p1 < p2) p1 else p2
 
-fun List<Price>.sum() = fold(Price.ZERO) { p1, p2 -> p1 + p2}
+fun List<Price>.sum() = fold(Price.ZERO) { total, price -> total + price}
+
+fun <T> List<T>.sumOf(getPrice: (T) -> Price) = fold(Price.ZERO) { total, elt -> total + getPrice(elt)}
 
 fun List<ValueRate>.sumRates() = fold(ValueRate.ZERO) { vr1, vr2 -> vr1 + vr2}
 
 operator fun Int.div(rate: Rate): Duration = (this / rate.timesPerSecond).seconds
+
+operator fun Double.div(time: Duration): Rate = Rate(this / time.inSeconds)
 
 inline class Rate(val timesPerSecond: Double): Comparable<Rate> {
 
@@ -18,20 +22,36 @@ inline class Rate(val timesPerSecond: Double): Comparable<Rate> {
 
     operator fun minus(other: Rate): Rate = Rate(timesPerSecond - other.timesPerSecond)
 
+    operator fun times(factor: Int): Rate = Rate(timesPerSecond * factor)
+
     operator fun times(factor: Double): Rate = Rate(timesPerSecond * factor)
+
+    operator fun times(time: Duration): Double = timesPerSecond * time.inSeconds
 
     operator fun div(factor: Double): Rate = Rate(timesPerSecond / factor)
 
     override fun compareTo(other: Rate): Int = timesPerSecond.compareTo(other.timesPerSecond)
 
     override fun toString(): String = String.format("%.2f/s", timesPerSecond)
+
+    companion object {
+        val ZERO = Rate(0.0)
+    }
 }
 
 inline class ValueRate(val amountPerSec: Double) : Comparable<ValueRate> {
 
-    operator fun plus(other: ValueRate) = ValueRate(amountPerSec + other.amountPerSec)
+    operator fun plus(other: ValueRate): ValueRate = ValueRate(amountPerSec + other.amountPerSec)
 
-    operator fun minus(other: ValueRate) = ValueRate(amountPerSec - other.amountPerSec)
+    operator fun minus(other: ValueRate): ValueRate = ValueRate(amountPerSec - other.amountPerSec)
+
+    operator fun times(factor: Int): ValueRate = ValueRate(amountPerSec * factor)
+
+    operator fun times(factor: Double): ValueRate = ValueRate(amountPerSec * factor)
+
+    operator fun times(time: Duration): Price = Price(amountPerSec * time.inSeconds)
+
+    operator fun div(factor: Double): ValueRate = ValueRate(amountPerSec / factor)
 
     override fun compareTo(other: ValueRate): Int = amountPerSec.compareTo(other.amountPerSec)
 

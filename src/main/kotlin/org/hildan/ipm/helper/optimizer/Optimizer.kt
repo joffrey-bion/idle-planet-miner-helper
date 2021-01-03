@@ -20,12 +20,9 @@ class Optimizer(initialGalaxy: Galaxy) {
             val newGalaxy = appliedAction.newGalaxy
             yield(appliedAction)
 
-            // these could be included in the search by providing actual income rate changes (make them "real" actions)
-            if (currentGalaxy.maxIncomeSmeltRecipe != newGalaxy.maxIncomeSmeltRecipe) {
-                yield(Action.SwitchSmeltRecipe(newGalaxy.maxIncomeSmeltRecipe!!).performOn(newGalaxy))
-            }
-            if (currentGalaxy.maxIncomeCraftRecipe != newGalaxy.maxIncomeCraftRecipe) {
-                yield(Action.SwitchCraftRecipe(newGalaxy.maxIncomeCraftRecipe!!).performOn(newGalaxy))
+            // this could be included in the search by providing actual income rate changes (make them "real" actions)
+            if (currentGalaxy.smeltersCraftersSetup != newGalaxy.smeltersCraftersSetup) {
+                yield(Action.SwitchSmeltersAndCrafters(newGalaxy.smeltersCraftersSetup).performOn(newGalaxy))
             }
 
             currentGalaxy = newGalaxy

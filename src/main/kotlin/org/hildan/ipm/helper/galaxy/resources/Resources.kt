@@ -15,18 +15,23 @@ interface ResourceType {
     val craftTime: Duration
 
     companion object {
-        fun all(): List<ResourceType> = emptyList<ResourceType>() + OreType.values() + AlloyType.values() + ItemType.values()
+        @OptIn(ExperimentalStdlibApi::class)
+        val ALL: List<ResourceType> = buildList {
+            addAll(OreType.values())
+            addAll(AlloyType.values())
+            addAll(ItemType.values())
+        }
     }
 }
 
 data class Resources(
-    val resources: Map<ResourceType, Int>
+    val quantitiesByType: Map<ResourceType, Int>
 ) {
     private val resourceTypes: Set<ResourceType>
-        get() = resources.keys
+        get() = quantitiesByType.keys
 
     val allResourceTypes: Set<ResourceType> by lazy {
-        resourceTypes + resourceTypes.flatMapTo(HashSet<ResourceType>()) { it.requiredResources.allResourceTypes }
+        resourceTypes + resourceTypes.flatMapTo(HashSet()) { it.requiredResources.allResourceTypes }
     }
 
     val allOreTypes: Set<OreType> by lazy {
@@ -43,15 +48,15 @@ data class Resources(
     val hasItems: Boolean
         get() = allResourceTypes.any { it is ItemType }
 
-    operator fun plus(other: Resources) = Resources(resources.mergedWith(other.resources, Int::plus))
+    operator fun plus(other: Resources) = Resources(quantitiesByType.mergedWith(other.quantitiesByType, Int::plus))
 
     operator fun times(factor: Double): Resources =
-            Resources(resources.mapValues { (_, qty) -> (qty * factor).roundToInt() })
+            Resources(quantitiesByType.mapValues { (_, qty) -> (qty * factor).roundToInt() })
 
-    override fun toString(): String = if (resources.isEmpty()) {
+    override fun toString(): String = if (quantitiesByType.isEmpty()) {
         "no resources"
     } else {
-        resources.entries.joinToString(", ") { (type, qty) -> "$qty $type" }
+        quantitiesByType.entries.joinToString(", ") { (type, qty) -> "$qty $type" }
     }
 
     companion object {

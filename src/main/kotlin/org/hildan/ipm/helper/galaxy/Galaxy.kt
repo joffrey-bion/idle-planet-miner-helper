@@ -6,19 +6,15 @@ import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.div
 import org.hildan.ipm.helper.galaxy.money.sumRates
-import org.hildan.ipm.helper.galaxy.planets.PlanetState
 import org.hildan.ipm.helper.galaxy.planets.Planet
+import org.hildan.ipm.helper.galaxy.planets.PlanetState
 import org.hildan.ipm.helper.galaxy.planets.Planets
-import org.hildan.ipm.helper.galaxy.resources.AlloyType
-import org.hildan.ipm.helper.galaxy.resources.ItemType
-import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.resources.ResourceType
-import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.galaxy.resources.*
 import org.hildan.ipm.helper.utils.andBelow
 import org.hildan.ipm.helper.utils.fastMaxOf
 import org.hildan.ipm.helper.utils.sumBy
+import java.util.*
 import kotlin.time.Duration
-import java.util.EnumSet
 
 data class Galaxy private constructor(
     val bonuses: GalaxyBonuses,
@@ -42,21 +38,18 @@ data class Galaxy private constructor(
             accessibleAlloys.containsAll(it.requiredResources.allAlloyTypes)
         }
 
-    private val accessibleResources: Set<ResourceType> = HashSet<ResourceType>().apply {
+    @OptIn(ExperimentalStdlibApi::class)
+    private val accessibleResources: Set<ResourceType> = buildSet {
         addAll(planets.accessibleOres)
         addAll(accessibleAlloys)
         addAll(accessibleItems)
     }
 
-    val maxIncomeSmeltRecipe: AlloyType? = with(bonuses) { accessibleAlloys.maxBy { it.smeltIncome } }
-
-    val maxIncomeCraftRecipe: ItemType? = with(bonuses) { accessibleItems.maxBy { it.craftIncome } }
+    val smeltersCraftersSetup = optimalRecipesFor(accessibleResources, nbSmelters, nbCrafters, bonuses)
 
     val totalIncomeRate: ValueRate = with(bonuses) {
         val oreIncome = planets.oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()
-        val smeltIncome = maxIncomeSmeltRecipe?.smeltIncome ?: ValueRate.ZERO
-        val craftIncome = maxIncomeCraftRecipe?.craftIncome ?: ValueRate.ZERO
-        oreIncome + smeltIncome + craftIncome
+        oreIncome + smeltersCraftersSetup.totalIncome
     }
 
     fun withBoughtPlanet(planet: Planet) : Galaxy = copy(
@@ -114,7 +107,7 @@ data class Galaxy private constructor(
         get() = with(bonuses) { totalCraftTimeFromOresAndAlloys / nbCrafters }
 
     fun getApproximateTime(resources: Resources): Duration {
-        val ores = resources.resources.filterKeys { it is OreType }
+        val ores = resources.quantitiesByType.filterKeys { it is OreType }
         val oreGatheringTime = ores.entries.sumBy { (type, qty) -> qty / planets.oreRatesByType.getValue(type as OreType) }
         val smeltTime = if (resources.hasAlloys) resources.dividedSmeltTimeFromOre else Duration.ZERO
         val craftTime = if (resources.hasItems) resources.dividedCraftTimeFromOresAndAlloys else Duration.ZERO

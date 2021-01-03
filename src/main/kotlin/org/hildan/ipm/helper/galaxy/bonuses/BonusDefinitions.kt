@@ -61,7 +61,7 @@ data class ResourceValuesBonus(
     private val itemsMultiplier: Multiplier = Multiplier.NONE,
     private val resourceMultipliers: Map<ResourceType, Multiplier> = emptyMap()
 ) {
-    val totalMultiplier: Map<ResourceType, Multiplier> = ResourceType.all().associateWith { getValue(it) }
+    val totalMultiplier: Map<ResourceType, Multiplier> = ResourceType.ALL.associateWith { getValue(it) }
 
     operator fun times(other: ResourceValuesBonus) = ResourceValuesBonus(
         alloysMultiplier = alloysMultiplier * other.alloysMultiplier,

@@ -6,11 +6,7 @@ import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.min
-import org.hildan.ipm.helper.galaxy.resources.AlloyType
-import org.hildan.ipm.helper.galaxy.resources.Crafters
-import org.hildan.ipm.helper.galaxy.resources.ItemType
-import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.galaxy.resources.Smelters
+import org.hildan.ipm.helper.galaxy.resources.*
 import org.hildan.ipm.helper.utils.fastMaxOf
 import org.hildan.ipm.helper.utils.next
 import kotlin.time.Duration
@@ -211,23 +207,13 @@ sealed class Action {
         override fun toString(): String = "Unlock crafter recipe $item"
     }
 
-    data class SwitchSmeltRecipe(val alloy: AlloyType): Action() {
+    data class SwitchSmeltersAndCrafters(val smeltersCraftersSetup: SmeltersCraftersSetup): Action() {
 
         override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
             action = this,
             newGalaxy = galaxy,
         )
 
-        override fun toString(): String = "Switch all smelters to $alloy"
-    }
-
-    data class SwitchCraftRecipe(val item: ItemType): Action() {
-
-        override fun performOn(galaxy: Galaxy): AppliedAction = galaxy.createAction(
-            action = this,
-            newGalaxy = galaxy,
-        )
-
-        override fun toString(): String = "Switch all crafters to $item"
+        override fun toString(): String = "Switch all smelters to ${smeltersCraftersSetup.smelters} and crafters to ${smeltersCraftersSetup.crafters}"
     }
 }
