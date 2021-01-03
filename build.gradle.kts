@@ -22,7 +22,11 @@ application {
 }
 
 tasks {
-    val compilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.time.ExperimentalTime", "-Xinline-classes")
+    val compilerArgs = listOf(
+        "-Xopt-in=kotlin.RequiresOptIn",
+        "-Xopt-in=kotlin.time.ExperimentalTime",
+        "-Xinline-classes"
+    )
     compileKotlin {
         kotlinOptions.freeCompilerArgs += compilerArgs
     }
