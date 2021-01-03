@@ -1,13 +1,12 @@
 package org.hildan.ipm.helper.optimizer
 
 import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.planets.Planet
-import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.Project
+import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.money.ValueRate
 import org.hildan.ipm.helper.galaxy.money.min
+import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.*
-import org.hildan.ipm.helper.utils.fastMaxOf
 import org.hildan.ipm.helper.utils.next
 import kotlin.time.Duration
 
@@ -76,7 +75,6 @@ private fun Galaxy.createAction(
     action: Action,
     newGalaxy: Galaxy,
     requiredCash: Price = Price.ZERO,
-    requiredResources: Resources = Resources.NOTHING
 ): AppliedAction {
     val cashInstantlySpent = min(currentCash, requiredCash)
     val remainingToPay = requiredCash - cashInstantlySpent
@@ -85,13 +83,30 @@ private fun Galaxy.createAction(
         totalIncomeRate == ValueRate.ZERO -> error("action costing extra money in 0-income galaxy")
         else -> remainingToPay / totalIncomeRate
     }
-    val timeWaitingForResources = getApproximateTime(requiredResources)
+    val newCash = currentCash - cashInstantlySpent
     return AppliedAction(
         action = action,
-        newGalaxy = newGalaxy.copy(currentCash = currentCash - cashInstantlySpent),
+        newGalaxy = newGalaxy.copy(currentCash = newCash),
         requiredCash = requiredCash,
+        requiredResources = Resources.NOTHING,
+        time = timeWaitingForCash,
+        incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate,
+    )
+}
+
+private fun Galaxy.createAction(
+    action: Action,
+    newGalaxy: Galaxy,
+    requiredResources: Resources
+): AppliedAction {
+    val timeWaitingForResources = getApproximateTime(requiredResources)
+    val newCash = currentCash + totalIncomeRate * timeWaitingForResources
+    return AppliedAction(
+        action = action,
+        newGalaxy = newGalaxy.copy(currentCash = newCash),
+        requiredCash = Price.ZERO,
         requiredResources = requiredResources,
-        time = fastMaxOf(timeWaitingForCash, timeWaitingForResources),
+        time = timeWaitingForResources,
         incomeRateGain = newGalaxy.totalIncomeRate - totalIncomeRate,
     )
 }
