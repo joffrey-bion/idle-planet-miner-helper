@@ -3,18 +3,12 @@ package org.hildan.ipm.helper.galaxy
 import org.hildan.ipm.helper.galaxy.bonuses.Bonus
 import org.hildan.ipm.helper.galaxy.bonuses.ConstantBonuses
 import org.hildan.ipm.helper.galaxy.money.Price
-import org.hildan.ipm.helper.galaxy.money.ValueRate
-import org.hildan.ipm.helper.galaxy.money.sum
-import org.hildan.ipm.helper.galaxy.resources.AlloyType
-import org.hildan.ipm.helper.galaxy.resources.ItemType
-import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.resources.ResourceType
-import org.hildan.ipm.helper.galaxy.resources.Resources
+import org.hildan.ipm.helper.galaxy.resources.*
 import org.hildan.ipm.helper.utils.LazyMap
-import org.hildan.ipm.helper.utils.sumBy
 import org.hildan.ipm.helper.utils.lazyEnumMap
+import org.hildan.ipm.helper.utils.sumBy
+import java.util.*
 import kotlin.time.Duration
-import java.util.EnumSet
 
 data class GalaxyBonuses(
     val constant: ConstantBonuses,
@@ -35,6 +29,14 @@ data class GalaxyBonuses(
         total.production.craftIngredients.applyTo(it.requiredResources)
     }
 
+    private val reducedSmeltTimeByAlloy: Map<AlloyType, Duration> = lazyEnumMap {
+        total.production.smeltSpeed.applyAsSpeed(it.smeltTime)
+    }
+
+    private val reducedCraftTimeByItem: Map<ItemType, Duration> = lazyEnumMap {
+        total.production.craftSpeed.applyAsSpeed(it.craftTime)
+    }
+
     private val smeltTimeFromOreByResourceType: Map<ResourceType, Duration> = LazyMap { res, cache ->
         val selfTime = total.production.smeltSpeed.applyAsSpeed(res.smeltTime)
         selfTime + res.computeDependenciesDuration(cache)
@@ -47,25 +49,11 @@ data class GalaxyBonuses(
 
     private fun ResourceType.computeDependenciesDuration(
         cache: LazyMap<ResourceType, Duration>
-    ): Duration = actualRequiredResources.resources.entries.sumBy { (type, qty) ->
+    ): Duration = actualRequiredResources.quantitiesByType.entries.sumBy { (type, qty) ->
         cache.getValue(type) * qty
     }
 
-    // TODO consider offline recipes
-    private val smeltingIncomeByAlloy: Map<AlloyType, ValueRate> = lazyEnumMap {
-        val consumedValue = it.actualRequiredResources.totalValue
-        val producedValue = it.currentValue
-        (producedValue - consumedValue) / total.production.smeltSpeed.applyAsSpeed(it.smeltTime)
-    }
-
-    // TODO consider offline recipes
-    private val craftingIncomeByItem: Map<ItemType, ValueRate> = lazyEnumMap {
-        val consumedValue = it.actualRequiredResources.totalValue
-        val producedValue = it.currentValue
-        (producedValue - consumedValue) / total.production.craftSpeed.applyAsSpeed(it.craftTime)
-    }
-
-    private val ResourceType.actualRequiredResources: Resources
+    val ResourceType.actualRequiredResources: Resources
         get() = when(this) {
             is AlloyType -> actualRequiredResources
             is ItemType -> actualRequiredResources
@@ -79,29 +67,28 @@ data class GalaxyBonuses(
     private val ItemType.actualRequiredResources: Resources
         get() = reducedCraftIngredientsByItem.getValue(this)
 
+    val ResourceType.actualProductionTime: Duration
+        get() = when (this) {
+            is AlloyType -> reducedSmeltTimeByAlloy.getValue(this)
+            is ItemType -> reducedCraftTimeByItem.getValue(this)
+            is OreType -> Duration.ZERO
+            else -> error("Unsupported resource type")
+        }
+
+    val ResourceType.currentValue: Price
+        get() = total.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue
+
+    val Resources.totalSmeltTimeFromOre: Duration
+        get() = quantitiesByType.entries.sumBy { (type, qty) -> type.actualSmeltTimeFromOre * qty }
+
+    val Resources.totalCraftTimeFromOresAndAlloys: Duration
+        get() = quantitiesByType.entries.sumBy { (type, qty) -> type.actualCraftTimeFromOresAndAlloys * qty }
+
     private val ResourceType.actualSmeltTimeFromOre: Duration
         get() = smeltTimeFromOreByResourceType.getValue(this)
 
     private val ResourceType.actualCraftTimeFromOresAndAlloys: Duration
         get() = craftTimeFromAlloysByResourceType.getValue(this)
-
-    val AlloyType.smeltIncome: ValueRate
-        get() = smeltingIncomeByAlloy.getValue(this)
-
-    val ItemType.craftIncome: ValueRate
-        get() = craftingIncomeByItem.getValue(this)
-
-    val ResourceType.currentValue: Price
-        get() = total.values.totalMultiplier[this]?.applyTo(baseValue) ?: baseValue
-
-    private val Resources.totalValue: Price
-        get() = resources.map { (type, qty) -> type.currentValue * qty }.sum()
-
-    val Resources.totalSmeltTimeFromOre: Duration
-        get() = resources.entries.sumBy { (type, qty) -> type.actualSmeltTimeFromOre * qty }
-
-    val Resources.totalCraftTimeFromOresAndAlloys: Duration
-        get() = resources.entries.sumBy { (type, qty) -> type.actualCraftTimeFromOresAndAlloys * qty }
 
     fun withProject(project: Project) : GalaxyBonuses = copy(
         researchedProjects = researchedProjects + project,

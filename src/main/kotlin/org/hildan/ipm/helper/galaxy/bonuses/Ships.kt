@@ -12,7 +12,7 @@ enum class Upgrade(
         Bonus.production(smeltSpeed = 1.5, craftSpeed = 1.5)
     ),
     THUNDERHORSE(Bonus.production(smeltSpeed = 2.0, craftSpeed = 2.0)),
-    MERCHANT(Bonus.values(multipliers = ResourceType.all().associateWith { 2.0 })),
+    MERCHANT(Bonus.values(multipliers = ResourceType.ALL.associateWith { 2.0 })),
 }
 
 fun Map<Room, Int>.asSingleBonus() = map { (room, level) -> room.bonus(level) }.sum()

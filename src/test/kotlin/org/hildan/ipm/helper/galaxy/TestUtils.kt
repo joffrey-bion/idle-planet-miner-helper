@@ -65,5 +65,5 @@ object ProjectSamples {
 }
 
 fun assertDoubleEquals(expected: Double, actual: Double, message: String? = null) {
-    assertTrue(abs(expected - actual) < 0.01, message)
+    assertTrue(abs(expected - actual) < 0.001, message)
 }
