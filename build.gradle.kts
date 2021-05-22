@@ -4,12 +4,14 @@ plugins {
 }
 
 repositories {
+    mavenCentral()
     jcenter()
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+    implementation("com.malinskiy:adam:0.2.5")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
@@ -21,7 +23,7 @@ application {
 }
 
 tasks {
-    val compilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.time.ExperimentalTime")
+    val compilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xopt-in=kotlin.time.ExperimentalTime", "-Xinline-classes")
     compileKotlin {
         kotlinOptions.freeCompilerArgs += compilerArgs
     }
