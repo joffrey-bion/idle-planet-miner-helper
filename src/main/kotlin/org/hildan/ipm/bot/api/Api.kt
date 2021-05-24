@@ -1,5 +1,6 @@
 package org.hildan.ipm.bot.api
 
+import org.hildan.ipm.bot.adb.Adb
 import org.hildan.ipm.bot.ui.ButtonState
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
@@ -9,6 +10,7 @@ import org.hildan.ipm.helper.galaxy.resources.OreType
  * Parent of all screens, navbar always visible.
  */
 interface BaseScreen {
+    val adb: Adb
     suspend fun goToResources(): ResourcesScreen
     suspend fun goToProduction(): ProductionScreen
     suspend fun goToProjects(): ProjectsScreen

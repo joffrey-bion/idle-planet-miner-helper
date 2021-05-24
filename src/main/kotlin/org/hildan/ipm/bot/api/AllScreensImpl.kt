@@ -13,7 +13,7 @@ import kotlin.time.seconds
 // TODO logging?
 
 class AllScreensImpl(
-    private val adb: Adb,
+    override val adb: Adb,
 ) : GalaxyScreen, PlanetScreen, ColonyDialog, ColonizationBonusOptionsDialog, ResourcesScreen, ProductionScreen,
     RecipeSelectionDialog, ProjectsScreen, ProjectResearchDialog, ManagersScreen, MothershipScreen, SellGalaxyDialog,
     SellGalaxyConfirmationDialog, ArkBonusClaimDialog, RoversDialog, RoverDiscoveriesDialog {
