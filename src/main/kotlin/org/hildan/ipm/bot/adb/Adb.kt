@@ -93,8 +93,7 @@ private suspend fun Adb.awaitPixelColor(
         }
     }
     if (totalAwaited > 2.seconds) {
-       System.err.println("WARN: long pixel color await time of $totalAwaited for color $targetColor at " +
-               "$resolvedCoords (actual color is currently ${pixelColor(coords)})")
+       System.err.println("WARN: awaited $totalAwaited for color $targetColor at $resolvedCoords")
     }
 }
 
