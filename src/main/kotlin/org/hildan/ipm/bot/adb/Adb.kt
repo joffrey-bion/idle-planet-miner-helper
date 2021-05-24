@@ -8,10 +8,14 @@ import com.malinskiy.adam.request.device.ListDevicesRequest
 import com.malinskiy.adam.request.framebuffer.BufferedImageScreenCaptureAdapter
 import com.malinskiy.adam.request.framebuffer.ScreenCaptureRequest
 import com.malinskiy.adam.request.shell.v2.ShellCommandRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.hildan.ipm.bot.ui.*
 import java.awt.image.BufferedImage
+import java.nio.file.Path
+import javax.imageio.ImageIO
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -114,5 +118,9 @@ private suspend fun Adb.pixelColor(coords: Coords): Color {
 }
 
 private suspend fun Adb.takeScreenshot() = adb.execute(ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()), device.serial)
+
+suspend fun Adb.saveScreenshot(path: Path) = withContext(Dispatchers.IO) {
+    ImageIO.write(takeScreenshot(), "png", path.toFile())
+}
 
 private fun BufferedImage.colorAt(coords: Coords) = Color(getRGB(coords.x, coords.y).toUInt())
