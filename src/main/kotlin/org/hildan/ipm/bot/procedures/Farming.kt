@@ -114,7 +114,6 @@ private suspend fun BaseScreen.setupCopperAndIronProduction() = //
         .tapSmelter2()
         .buyRecipe2()
         .selectRecipe2() // select iron bars
-        .also { delay(1000) }
 
 private suspend fun BaseScreen.assignManagers() = //
     goToManagers()
