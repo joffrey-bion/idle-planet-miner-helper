@@ -78,7 +78,7 @@ private suspend fun ScreenWithGalaxyTopVisible.upgradeInitialPlanets() = //
         .startAutoSell(OreType.COPPER)
         .tapBalor()
         .upgradePlanetMSCM()
-        .also { delay(100) } // sometimes we miss drasta click due to lag (or money?)
+        .also { delay(300) } // sometimes we miss drasta click due to lag (or money?)
         .tapDrasta()
         .upgradePlanetMSCM()
         .goToResources()
