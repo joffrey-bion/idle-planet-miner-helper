@@ -24,7 +24,9 @@ fun main(): Unit = runBlocking {
     screen.runCreditsFarmingLoop()
 }
 
+// FIXME detect daily task and do not confuse with Ark bonus
 // TODO detect rover, claim and relaunch
+// TODO save screenshot file with galaxy value and credits before sell
 
 // TODO fully type-safe state
 // - navbar is always visible (even in managers screen, even with dialogs)
