@@ -13,9 +13,12 @@ internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing
         checkAndBuyArkBonus()
         println(">>> Cycle start")
         val (screen, cycleDuration) = measureTimedValue {
-            goToMothership().sellGalaxy().reach10M()
+            goToMothership().sellGalaxy().reach10M().also {
+                println("Waiting for better galaxy value before next sell")
+                delay(6000) // let GV go over a couple more credits thresholds
+            }
         }
-        println(">>> Full cycle duration: $cycleDuration")
+        println(">>> Full cycle duration: $cycleDuration\n")
         screen
     }
 }
@@ -28,7 +31,7 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .also { println("Upgrading Balor") }
         .tapBalor()
         .upgradePlanetMSCM()
-        .also { delay(300) } // sometimes we miss drasta click due to lag (or money?)
+        .also { delay(500) } // sometimes we miss drasta click due to lag (or money?)
         .also { println("Upgrading Drasta") }
         .tapDrasta()
         .upgradePlanetMSCM()
@@ -69,7 +72,7 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .goToResources()
         .startAutoSell(OreType.COPPER) // we don't auto-sell iron to let prod at full speed
         .also { println("Round #2 of planet upgrades") }
-        .planetUpgradeRound()
+        .planetMCUpgradeRound()
         .also { println("Unlocking beacon") }
         .goToProjects()
         .researchProject(Project.BEACON)
@@ -89,10 +92,11 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .goToProjects()
         .researchProject(Project.CRAFTER)
         .also { println("Setting up crafters") }
-        .setupCrafters()
+        .setupCraftersWithIronNails()
         .also { println("Final tweaks") }
         .goToResources()
         .startAutoSell(OreType.LEAD)
+            // TODO auto-sell iron nails here
         .closeResources()
         .tapDholen()
         .upgradeMine()
@@ -127,7 +131,7 @@ private suspend fun BaseScreen.assignManagers() = //
         .nextManagedPlanet()
         .assignFirstManager()
 
-private suspend fun ScreenWithGalaxyTopVisible.planetUpgradeRound() = //
+private suspend fun ScreenWithGalaxyTopVisible.planetMCUpgradeRound() = //
     tapBalor()
         .upgradeMine()
         .upgradeCargo()
@@ -140,7 +144,7 @@ private suspend fun ScreenWithGalaxyTopVisible.planetUpgradeRound() = //
         .upgradeMine()
         .upgradeCargo()
 
-private suspend fun BaseScreen.setupCrafters() = //
+private suspend fun BaseScreen.setupCraftersWithIronNails() = //
     goToProduction()
         .switchToCrafting()
         .tapCrafter1()
