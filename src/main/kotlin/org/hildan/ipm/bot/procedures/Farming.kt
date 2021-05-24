@@ -4,8 +4,10 @@ import kotlinx.coroutines.delay
 import org.hildan.ipm.bot.api.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.resources.OreType
+import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
+import kotlin.time.seconds
 
 @OptIn(ExperimentalTime::class)
 internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing {
@@ -14,8 +16,9 @@ internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing
         println(">>> Cycle start")
         val (screen, cycleDuration) = measureTimedValue {
             goToMothership().sellGalaxy(saveScreenshot = true).reach10M().also {
-                println("Waiting for better galaxy value before next sell")
-                delay(6000) // let GV go over a couple more credits thresholds
+                val randomWait = Random.nextInt(until = 20).seconds
+                println("Waiting for better galaxy value before next sell ($randomWait)")
+                delay(randomWait) // let GV go over a couple more credits thresholds
             }
         }
         println(">>> Full cycle duration: $cycleDuration\n")
