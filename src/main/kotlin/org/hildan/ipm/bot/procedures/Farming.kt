@@ -5,18 +5,18 @@ import org.hildan.ipm.bot.api.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 @OptIn(ExperimentalTime::class)
-internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop() {
-    var screen = this
-    while (true) {
+internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing {
+    infiniteLoop {
         checkAndBuyArkBonus()
         println(">>> Cycle start")
-        val cycleDuration = measureTime {
-            screen = goToMothership().sellGalaxy().reach10M()
+        val (screen, cycleDuration) = measureTimedValue {
+            goToMothership().sellGalaxy().reach10M()
         }
         println(">>> Full cycle duration: $cycleDuration")
+        screen
     }
 }
 

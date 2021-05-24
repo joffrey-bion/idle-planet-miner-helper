@@ -3,6 +3,13 @@ package org.hildan.ipm.bot.api
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 
+// this ensures the type safety of the loop body
+internal inline fun <T : BaseScreen> T.infiniteLoop(body: T.() -> T): Nothing {
+    while (true) {
+        body()
+    }
+}
+
 internal suspend fun PlanetScreen.upgradePlanetMSCM() = upgradeMine().upgradeShip().upgradeCargo().upgradeMine()
 
 internal suspend fun ProjectsScreen.researchProject(project: Project) = tapProject(project).confirmResearch()

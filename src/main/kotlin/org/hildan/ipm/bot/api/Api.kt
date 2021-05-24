@@ -16,7 +16,7 @@ interface BaseScreen {
     suspend fun goToMothership(): MothershipScreen
 }
 
-interface ScreenWithArkBonusVisible {
+interface ScreenWithArkBonusVisible : BaseScreen {
     suspend fun isArkBonusPresent(): Boolean
     suspend fun tapArkBonus(): ArkBonusClaimDialog
 }

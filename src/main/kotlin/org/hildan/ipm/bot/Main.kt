@@ -9,7 +9,7 @@ import org.hildan.ipm.bot.procedures.*
 import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
 import kotlin.time.ExperimentalTime
 
-fun main() = runBlocking {
+fun main(): Unit = runBlocking {
     StartAdbInteractor().execute()
 
     val adb = connectFirstAdbDevice(OnePlus5CoordsMap)

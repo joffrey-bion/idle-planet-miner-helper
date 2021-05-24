@@ -7,22 +7,23 @@ import org.hildan.ipm.bot.api.ColonyDialog
 import org.hildan.ipm.bot.api.PlanetScreen
 import org.hildan.ipm.bot.api.ScreenWithArkBonusVisible
 import org.hildan.ipm.bot.api.checkAndBuyArkBonus
+import org.hildan.ipm.bot.api.infiniteLoop
 import org.hildan.ipm.bot.ui.*
 import java.time.Instant
 import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 import kotlin.time.seconds
 
-internal suspend fun ScreenWithArkBonusVisible.run6minArkLoop() {
+internal suspend fun ScreenWithArkBonusVisible.run6minArkLoop(): Nothing {
     while (true) {
         val gotBonus = checkAndBuyArkBonus()
         delay(if (gotBonus) 6.minutes else 10.seconds)
     }
 }
 
-internal suspend fun PlanetScreen.runTournamentBackground() {
+internal suspend fun PlanetScreen.runTournamentBackground(): Nothing {
     var lastArkBonus = Instant.MIN
-    while (true) {
+    infiniteLoop {
         if (lastArkBonus < Instant.now().minusSeconds(6 * 60)) {
             val bonusReceived = checkAndBuyArkBonus()
             if (bonusReceived) {
@@ -37,13 +38,11 @@ internal suspend fun PlanetScreen.runTournamentBackground() {
     }
 }
 
-internal suspend fun ColonyDialog.runColonyLoop() {
-    var screen = this
-    while (true) {
-        screen = when (readColonyButtonState()) {
+internal suspend fun ColonyDialog.runColonyLoop(): Nothing {
+    infiniteLoop {
+        when (readColonyButtonState()) {
             ButtonState.ENABLED -> tapColonize().pickMineColonizationBonus()
             ButtonState.DISABLED, ButtonState.INVISIBLE -> nextColonizedPlanet()
         }
-        delay(20)
     }
 }
