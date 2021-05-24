@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.hildan.ipm.bot.ui.*
 import java.awt.image.BufferedImage
+import java.net.ConnectException
 import java.nio.file.Path
 import javax.imageio.ImageIO
 import kotlin.time.Duration
@@ -27,8 +28,13 @@ private const val DEBUG_LOGS = false
 
 suspend fun connectFirstAdbDevice(coords: CoordsMap): Adb {
     val adb = AndroidDebugBridgeClientFactory().build()
-    val device = adb.execute(request = ListDevicesRequest()).firstOrNull()
-        ?: error("No devices found, run 'adb connect localhost:63075' (or maybe other port) to attach bluestack")
+    val device = try {
+        adb.execute(request = ListDevicesRequest()).firstOrNull()
+            ?: error("No devices found, run 'adb connect localhost:<BS_PORT>' to attach Bluestacks to the adb server")
+    } catch (e: ConnectException) {
+        error("No adb server running, please run 'adb connect localhost:<BS_PORT>' to start the adb server and " +
+                "attach Bluestacks to it.")
+    }
     return Adb(adb, device, coords)
 }
 

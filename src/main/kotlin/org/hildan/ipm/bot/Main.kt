@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 package org.hildan.ipm.bot
 
-import com.malinskiy.adam.interactor.StartAdbInteractor
 import kotlinx.coroutines.runBlocking
 import org.hildan.ipm.bot.adb.*
 import org.hildan.ipm.bot.api.*
@@ -10,8 +9,6 @@ import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
 import kotlin.time.ExperimentalTime
 
 fun main(): Unit = runBlocking {
-    StartAdbInteractor().execute()
-
     val adb = connectFirstAdbDevice(OnePlus5CoordsMap)
     val screen = AllScreensImpl(adb) as GalaxyScreen // change this to match whatever screen is currently running
 
