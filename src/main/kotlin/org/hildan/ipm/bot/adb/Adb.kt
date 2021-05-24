@@ -16,6 +16,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 import kotlin.time.milliseconds
+import kotlin.time.minutes
 import kotlin.time.seconds
 
 private const val DEBUG_LOGS = false
@@ -65,7 +66,7 @@ private suspend fun Adb.shell(cmd: String) {
 internal suspend fun Adb.tapWhenEnabled(
     button: Button,
     retryDelay: Duration = 200.milliseconds,
-    timeout: Duration = Duration.INFINITE,
+    timeout: Duration = 1.minutes,
     timeoutMsg: String = "WARN: tap was skipped because the button stayed disabled for more than $timeout"
 ) {
     withTimeoutOrNull(timeout) {
