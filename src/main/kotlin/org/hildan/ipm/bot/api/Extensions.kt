@@ -27,7 +27,7 @@ internal suspend fun MothershipScreen.sellGalaxy() = tapSellGalaxy().tapRegularS
 internal suspend fun ManagersScreen.clearManagers() {
     repeat(Planet.values().size) {
         removeAssignedManager()
-        nextPlanet()
+        nextManagedPlanet()
     }
 }
 
@@ -37,6 +37,6 @@ internal suspend fun ManagersScreen.clearManagers() {
 internal suspend fun ManagersScreen.assignManagers() {
     repeat(Planet.values().size) {
         assignFirstManager()
-        prevPlanet()
+        prevManagedPlanet()
     }
 }

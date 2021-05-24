@@ -85,13 +85,16 @@ private suspend fun Adb.awaitPixelColor(
     val totalAwaited = measureTime {
         var color = pixelColor(resolvedCoords)
         while (color != targetColor) {
-            println("Waiting for color $targetColor, got $color")
+            if (DEBUG_LOGS) {
+                println("Waiting for color $targetColor, got $color")
+            }
             delay(retryDelay)
             color = pixelColor(resolvedCoords)
         }
     }
     if (totalAwaited > 2.seconds) {
-       System.err.println("WARN: long pixel color await time of $totalAwaited for color $targetColor at $resolvedCoords")
+       System.err.println("WARN: long pixel color await time of $totalAwaited for color $targetColor at " +
+               "$resolvedCoords (actual color is currently ${pixelColor(coords)})")
     }
 }
 

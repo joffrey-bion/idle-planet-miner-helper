@@ -54,7 +54,7 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .also { println("Round #3 of planet upgrades") }
         .tapDrasta()
         .upgradeMine()
-        .tapNext()
+        .nextPlanet()
         .upgradeMine()
         .also { println("Unlocking crafter") }
         .goToResources()
@@ -91,8 +91,8 @@ private suspend fun ScreenWithGalaxyTopVisible.upgradeInitialPlanets() = //
         .closePlanet()
         .tapDholen()
         .upgradePlanetMSCM()
-        .tapNext()
-        .tapNext()
+        .nextPlanet()
+        .nextPlanet()
         .upgradeMine()
 
 private suspend fun BaseScreen.setupAutoSellForProjectsProgress() = //
@@ -119,23 +119,23 @@ private suspend fun BaseScreen.setupCopperAndIronProduction() = //
 private suspend fun BaseScreen.assignManagers() = //
     goToManagers()
         .assignFirstManager()
-        .nextPlanet()
+        .nextManagedPlanet()
         .assignFirstManager()
-        .nextPlanet()
+        .nextManagedPlanet()
         .assignFirstManager()
-        .nextPlanet()
+        .nextManagedPlanet()
         .assignFirstManager()
 
 private suspend fun ScreenWithGalaxyTopVisible.planetUpgradeRound() = //
     tapBalor()
         .upgradeMine()
         .upgradeCargo()
-        .tapNext() // Drasta
+        .nextPlanet() // Drasta
         .upgradeCargo()
-        .tapNext() // Anadius
+        .nextPlanet() // Anadius
         .upgradeMine()
         .upgradeCargo()
-        .tapNext() // Dholen
+        .nextPlanet() // Dholen
         .upgradeMine()
         .upgradeCargo()
 

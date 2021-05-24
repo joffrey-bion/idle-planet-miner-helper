@@ -46,7 +46,7 @@ class AllScreensImpl(
         else -> error("$planet is not visible in the zoomed galaxy screen, sorry")
     }
 
-    override suspend fun tapNext(): PlanetScreen = tap { planetButtons.next }
+    override suspend fun nextPlanet(): PlanetScreen = tap { planetButtons.next }
     override suspend fun tapMine(): PlanetScreen = tap { planetButtons.mine }
     override suspend fun tapShip(): PlanetScreen = tap { planetButtons.ship }
     override suspend fun tapCargo(): PlanetScreen = tap { planetButtons.cargo }
@@ -70,9 +70,13 @@ class AllScreensImpl(
     override suspend fun openManager(): ManagersScreen = tap { planetButtons.manager }
     override suspend fun closePlanet(): GalaxyScreen = tap { planetButtons.close }
 
+    override suspend fun readColonyButtonState(): ButtonState {
+        return adb.buttonState(Buttons.colonizeDialog.colonize)
+    }
     override suspend fun tapColonize(): ColonizationBonusOptionsDialog = tap { coloniesDialog.colonizeButton }
+    override suspend fun nextColonizedPlanet(): ColonyDialog = tap { coloniesDialog.nextPlanet }
 
-    override suspend fun pickMineColonizationBonus(): PlanetScreen {
+    override suspend fun pickMineColonizationBonus(): ColonyDialog {
         adb.tapWhenEnabled(Buttons.colonizeDialog.upgradeMine)
         return this
     }
@@ -117,8 +121,8 @@ class AllScreensImpl(
         else -> error("Project $this is not supported")
     }
 
-    override suspend fun prevPlanet(): ManagersScreen = tap { managers.prevPlanet }
-    override suspend fun nextPlanet(): ManagersScreen = tap { managers.nextPlanet }
+    override suspend fun prevManagedPlanet(): ManagersScreen = tap { managers.prevPlanet }
+    override suspend fun nextManagedPlanet(): ManagersScreen = tap { managers.nextPlanet }
     override suspend fun assignFirstManager(): ManagersScreen = tap { managers.firstManager }
     override suspend fun removeAssignedManager(): ManagersScreen = tap { managers.assignedManager }
 

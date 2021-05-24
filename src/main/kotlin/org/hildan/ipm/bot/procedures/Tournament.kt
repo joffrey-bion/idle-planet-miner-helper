@@ -3,21 +3,24 @@
 package org.hildan.ipm.bot.procedures
 
 import kotlinx.coroutines.delay
-import org.hildan.ipm.bot.adb.*
+import org.hildan.ipm.bot.api.ColonyDialog
+import org.hildan.ipm.bot.api.PlanetScreen
+import org.hildan.ipm.bot.api.ScreenWithArkBonusVisible
+import org.hildan.ipm.bot.api.checkAndBuyArkBonus
 import org.hildan.ipm.bot.ui.*
 import java.time.Instant
 import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 import kotlin.time.seconds
 
-internal suspend fun Adb.run6minArkLoop() {
+internal suspend fun ScreenWithArkBonusVisible.run6minArkLoop() {
     while (true) {
         val gotBonus = checkAndBuyArkBonus()
         delay(if (gotBonus) 6.minutes else 10.seconds)
     }
 }
 
-internal suspend fun Adb.runTournamentBackground() {
+internal suspend fun PlanetScreen.runTournamentBackground() {
     var lastArkBonus = Instant.MIN
     while (true) {
         if (lastArkBonus < Instant.now().minusSeconds(6 * 60)) {
@@ -27,39 +30,20 @@ internal suspend fun Adb.runTournamentBackground() {
             }
         }
         // we don't care if buttons are disabled here
-        tap { planetButtons.mine }
-        tap { planetButtons.ship }
-        tap { planetButtons.cargo }
-        tap { planetButtons.next }
+        tapMine()
+        tapShip()
+        tapCargo()
+        nextPlanet()
     }
 }
 
-internal suspend fun Adb.runColonyLoop() {
+internal suspend fun ColonyDialog.runColonyLoop() {
+    var screen = this
     while (true) {
-        when (buttonState(Buttons.colonizeDialog.colonize)) {
-            ButtonState.ENABLED -> {
-                tap { coloniesDialog.colonizeButton }
-                tapWhenEnabled(Buttons.colonizeDialog.upgradeMine)
-            }
-            ButtonState.DISABLED, ButtonState.INVISIBLE -> {
-                tap { coloniesDialog.nextPlanet }
-            }
+        screen = when (readColonyButtonState()) {
+            ButtonState.ENABLED -> tapColonize().pickMineColonizationBonus()
+            ButtonState.DISABLED, ButtonState.INVISIBLE -> nextColonizedPlanet()
         }
         delay(20)
     }
 }
-
-internal suspend fun Adb.checkAndBuyArkBonus(): Boolean {
-    print("Checking Ark bonus... ")
-    val bonusPresent = isArkBonusPresent()
-    if (bonusPresent) {
-        println("Available! Let's buy.")
-        tap { arkBonusIcon }
-        tapWhenEnabled(Buttons.arkClaim)
-    } else {
-        println("Nope.")
-    }
-    return bonusPresent
-}
-
-private suspend fun Adb.isArkBonusPresent(): Boolean = pixelColor { arkBonusIcon } == Colors.arkBonusIcon

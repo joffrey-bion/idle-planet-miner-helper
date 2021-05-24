@@ -1,5 +1,6 @@
 package org.hildan.ipm.bot.api
 
+import org.hildan.ipm.bot.ui.ButtonState
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
@@ -61,7 +62,7 @@ interface SmallNavPanelExpandedScreen : ScreenWithGalaxyTopVisible, ScreenWithRo
 }
 
 interface PlanetScreen : ScreenWithGalaxyTopVisible {
-    suspend fun tapNext(): PlanetScreen
+    suspend fun nextPlanet(): PlanetScreen
 
     /** Simply taps the mine button even if not enabled */
     suspend fun tapMine(): PlanetScreen
@@ -83,11 +84,13 @@ interface PlanetScreen : ScreenWithGalaxyTopVisible {
 }
 
 interface ColonyDialog : BaseScreen {
+    suspend fun readColonyButtonState(): ButtonState
     suspend fun tapColonize(): ColonizationBonusOptionsDialog
+    suspend fun nextColonizedPlanet(): ColonyDialog
 }
 
 interface ColonizationBonusOptionsDialog : BaseScreen {
-    suspend fun pickMineColonizationBonus(): PlanetScreen
+    suspend fun pickMineColonizationBonus(): ColonyDialog
 }
 
 interface ResourcesScreen : SmallNavPanelExpandedScreen {
@@ -125,8 +128,8 @@ interface ProjectResearchDialog : BaseScreen {
 }
 
 interface ManagersScreen : BaseScreen {
-    suspend fun prevPlanet(): ManagersScreen
-    suspend fun nextPlanet(): ManagersScreen
+    suspend fun prevManagedPlanet(): ManagersScreen
+    suspend fun nextManagedPlanet(): ManagersScreen
     suspend fun assignFirstManager(): ManagersScreen
     suspend fun removeAssignedManager(): ManagersScreen
 }

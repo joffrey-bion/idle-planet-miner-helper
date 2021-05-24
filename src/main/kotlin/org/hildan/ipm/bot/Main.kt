@@ -16,9 +16,9 @@ fun main() = runBlocking {
     val screen = AllScreensImpl(adb) as GalaxyScreen // change this to match whatever screen is currently running
 
 //    println(adb.pixelColor { arkClaim })
-//    adb.runColonyLoop()
-//    adb.run6minArkLoop()
-//    adb.runTournamentBackground()
+//    screen.runColonyLoop()
+//    screen.run6minArkLoop()
+//    screen.runTournamentBackground()
 //    screen.clearManagers()
 //    screen.assignManagers()
     screen.runCreditsFarmingLoop()
