@@ -1,12 +1,14 @@
+@file:OptIn(ExperimentalTime::class)
 package org.hildan.ipm.bot.api
 
 import kotlinx.coroutines.delay
 import org.hildan.ipm.bot.ui.*
 import org.hildan.ipm.bot.adb.*
-import org.hildan.ipm.bot.procedures.waitAndTapPlanetButton
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 // TODO logging?
 
@@ -17,8 +19,7 @@ class AllScreensImpl(
     SellGalaxyConfirmationDialog, ArkBonusClaimDialog, RoversDialog, RoverDiscoveriesDialog {
 
     private suspend inline fun <reified T> tap(noinline coords: PlatonicCoords): T {
-        adb.tap(coords)
-        // give some time for the UI to update (it lags sometimes)
+        adb.tap(coords) // give some time for the UI to update (it lags sometimes)
         // FIXME replace by pixel checks in key places
         delay(20)
         return this as T
@@ -51,17 +52,17 @@ class AllScreensImpl(
     override suspend fun tapCargo(): PlanetScreen = tap { planetButtons.cargo }
 
     override suspend fun upgradeMine(): PlanetScreen {
-        adb.waitAndTapPlanetButton(Buttons.planet.upgradeMine)
+        adb.tapWhenEnabled(Buttons.planet.upgradeMine, timeout = 5.seconds)
         return this
     }
 
     override suspend fun upgradeShip(): PlanetScreen {
-        adb.waitAndTapPlanetButton(Buttons.planet.upgradeShip)
+        adb.tapWhenEnabled(Buttons.planet.upgradeShip, timeout = 5.seconds)
         return this
     }
 
     override suspend fun upgradeCargo(): PlanetScreen {
-        adb.waitAndTapPlanetButton(Buttons.planet.upgradeCargo)
+        adb.tapWhenEnabled(Buttons.planet.upgradeCargo, timeout = 5.seconds)
         return this
     }
 
@@ -83,7 +84,7 @@ class AllScreensImpl(
 
     override suspend fun stopAutoSell(resource: OreType): ResourcesScreen = startAutoSell(resource)
 
-    private fun OreType.coords(): PlatonicCoords = when(this) {
+    private fun OreType.coords(): PlatonicCoords = when (this) {
         OreType.COPPER -> ({ ores.copper })
         OreType.IRON -> ({ ores.iron })
         OreType.LEAD -> ({ ores.lead })
@@ -106,7 +107,7 @@ class AllScreensImpl(
         return this
     }
 
-    private fun Project.coords(): PlatonicCoords = when(this) {
+    private fun Project.coords(): PlatonicCoords = when (this) {
         Project.ASTEROID_MINER -> ({ projects.asteroidMiner })
         Project.SMELTER -> ({ projects.smelter })
         Project.MANAGEMENT -> ({ projects.management })

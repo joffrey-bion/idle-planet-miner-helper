@@ -48,3 +48,18 @@ internal suspend fun Adb.runColonyLoop() {
         delay(20)
     }
 }
+
+internal suspend fun Adb.checkAndBuyArkBonus(): Boolean {
+    print("Checking Ark bonus... ")
+    val bonusPresent = isArkBonusPresent()
+    if (bonusPresent) {
+        println("Available! Let's buy.")
+        tap { arkBonusIcon }
+        tapWhenEnabled(Buttons.arkClaim)
+    } else {
+        println("Nope.")
+    }
+    return bonusPresent
+}
+
+private suspend fun Adb.isArkBonusPresent(): Boolean = pixelColor { arkBonusIcon } == Colors.arkBonusIcon
