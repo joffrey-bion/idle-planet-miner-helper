@@ -9,7 +9,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
     implementation("com.malinskiy:adam:0.2.5")
 
