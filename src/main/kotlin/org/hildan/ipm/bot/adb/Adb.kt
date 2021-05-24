@@ -39,7 +39,6 @@ suspend fun Adb.tap(coords: PlatonicCoords) = tap(coords.resolve())
 
 suspend fun Adb.tap(coords: Coords) {
     shell("input tap ${coords.x} ${coords.y}")
-    delay(100.milliseconds) // avoid blowing up during startup animations with ships
 }
 
 suspend fun Adb.longTap(duration: Duration = 1000.milliseconds, coords: PlatonicCoords) =
@@ -54,6 +53,7 @@ private suspend fun Adb.shell(cmd: String) {
         println("adb shell $cmd")
     }
     val result = adb.execute(ShellCommandRequest(cmd), device.serial)
+    delay(100) // ensure command is registered by the device
     if (result.exitCode != 0) error("Non-zero exit code ${result.exitCode} for shell command: $cmd")
 }
 

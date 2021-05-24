@@ -20,8 +20,6 @@ class AllScreensImpl(
 
     private suspend inline fun <reified T> tap(noinline coords: PlatonicCoords): T {
         adb.tap(coords) // give some time for the UI to update (it lags sometimes)
-        // FIXME replace by pixel checks in key places
-        delay(20)
         return this as T
     }
 
