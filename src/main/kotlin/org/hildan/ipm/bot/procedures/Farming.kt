@@ -21,7 +21,32 @@ internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing
 }
 
 private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
-    upgradeInitialPlanets()
+    also { println("Bootstrapping copper auto-sell") }
+        .tapBalor() //
+        .goToResources()
+        .startAutoSell(OreType.COPPER)
+        .also { println("Upgrading Balor") }
+        .tapBalor()
+        .upgradePlanetMSCM()
+        .also { delay(300) } // sometimes we miss drasta click due to lag (or money?)
+        .also { println("Upgrading Drasta") }
+        .tapDrasta()
+        .upgradePlanetMSCM()
+        .goToResources()
+        .startAutoSell(OreType.IRON)
+        .tapBalor()
+        .upgradeMine()
+        .closePlanet()
+        .also { println("Upgrading Anadius") }
+        .tapAnadius()
+        .upgradePlanetMSCM()
+        .closePlanet()
+        .also { println("Upgrading Dholen") }
+        .tapDholen()
+        .upgradePlanetMSCM()
+        .nextPlanet()
+        .nextPlanet()
+        .upgradeMine()
         .also { println("Preparing auto-sell for project/prod setup") }
         .setupAutoSellForProjectsProgress()
         .also { println("Unlocking smelter project") }
@@ -31,7 +56,7 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .also { println("Unlocking management project") }
         .goToProjects()
         .researchProject(Project.MANAGEMENT)
-        .also { println("Setting up managers") }
+        .also { println("Assigning managers") }
         .assignManagers()
         .also { println("Unlocking telescope") }
         .goToProjects()
@@ -72,29 +97,6 @@ private suspend fun ScreenWithGalaxyTopVisible.reach10M() = //
         .tapDholen()
         .upgradeMine()
 
-private suspend fun ScreenWithGalaxyTopVisible.upgradeInitialPlanets() = //
-    tapBalor()
-        .goToResources()
-        .startAutoSell(OreType.COPPER)
-        .tapBalor()
-        .upgradePlanetMSCM()
-        .also { delay(300) } // sometimes we miss drasta click due to lag (or money?)
-        .tapDrasta()
-        .upgradePlanetMSCM()
-        .goToResources()
-        .startAutoSell(OreType.IRON)
-        .tapBalor()
-        .upgradeMine()
-        .closePlanet()
-        .tapAnadius()
-        .upgradePlanetMSCM()
-        .closePlanet()
-        .tapDholen()
-        .upgradePlanetMSCM()
-        .nextPlanet()
-        .nextPlanet()
-        .upgradeMine()
-
 private suspend fun BaseScreen.setupAutoSellForProjectsProgress() = //
     goToResources()
         .startAutoSell(OreType.LEAD)
@@ -129,7 +131,7 @@ private suspend fun ScreenWithGalaxyTopVisible.planetUpgradeRound() = //
     tapBalor()
         .upgradeMine()
         .upgradeCargo()
-        .nextPlanet() // Drasta
+        .nextPlanet() // Drasta (mine is never affordable at that point)
         .upgradeCargo()
         .nextPlanet() // Anadius
         .upgradeMine()
@@ -144,6 +146,6 @@ private suspend fun BaseScreen.setupCrafters() = //
         .tapCrafter1()
         .buyRecipe2()
         .selectRecipe2()
-        .buySmelter2()
+        .buyCrafter2()
         .tapCrafter2()
         .selectRecipe2()
