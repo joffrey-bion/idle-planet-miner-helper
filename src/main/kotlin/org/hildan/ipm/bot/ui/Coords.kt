@@ -1,24 +1,28 @@
-package org.hildan.ipm.bot
+package org.hildan.ipm.bot.ui
 
-// Tail events:
-// adb shell getevent -l
+data class Coords(val x: Int, val y: Int) {
+    override fun toString(): String = "($x, $y)"
+}
 
-data class Coords(val x: Int, val y: Int)
+typealias PlatonicCoords = CoordsMap.() -> Coords
 
-interface IpmCoords {
-    val arkBonusButton: Coords
+interface CoordsMap {
+    val arkBonusIcon: Coords
     val arkClaim: Coords
+    val rover: RoverCoords
 
     val planets: PlanetCoords
     val planetButtons: PlanetButtonsCoords
 
     val navbar: NavbarCoords
+    val closeNavPanel: Coords
 
     val ores: OresCoords
     val production: ProductionCoords
     val projects: ProjectCoords
     val managers: ManagersCoords
     val mothership: MothershipCoords
+    val coloniesDialog: ColoniesCoords
 }
 
 interface PlanetCoords {
@@ -35,6 +39,14 @@ interface PlanetButtonsCoords {
     val manager: Coords
     val next: Coords
     val close: Coords
+    val colony: Coords
+}
+
+interface ColoniesCoords {
+    val colonizeButton: Coords
+    val upgradeMineButton: Coords
+    val nextPlanet: Coords
+    val close: Coords
 }
 
 interface NavbarCoords {
@@ -49,14 +61,13 @@ interface OresCoords {
     val copper: Coords
     val iron: Coords
     val lead: Coords
-    val close: Coords
 }
 
 interface ProductionCoords {
     val smeltButton: Coords
     val craftButton: Coords
-    val selectRecipe1Button: Coords
-    val selectRecipe2Button: Coords
+    val slot1RecipeButton: Coords
+    val slot2RecipeButton: Coords
 
     val recipePicker: RecipePickerCoords
 }
@@ -74,28 +85,49 @@ interface ProjectCoords {
     val beacon: Coords
     val crafter: Coords
 
-    val closeProjects: Coords
     val researchDialogConfirm: Coords
 }
 
 interface ManagersCoords {
     val firstManager: Coords
-    val next: Coords
+    val assignedManager: Coords
+    val nextPlanet: Coords
+    val prevPlanet: Coords
 }
 
 interface MothershipCoords {
-    val sellButton: Coords
-    val sellDialog: SellDialogCoords
+    val sellGalaxyButton: Coords
+    val sellGalaxyDialog: GalaxySellDialogCoords
+    val confirmSellDialog: ConfirmSellDialogCoords
 }
 
-interface SellDialogCoords {
-    val sellButton: Coords
-    val confirmSellButton: Coords
+interface GalaxySellDialogCoords {
+    val regularSellButton: Coords
 }
 
-object OnePlus5Coords : IpmCoords {
-    override val arkBonusButton = Coords(850, 305)
+interface ConfirmSellDialogCoords {
+    val confirmButton: Coords
+}
+
+interface RoverCoords {
+    val roverDot: Coords
+    val roversDialog: RoversDialogCoords
+    val roverDiscoveriesDialog: RoverDiscoveriesDialogCoords
+}
+
+interface RoversDialogCoords {
+    val claimBonusButton: Coords
+}
+
+interface RoverDiscoveriesDialogCoords {
+    val claimButton: Coords
+}
+
+object OnePlus5CoordsMap : CoordsMap {
+    override val arkBonusIcon = Coords(850, 305)
     override val arkClaim = Coords(450, 960)
+
+    override val closeNavPanel = Coords(855, 710)
 
     override val planets = object : PlanetCoords {
         override val balor = Coords(230, 230)
@@ -111,6 +143,14 @@ object OnePlus5Coords : IpmCoords {
         override val manager = Coords(810, 600)
         override val next = Coords(340, 600)
         override val close = Coords(850, 470)
+        override val colony = Coords(840, 415)
+    }
+
+    override val coloniesDialog = object : ColoniesCoords {
+        override val colonizeButton = Coords(350, 1350)
+        override val upgradeMineButton = Coords(630, 1000)
+        override val nextPlanet = Coords(570, 410)
+        override val close = Coords(730, 200)
     }
 
     override val navbar = object : NavbarCoords {
@@ -125,15 +165,13 @@ object OnePlus5Coords : IpmCoords {
         override val copper = Coords(350, 880)
         override val iron = Coords(350, 975)
         override val lead = Coords(350, 1070)
-
-        override val close = Coords(855, 710)
     }
 
     override val production = object : ProductionCoords {
         override val smeltButton = Coords(220, 790)
         override val craftButton = Coords(680, 790)
-        override val selectRecipe1Button = Coords(260, 1240)
-        override val selectRecipe2Button = Coords(640, 1240)
+        override val slot1RecipeButton = Coords(260, 1240)
+        override val slot2RecipeButton = Coords(640, 1240)
 
         override val recipePicker = object : RecipePickerCoords {
             override val recipe1 = Coords(320, 600)
@@ -149,20 +187,33 @@ object OnePlus5Coords : IpmCoords {
         override val beacon = Coords(290, 1010)
         override val crafter = Coords(360, 1450)
 
-        override val closeProjects = Coords(855, 710)
         override val researchDialogConfirm = Coords(460, 1150)
     }
 
     override val managers = object : ManagersCoords {
         override val firstManager = Coords(200, 1000)
-        override val next = Coords(430, 400)
+        override val assignedManager = Coords(635, 380) // in the headlight of manager, or in the background when none
+        override val prevPlanet = Coords(100, 400)
+        override val nextPlanet = Coords(430, 400)
     }
 
     override val mothership = object : MothershipCoords {
-        override val sellButton = Coords(140, 825)
-        override val sellDialog = object : SellDialogCoords {
-            override val sellButton = Coords(370, 1025)
-            override val confirmSellButton = Coords(530, 1040)
+        override val sellGalaxyButton = Coords(140, 825)
+        override val sellGalaxyDialog = object : GalaxySellDialogCoords {
+            override val regularSellButton = Coords(370, 1025)
+        }
+        override val confirmSellDialog = object : ConfirmSellDialogCoords {
+            override val confirmButton = Coords(530, 1040)
+        }
+    }
+
+    override val rover = object : RoverCoords {
+        override val roverDot = Coords(875, 460)
+        override val roversDialog = object : RoversDialogCoords {
+            override val claimBonusButton = Coords(720, 590) // not on text
+        }
+        override val roverDiscoveriesDialog = object : RoverDiscoveriesDialogCoords {
+            override val claimButton = Coords(540, 1030) // not on text
         }
     }
 }
