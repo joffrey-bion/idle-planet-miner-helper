@@ -49,17 +49,17 @@ class AllScreensImpl(
     override suspend fun tapCargo(): PlanetScreen = tap { planetButtons.cargo }
 
     override suspend fun upgradeMine(): PlanetScreen {
-        adb.tapWhenEnabled(Buttons.planet.upgradeMine, timeout = 5.seconds)
+        adb.tapWhenEnabled(Buttons.Planet.upgradeMine, timeout = 5.seconds)
         return this
     }
 
     override suspend fun upgradeShip(): PlanetScreen {
-        adb.tapWhenEnabled(Buttons.planet.upgradeShip, timeout = 5.seconds)
+        adb.tapWhenEnabled(Buttons.Planet.upgradeShip, timeout = 5.seconds)
         return this
     }
 
     override suspend fun upgradeCargo(): PlanetScreen {
-        adb.tapWhenEnabled(Buttons.planet.upgradeCargo, timeout = 5.seconds)
+        adb.tapWhenEnabled(Buttons.Planet.upgradeCargo, timeout = 5.seconds)
         return this
     }
 
@@ -68,13 +68,13 @@ class AllScreensImpl(
     override suspend fun closePlanet(): GalaxyScreen = tap { planetButtons.close }
 
     override suspend fun readColonyButtonState(): ButtonState {
-        return adb.buttonState(Buttons.colonizeDialog.colonize)
+        return adb.buttonState(Buttons.ColonizeDialog.colonize)
     }
     override suspend fun tapColonize(): ColonizationBonusOptionsDialog = tap { coloniesDialog.colonizeButton }
     override suspend fun nextColonizedPlanet(): ColonyDialog = tap { coloniesDialog.nextPlanet }
 
     override suspend fun pickMineColonizationBonus(): ColonyDialog {
-        adb.tapWhenEnabled(Buttons.colonizeDialog.upgradeMine)
+        adb.tapWhenEnabled(Buttons.ColonizeDialog.upgradeMine)
         return this
     }
 
@@ -104,7 +104,7 @@ class AllScreensImpl(
 
     override suspend fun tapProject(project: Project): ProjectResearchDialog = tap(project.coords())
     override suspend fun confirmResearch(): ProjectsScreen {
-        adb.tapWhenEnabled(Buttons.projects.research)
+        adb.tapWhenEnabled(Buttons.Projects.research)
         return this
     }
 
@@ -131,11 +131,11 @@ class AllScreensImpl(
     override suspend fun tapArkBonus(): ArkBonusClaimDialog = tap { arkBonusIcon }
     override suspend fun claimArkBonus(): ScreenWithArkBonusVisible = tap { arkClaim }
 
-    override suspend fun isRoverDone(): Boolean = adb.pixelColor { rover.roverDot } == Colors.rover.readyDot
+    override suspend fun isRoverDone(): Boolean = adb.pixelColor { rover.roverDot } == Colors.Rover.readyDot
     override suspend fun tapRover(): RoversDialog = tap { rover.roverDot }
     override suspend fun openRoverDiscoveries(): RoverDiscoveriesDialog = tap { rover.roversDialog.claimBonusButton }
     override suspend fun claimRoverBonus(): ScreenWithRoverVisible {
-        adb.tapWhenEnabled(Buttons.rover.roverDiscoveriesClaim)
+        adb.tapWhenEnabled(Buttons.Rover.roverDiscoveriesClaim)
         return this
     }
 }
