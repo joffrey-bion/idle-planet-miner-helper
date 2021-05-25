@@ -4,129 +4,61 @@ package org.hildan.ipm.bot.adb
 import com.malinskiy.adam.AndroidDebugBridgeClient
 import com.malinskiy.adam.AndroidDebugBridgeClientFactory
 import com.malinskiy.adam.request.device.Device
+import com.malinskiy.adam.request.device.DeviceState
 import com.malinskiy.adam.request.device.ListDevicesRequest
 import com.malinskiy.adam.request.framebuffer.BufferedImageScreenCaptureAdapter
 import com.malinskiy.adam.request.framebuffer.ScreenCaptureRequest
 import com.malinskiy.adam.request.shell.v2.ShellCommandRequest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
-import org.hildan.ipm.bot.ui.*
-import java.awt.image.BufferedImage
+import org.hildan.ipm.bot.ui.CoordsMap
+import org.hildan.ipm.bot.ui.PlatonicCoords
 import java.net.ConnectException
-import java.nio.file.Path
-import javax.imageio.ImageIO
+import kotlin.system.exitProcess
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
 import kotlin.time.milliseconds
-import kotlin.time.minutes
-import kotlin.time.seconds
 
-private const val DEBUG_LOGS = false
-
-suspend fun connectFirstAdbDevice(coords: CoordsMap): Adb {
-    val adb = AndroidDebugBridgeClientFactory().build()
-    val device = try {
-        adb.execute(request = ListDevicesRequest()).firstOrNull()
-            ?: error("No devices found, run 'adb connect localhost:<BS_PORT>' to attach Bluestacks to the adb server")
-    } catch (e: ConnectException) {
-        error("No adb server running, please run 'adb connect localhost:<BS_PORT>' to start the adb server and " +
-                "attach Bluestacks to it.")
-    }
-    return Adb(adb, device, coords)
-}
+private const val NO_DEVICE_ERROR = "No connected device found, please run 'adb connect localhost:<BS_PORT>' to " +
+        "attach Bluestacks to the adb server. You can find the port in Bluestacks Settings > Preferences > Platform " +
+        "settings. Make sure you tick 'Enable Android Debug Bridge (ABD)', the port is displayed in the subtext."
 
 class Adb(
-    val adb: AndroidDebugBridgeClient,
-    val device: Device,
-    val coords: CoordsMap,
+    private val client: AndroidDebugBridgeClient,
+    private val device: Device,
+    private val coords: CoordsMap,
+    private val touchRegistrationSafetyDelay: Duration = 100.milliseconds
 ) {
     fun PlatonicCoords.resolve() = coords.this()
-}
 
-suspend fun Adb.tap(coords: PlatonicCoords) = tap(coords.resolve())
-
-suspend fun Adb.tap(coords: Coords) {
-    shell("input tap ${coords.x} ${coords.y}")
-}
-
-suspend fun Adb.longTap(duration: Duration = 1000.milliseconds, coords: PlatonicCoords) =
-    longTap(duration, coords.resolve())
-
-suspend fun Adb.longTap(duration: Duration = 1000.milliseconds, coords: Coords) {
-    shell("input swipe ${coords.x} ${coords.y} ${coords.x} ${coords.y} ${duration.inMilliseconds.toInt()}")
-}
-
-private suspend fun Adb.shell(cmd: String) {
-    if (DEBUG_LOGS) {
-        println("adb shell $cmd")
+    suspend fun shell(cmd: String) {
+        val result = client.execute(ShellCommandRequest(cmd), device.serial)
+        delay(touchRegistrationSafetyDelay) // ensure command is registered by the device
+        if (result.exitCode != 0) error("Non-zero exit code ${result.exitCode} for shell command: $cmd")
     }
-    val result = adb.execute(ShellCommandRequest(cmd), device.serial)
-    delay(100) // ensure command is registered by the device
-    if (result.exitCode != 0) error("Non-zero exit code ${result.exitCode} for shell command: $cmd")
-}
 
-/**
- * Waits until the given [button] is enabled and then taps it.
- * The color is checked every [retryDelay].
- * If the button doesn't become enabled before [timeout], this method gives up and returns false.
- */
-internal suspend fun Adb.tapWhenEnabled(
-    button: Button,
-    retryDelay: Duration = 200.milliseconds,
-    timeout: Duration = 1.minutes,
-    timeoutMsg: String = "WARN: tap was skipped because the button stayed disabled for more than $timeout"
-) {
-    withTimeoutOrNull(timeout) {
-        awaitPixelColor(button.colors.enabled, retryDelay = retryDelay, coords = button.colorLocation)
-        tap(button.tapLocation)
-    } ?: run {
-        System.err.println(timeoutMsg)
-    }
-}
+    suspend fun screenshot() = client.execute(ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()), device.serial)
 
-private suspend fun Adb.awaitPixelColor(
-    targetColor: Color,
-    retryDelay: Duration = 200.milliseconds,
-    coords: PlatonicCoords,
-) {
-    val resolvedCoords = coords.resolve()
-    val totalAwaited = measureTime {
-        var color = pixelColor(resolvedCoords)
-        while (color != targetColor) {
-            if (DEBUG_LOGS) {
-                println("Waiting for color $targetColor, got $color")
-            }
-            delay(retryDelay)
-            color = pixelColor(resolvedCoords)
+    companion object {
+        suspend fun connectToFirstDevice(coordsMap: CoordsMap): Adb {
+            val client = AndroidDebugBridgeClientFactory().build()
+            val device = client.firstConnectedDevice()
+            println("Connected to device ${device.serial}")
+            return Adb(client, device, coordsMap)
         }
     }
-    if (totalAwaited > 2.seconds) {
-       System.err.println("WARN: awaited $totalAwaited for color $targetColor at $resolvedCoords")
+}
+
+private suspend fun AndroidDebugBridgeClient.firstConnectedDevice(): Device {
+    val device = listDevices().firstOrNull { it.state == DeviceState.DEVICE }
+    if (device == null) {
+        System.err.println(NO_DEVICE_ERROR)
+        exitProcess(1)
     }
+    return device
 }
 
-suspend fun Adb.buttonState(button: Button): ButtonState = pixelColor(button.colorLocation).toState(button.colors)
-
-private fun Color.toState(buttonColors: ButtonStateColors) = when(this) {
-    buttonColors.enabled -> ButtonState.ENABLED
-    buttonColors.disabled -> ButtonState.DISABLED
-    else -> ButtonState.INVISIBLE
+private suspend fun AndroidDebugBridgeClient.listDevices(): List<Device> = try {
+    execute(request = ListDevicesRequest())
+} catch (e: ConnectException) {
+    error("No adb server running, please run 'adb connect localhost:<BS_PORT>' to start the adb server and attach Bluestacks to it.")
 }
-
-suspend fun Adb.pixelColor(coords: CoordsMap.() -> Coords): Color = pixelColor(this.coords.coords())
-
-private suspend fun Adb.pixelColor(coords: Coords): Color {
-    val image = takeScreenshot()
-    return image.colorAt(coords)
-}
-
-private suspend fun Adb.takeScreenshot() = adb.execute(ScreenCaptureRequest(BufferedImageScreenCaptureAdapter()), device.serial)
-
-suspend fun Adb.saveScreenshot(path: Path) = withContext(Dispatchers.IO) {
-    ImageIO.write(takeScreenshot(), "png", path.toFile())
-}
-
-private fun BufferedImage.colorAt(coords: Coords) = Color(getRGB(coords.x, coords.y).toUInt())

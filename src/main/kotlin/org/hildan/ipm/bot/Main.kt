@@ -9,7 +9,7 @@ import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
 import kotlin.time.ExperimentalTime
 
 fun main(): Unit = runBlocking {
-    val adb = connectFirstAdbDevice(OnePlus5CoordsMap)
+    val adb = Adb.connectToFirstDevice(coordsMap = OnePlus5CoordsMap)
     val screen = AllScreensImpl(adb) as GalaxyScreen // change this to match whatever screen is currently running
 
 //    println(adb.pixelColor { arkClaim })
@@ -22,7 +22,7 @@ fun main(): Unit = runBlocking {
 }
 
 // FIXME detect daily task and do not confuse with Ark bonus
-// TODO detect rover, claim and relaunch
+// TODO detect rover, claim and relaunch (don't forget to ensure rover project is researched!)
 
 // TODO fully type-safe state
 // - navbar is always visible (even in managers screen, even with dialogs)
