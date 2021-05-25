@@ -1,7 +1,6 @@
 @file:OptIn(ExperimentalTime::class)
 package org.hildan.ipm.bot.api
 
-import kotlinx.coroutines.delay
 import org.hildan.ipm.bot.ui.*
 import org.hildan.ipm.bot.adb.*
 import org.hildan.ipm.helper.galaxy.Project
@@ -87,9 +86,9 @@ class AllScreensImpl(
     override suspend fun stopAutoSell(resource: OreType): ResourcesScreen = startAutoSell(resource)
 
     private fun OreType.coords(): PlatonicCoords = when (this) {
-        OreType.COPPER -> ({ ores.copper })
-        OreType.IRON -> ({ ores.iron })
-        OreType.LEAD -> ({ ores.lead })
+        OreType.COPPER -> ({ resources.row1 })
+        OreType.IRON -> ({ resources.row2 })
+        OreType.LEAD -> ({ resources.row3 })
         else -> error("Resource $this is not supported")
     }
 

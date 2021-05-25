@@ -17,7 +17,7 @@ interface CoordsMap {
     val navbar: NavbarCoords
     val closeNavPanel: Coords
 
-    val ores: OresCoords
+    val resources: ResourcesCoords
     val production: ProductionCoords
     val projects: ProjectCoords
     val managers: ManagersCoords
@@ -57,10 +57,10 @@ interface NavbarCoords {
     val mothership: Coords
 }
 
-interface OresCoords {
-    val copper: Coords
-    val iron: Coords
-    val lead: Coords
+interface ResourcesCoords {
+    val row1: Coords
+    val row2: Coords
+    val row3: Coords
 }
 
 interface ProductionCoords {
@@ -161,10 +161,10 @@ object OnePlus5CoordsMap : CoordsMap {
         override val mothership = Coords(820, 1560)
     }
 
-    override val ores = object : OresCoords {
-        override val copper = Coords(350, 880)
-        override val iron = Coords(350, 975)
-        override val lead = Coords(350, 1070)
+    override val resources = object : ResourcesCoords {
+        override val row1 = Coords(350, 880)
+        override val row2 = Coords(350, 975)
+        override val row3 = Coords(350, 1070)
     }
 
     override val production = object : ProductionCoords {

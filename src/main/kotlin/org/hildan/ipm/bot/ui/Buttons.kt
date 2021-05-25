@@ -42,6 +42,10 @@ object GalaxySellDialogButtons {
 }
 
 object RoverButtons {
+    val roversClaimBonusButton = Button(
+        tapLocation = { rover.roversDialog.claimBonusButton },
+        colors = Colors.rover.roversClaimBonusButton,
+    )
     val roverDiscoveriesClaim = Button(
         tapLocation = { rover.roverDiscoveriesDialog.claimButton },
         colors = Colors.rover.roverDiscoveriesClaimButton,
