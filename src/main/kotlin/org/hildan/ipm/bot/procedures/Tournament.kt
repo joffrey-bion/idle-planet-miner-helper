@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
-
 package org.hildan.ipm.bot.procedures
 
 import kotlinx.coroutines.delay
@@ -10,7 +8,6 @@ import org.hildan.ipm.bot.api.checkAndBuyArkBonus
 import org.hildan.ipm.bot.api.infiniteLoop
 import org.hildan.ipm.bot.ui.*
 import java.time.Instant
-import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 import kotlin.time.seconds
 

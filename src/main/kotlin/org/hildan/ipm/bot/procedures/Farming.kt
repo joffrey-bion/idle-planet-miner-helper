@@ -5,11 +5,9 @@ import org.hildan.ipm.bot.api.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import kotlin.random.Random
-import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 import kotlin.time.seconds
 
-@OptIn(ExperimentalTime::class)
 internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing {
     infiniteLoop {
         checkAndBuyArkBonus()

@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
 package org.hildan.ipm.bot.api
 
 import org.hildan.ipm.bot.ui.*
@@ -6,7 +5,6 @@ import org.hildan.ipm.bot.adb.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
-import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
 // TODO logging?

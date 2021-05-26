@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalUnsignedTypes::class)
-
 package org.hildan.ipm.bot.ui
 
 inline class Color(private val argb: UInt) {

@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalTime::class)
 package org.hildan.ipm.bot
 
 import kotlinx.coroutines.runBlocking
@@ -6,7 +5,6 @@ import org.hildan.ipm.bot.adb.*
 import org.hildan.ipm.bot.api.*
 import org.hildan.ipm.bot.procedures.*
 import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
-import kotlin.time.ExperimentalTime
 
 fun main(): Unit = runBlocking {
     val adb = Adb.connectToFirstDevice(coordsMap = OnePlus5CoordsMap)

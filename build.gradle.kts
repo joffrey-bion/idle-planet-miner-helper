@@ -23,9 +23,10 @@ application {
 
 tasks {
     val compilerArgs = listOf(
+        "-Xinline-classes",
+        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
         "-Xopt-in=kotlin.RequiresOptIn",
-        "-Xopt-in=kotlin.time.ExperimentalTime",
-        "-Xinline-classes"
+        "-Xopt-in=kotlin.time.ExperimentalTime"
     )
     compileKotlin {
         kotlinOptions.freeCompilerArgs += compilerArgs

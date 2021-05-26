@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalTime::class, ExperimentalUnsignedTypes::class)
 package org.hildan.ipm.bot.adb
 
 import com.malinskiy.adam.AndroidDebugBridgeClient
@@ -15,7 +14,6 @@ import org.hildan.ipm.bot.ui.PlatonicCoords
 import java.net.ConnectException
 import kotlin.system.exitProcess
 import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
 import kotlin.time.milliseconds
 
 private const val NO_DEVICE_ERROR = "No connected device found, please run 'adb connect localhost:<BS_PORT>' to " +
