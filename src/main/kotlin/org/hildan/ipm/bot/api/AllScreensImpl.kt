@@ -125,11 +125,11 @@ class AllScreensImpl(
     override suspend fun tapRegularSell(): SellGalaxyConfirmationDialog = tap { mothership.sellGalaxyDialog.regularSellButton }
     override suspend fun tapConfirmGalaxySell(): MothershipScreen = tap { mothership.confirmSellDialog.confirmButton }
 
-    override suspend fun isArkBonusPresent(): Boolean = adb.pixelColor { arkBonusIcon } == Colors.arkBonusIcon
+    override suspend fun isArkBonusPresent(): Boolean = adb.pixelColorAt { arkBonusIcon } == Colors.arkBonusIcon
     override suspend fun tapArkBonus(): ArkBonusClaimDialog = tap { arkBonusIcon }
     override suspend fun claimArkBonus(): ScreenWithArkBonusVisible = tap { arkClaim }
 
-    override suspend fun isRoverDone(): Boolean = adb.pixelColor { rover.roverDot } == Colors.Rover.readyDot
+    override suspend fun isRoverDone(): Boolean = adb.pixelColorAt { rover.roverDot } == Colors.Rover.readyDot
     override suspend fun tapRover(): RoversDialog = tap { rover.roverDot }
     override suspend fun openRoverDiscoveries(): RoverDiscoveriesDialog = tap { rover.roversDialog.claimBonusButton }
     override suspend fun claimRoverBonus(): ScreenWithRoverVisible {
