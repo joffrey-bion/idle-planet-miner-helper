@@ -41,13 +41,6 @@ private fun Color.toState(buttonColors: ButtonStateColors) = when(this) {
     else -> ButtonState.INVISIBLE
 }
 
-suspend fun Adb.saveScreenshot(path: Path, clipRectangle: Rectangle? = null) {
-    screenshot().maybeClippedTo(clipRectangle).saveTo(path)
-}
-
-private fun BufferedImage.maybeClippedTo(clipRectangle: Rectangle?): BufferedImage =
-    if (clipRectangle != null) clippedTo(clipRectangle) else this
-
 fun BufferedImage.clippedTo(clipRectangle: Rectangle): BufferedImage =
     getSubimage(clipRectangle.x, clipRectangle.y, clipRectangle.width, clipRectangle.height)
 

@@ -1,6 +1,6 @@
 package org.hildan.ipm.bot.ui
 
-inline class Color(private val argb: UInt) {
+inline class Color(val argb: UInt) {
     override fun toString(): String = "0x${argb.toString(16)}"
 }
 

@@ -1,18 +1,20 @@
 package org.hildan.ipm.bot.api
 
 import kotlinx.coroutines.delay
-import org.hildan.ipm.bot.adb.saveScreenshot
+import org.hildan.ipm.bot.adb.clippedTo
+import org.hildan.ipm.bot.ui.Clips
+import org.hildan.ipm.bot.ui.Ocrs
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
-import java.nio.file.Files
-import java.nio.file.Path
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
-private val screenshotsDir = Paths.get("${System.getProperty("user.home")}/.ipm/screenshots").apply {
+private val ipmDataDir = Paths.get("${System.getProperty("user.home")}/.ipm").apply {
     toFile().mkdirs()
 }
+
+private val ipmGalaxyValuesCsv = ipmDataDir.resolve("galaxy-values.csv")
 
 // this ensures the type safety of the loop body
 internal inline fun <T : BaseScreen> T.infiniteLoop(body: T.() -> T): Nothing {
@@ -33,28 +35,48 @@ internal suspend fun ScreenWithArkBonusVisible.checkAndBuyArkBonus(): Boolean {
     val bonusPresent = isArkBonusPresent()
     if (bonusPresent) {
         println("Available! Let's buy.")
-        tapArkBonus().claimArkBonus()
+        claimArkBonus()
     } else {
         println("Nope.")
     }
     return bonusPresent
 }
 
-internal suspend fun MothershipScreen.sellGalaxy(saveScreenshot: Boolean = false): MothershipScreen {
+internal suspend fun MothershipScreen.sellGalaxy(saveGalaxyValue: Boolean = false): MothershipScreen {
     return tapSellGalaxy()
         .apply {
-            if (saveScreenshot) {
+            if (saveGalaxyValue) {
                 delay(500) // wait for dialog
-                adb.saveScreenshot(generateScreenshotPath())
+                saveGalaxyValue()
             }
         }
         .tapRegularSell()
         .tapConfirmGalaxySell()
 }
 
-private fun generateScreenshotPath(): Path {
-    val formattedNow = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmmss"))
-    return Files.createTempFile(screenshotsDir, "screenshot-${formattedNow}_", ".png")
+private suspend fun SellGalaxyDialog.saveGalaxyValue() {
+    val galaxyValueImg = adb.screenshot().clippedTo(Clips.galaxyValueInSellDialog)
+    val galaxyValue = Ocrs.galaxyValueInSellDialog.parse(galaxyValueImg).parseDollarAmount()
+    ipmGalaxyValuesCsv.toFile().appendText("$galaxyValue\n")
+}
+
+private fun String.parseDollarAmount(): BigInteger {
+    require(first() == '$') { "Expected dollar as first character" }
+    val amountText = drop(1).dropLast(1)
+    val unit = last()
+    val power10 = unit.unitPower10()
+    val amount = amountText.toBigDecimalOrNull() ?: error("Bad OCR result, cannot convert '${this}' to a cash amount")
+    return (amount * BigDecimal.TEN.pow(power10)).toBigInteger()
+}
+
+private fun Char.unitPower10(): Int = when (this) {
+    'K' -> 3
+    'M' -> 6
+    'B' -> 9
+    'T' -> 12
+    'q' -> 15
+    'Q' -> 18
+    else -> error("Unsupported unit '${this}'")
 }
 
 internal suspend fun ManagersScreen.clearManagers() {

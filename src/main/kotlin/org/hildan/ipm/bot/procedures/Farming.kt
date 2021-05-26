@@ -13,7 +13,7 @@ internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing
         checkAndBuyArkBonus()
         println(">>> Cycle start")
         val (screen, cycleDuration) = measureTimedValue {
-            goToMothership().sellGalaxy(saveScreenshot = true).reach10M().also {
+            goToMothership().sellGalaxy(saveGalaxyValue = true).reach10M().also {
                 val randomWait = Random.nextInt(until = 20).seconds
                 println("Waiting for better galaxy value before next sell ($randomWait)")
                 delay(randomWait) // let GV go over a couple more credits thresholds
