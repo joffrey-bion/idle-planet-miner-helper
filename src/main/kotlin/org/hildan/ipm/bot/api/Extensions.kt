@@ -2,6 +2,7 @@ package org.hildan.ipm.bot.api
 
 import kotlinx.coroutines.delay
 import org.hildan.ipm.bot.adb.clippedTo
+import org.hildan.ipm.bot.ocr.ocr
 import org.hildan.ipm.bot.ui.Clips
 import org.hildan.ipm.bot.ui.Ocrs
 import org.hildan.ipm.helper.galaxy.Project
@@ -13,8 +14,6 @@ import java.nio.file.Paths
 private val ipmDataDir = Paths.get("${System.getProperty("user.home")}/.ipm").apply {
     toFile().mkdirs()
 }
-
-private val ipmGalaxyValuesCsv = ipmDataDir.resolve("galaxy-values.csv")
 
 // this ensures the type safety of the loop body
 internal inline fun <T : BaseScreen> T.infiniteLoop(body: T.() -> T): Nothing {
@@ -55,14 +54,34 @@ internal suspend fun MothershipScreen.sellGalaxy(saveGalaxyValue: Boolean = fals
 }
 
 private suspend fun SellGalaxyDialog.saveGalaxyValue() {
-    val galaxyValueImg = adb.screenshot().clippedTo(Clips.galaxyValueInSellDialog)
-    val galaxyValue = Ocrs.galaxyValueInSellDialog.parse(galaxyValueImg).parseDollarAmount()
-    ipmGalaxyValuesCsv.toFile().appendText("$galaxyValue\n")
+    val galaxyValue = readGalaxyValue()
+
+    val secondsSinceLastSave = secondsSinceLastSave() ?: return // we don't want to record if we don't know the duration
+    val galaxyValuesCsv = ipmDataDir.resolve("galaxy-values.csv").toFile()
+    if (!galaxyValuesCsv.exists()) {
+        galaxyValuesCsv.appendText("Seconds, Galaxy value\n")
+    }
+    galaxyValuesCsv.appendText("$secondsSinceLastSave, $galaxyValue\n")
+}
+
+private suspend fun SellGalaxyDialog.readGalaxyValue(): BigInteger = adb.screenshot() //
+    .clippedTo(Clips.galaxyValueInSellDialog) //
+    .ocr(Ocrs.galaxyValueInSellDialog) //
+    .parseDollarAmount()
+
+private var lastSave: Long? = null
+
+private fun secondsSinceLastSave(): Double? {
+    val now = System.currentTimeMillis()
+    val last = lastSave
+    lastSave = now
+    return if (last == null) null else (now - last) / 1000.0
 }
 
 private fun String.parseDollarAmount(): BigInteger {
+    require(isNotBlank()) { "Parsed amount is blank, maybe not on the right screen?" }
     require(first() == '$') { "Expected dollar as first character" }
-    val amountText = drop(1).dropLast(1)
+    val amountText = drop(1).dropLast(1).replace('B', '8') // sometimes 8 yields B
     val unit = last()
     val power10 = unit.unitPower10()
     val amount = amountText.toBigDecimalOrNull() ?: error("Bad OCR result, cannot convert '${this}' to a cash amount")

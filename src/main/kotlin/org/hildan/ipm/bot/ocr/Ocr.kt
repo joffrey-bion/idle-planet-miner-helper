@@ -19,6 +19,8 @@ private class RefImage(
     val value: String,
 )
 
+fun BufferedImage.ocr(ocr: Ocr) = ocr.parse(this)
+
 class Ocr(
     private val groupName: String,
     private val focusColor: Color,
@@ -45,7 +47,7 @@ class Ocr(
         var score = 0
         for (i in 0 until width) {
             for (j in 0 until height) {
-                if (getRGB(i, j).isRelevant() == reference.getRGB(i, j).isRelevant()) {
+                if (argb(i, j).isRelevant() == reference.argb(i, j).isRelevant()) {
                     score++
                 }
             }
@@ -56,9 +58,6 @@ class Ocr(
     private fun BufferedImage.splitOnIrrelevantColumns(): List<BufferedImage> =
         getIrrelevantColumnRanges().map { colRange -> subImage(colRange) }
 
-    private fun BufferedImage.subImage(colRange: IntRange): BufferedImage =
-        getSubimage(colRange.first, 0, colRange.last - colRange.first + 1, height)
-
     @OptIn(ExperimentalStdlibApi::class)
     private fun BufferedImage.getIrrelevantColumnRanges(): List<IntRange> {
         val rangeBounds = buildList {
@@ -66,29 +65,22 @@ class Ocr(
             addAll(getIrrelevantColumnsIndices())
             add(width)
         }
-        return rangeBounds.zipWithNext { s, e -> (s + 1) until e }.filter { !it.isEmpty() }
+        return rangeBounds.zipWithNext { start, end -> (start + 1) until end }.filter { !it.isEmpty() }
     }
 
-    private fun BufferedImage.getIrrelevantColumnsIndices(): List<Int> =
-        (0 until width).filter { isIrrelevantColumn(it) }
+    private fun BufferedImage.getIrrelevantColumnsIndices() = (0 until width).filter { col -> !isRelevantColumn(col) }
 
-    private fun BufferedImage.isIrrelevantColumn(col: Int) =
-        (0 until height).none { row -> getRGB(col, row).isRelevant() }
+    private fun BufferedImage.isRelevantColumn(col: Int) = (0 until height).any { row -> argb(col, row).isRelevant() }
 
-    private fun Int.isRelevant(): Boolean {
-        val focus = focusColor.intArgb
-        return closeEnough(alpha, focus.alpha) //
-                && closeEnough(red, focus.red) //
-                && closeEnough(green, focus.green) //
-                && closeEnough(blue, focus.blue)
-    }
+    private fun Color.isRelevant(): Boolean = closeEnough(alpha, focusColor.alpha) //
+            && closeEnough(red, focusColor.red) //
+            && closeEnough(green, focusColor.green) //
+            && closeEnough(blue, focusColor.blue)
 
-    private fun closeEnough(a: Int, b: Int) = abs(a - b) < tolerance
+    private fun closeEnough(a: UByte, b: UByte) = abs(a.toInt() - b.toInt()) < tolerance
 }
 
-private val Int.alpha get() = (this ushr 24) and 0xff
-private val Int.red get() = (this ushr 16) and 0xff
-private val Int.green get() = (this ushr 8) and 0xff
-private val Int.blue get() = this and 0xff
+private fun BufferedImage.subImage(colRange: IntRange): BufferedImage =
+    getSubimage(colRange.first, 0, colRange.last - colRange.first + 1, height)
 
-private val Color.intArgb get() = argb.toInt()
+private fun BufferedImage.argb(col: Int, row: Int) = Color(getRGB(col, row).toUInt())
