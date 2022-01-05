@@ -6,6 +6,23 @@ import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
 
+// - navbar is always visible (even in managers screen, even with dialogs)
+// - all navbar panels are the same height, except managers that are full screen
+// - when a non-manager panel is open, it leaves all relevant top-right icons visible (even with ark bonus active)
+// - ark bonus moves the rover down
+// - planet panel (with colony button) leaves 4 icons in the top-right corner (rover never visible, but the ark is)
+
+// top-right icons:
+// - settings
+// - achievements
+// - permanent mining bonus
+// - daily gifts (when available, once a day) - FIXME detected as ark bonus!!
+// - ark bonus (when available) -
+// - daily tasks
+// - rover (even when it's not unlocked)
+// - tournament (when available)
+// - challenge (when available) - TODO check if before tournament
+
 /**
  * Parent of all screens, navbar always visible.
  */

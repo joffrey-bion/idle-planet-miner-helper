@@ -1,9 +1,10 @@
 package org.hildan.ipm.bot
 
 import kotlinx.coroutines.runBlocking
-import org.hildan.ipm.bot.adb.*
-import org.hildan.ipm.bot.api.*
-import org.hildan.ipm.bot.procedures.*
+import org.hildan.ipm.bot.adb.Adb
+import org.hildan.ipm.bot.api.AllScreensImpl
+import org.hildan.ipm.bot.api.GalaxyScreen
+import org.hildan.ipm.bot.procedures.runCreditsFarmingLoop
 import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
 
 fun main(): Unit = runBlocking {
@@ -21,21 +22,3 @@ fun main(): Unit = runBlocking {
 
 // FIXME detect daily task and do not confuse with Ark bonus
 // TODO detect rover, claim and relaunch (don't forget to ensure rover project is researched!)
-
-// TODO fully type-safe state
-// - navbar is always visible (even in managers screen, even with dialogs)
-// - all navbar panels are the same height, except managers that are full screen
-// - when a non-manager panel is open, it leaves all relevant top-right icons visible (even with ark bonus active)
-// - ark bonus moves the rover down
-// - planet panel (with colony button) leaves 4 icons in the top-right corner (rover never visible, but the ark is)
-
-// top-right icons:
-// - settings
-// - achievements
-// - permanent mining bonus
-// - daily gifts (when available, once a day) - FIXME detected as ark bonus!!
-// - ark bonus (when available)
-// - daily tasks
-// - rover (even when it's not unlocked)
-// - tournament (when available)
-// - challenge (when available) - TODO check if before tournament
