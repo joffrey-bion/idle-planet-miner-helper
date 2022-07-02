@@ -2,11 +2,12 @@ package org.hildan.ipm.bot.api
 
 import kotlinx.coroutines.delay
 import org.hildan.ipm.bot.adb.clippedTo
-import org.hildan.ipm.bot.ocr.ocr
+import org.hildan.ipm.bot.ocr.Ocr
 import org.hildan.ipm.bot.ui.Clips
 import org.hildan.ipm.bot.ui.Ocrs
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
+import java.awt.image.BufferedImage
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.nio.file.Paths
@@ -68,6 +69,8 @@ private suspend fun SellGalaxyDialog.readGalaxyValue(): BigInteger = adb.screens
     .clippedTo(Clips.galaxyValueInSellDialog) //
     .ocr(Ocrs.galaxyValueInSellDialog) //
     .parseDollarAmount()
+
+private fun BufferedImage.ocr(ocr: Ocr) = ocr.parse(this)
 
 private var lastSave: Long? = null
 
