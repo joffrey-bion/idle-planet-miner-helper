@@ -8,8 +8,8 @@ import org.hildan.ipm.bot.api.checkAndBuyArkBonus
 import org.hildan.ipm.bot.api.infiniteLoop
 import org.hildan.ipm.bot.ui.*
 import java.time.Instant
-import kotlin.time.minutes
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 internal suspend fun ScreenWithArkBonusVisible.run6minArkLoop(): Nothing {
     while (true) {

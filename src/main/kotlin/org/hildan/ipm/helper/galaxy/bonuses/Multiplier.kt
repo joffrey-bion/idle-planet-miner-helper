@@ -6,7 +6,8 @@ import org.hildan.ipm.helper.galaxy.resources.Resources
 import kotlin.math.pow
 import kotlin.time.Duration
 
-inline class Multiplier(private val factor: Double) {
+@JvmInline
+value class Multiplier(private val factor: Double) {
 
     operator fun plus(other: Multiplier) = Multiplier(factor + (other.factor - 1))
 

@@ -1,14 +1,12 @@
 package org.hildan.ipm.helper.galaxy
 
-import org.hildan.ipm.helper.galaxy.resources.ItemType.BATTERY
-import org.hildan.ipm.helper.galaxy.resources.OreType.COPPER
-import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.galaxy.resources.of
-import kotlin.time.Duration
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.time.minutes
-import kotlin.time.seconds
+import org.hildan.ipm.helper.galaxy.resources.*
+import org.hildan.ipm.helper.galaxy.resources.ItemType.*
+import org.hildan.ipm.helper.galaxy.resources.OreType.*
+import kotlin.test.*
+import kotlin.time.*
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class GalaxyBonusesTest {
 

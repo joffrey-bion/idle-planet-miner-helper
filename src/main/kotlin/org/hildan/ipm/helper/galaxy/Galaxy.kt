@@ -48,9 +48,9 @@ data class Galaxy private constructor(
         addAll(accessibleItems)
     }
 
-    val maxIncomeSmeltRecipe: AlloyType? = with(bonuses) { accessibleAlloys.maxBy { it.smeltIncome } }
+    val maxIncomeSmeltRecipe: AlloyType? = with(bonuses) { accessibleAlloys.maxByOrNull { it.smeltIncome } }
 
-    val maxIncomeCraftRecipe: ItemType? = with(bonuses) { accessibleItems.maxBy { it.craftIncome } }
+    val maxIncomeCraftRecipe: ItemType? = with(bonuses) { accessibleItems.maxByOrNull { it.craftIncome } }
 
     val totalIncomeRate: ValueRate = with(bonuses) {
         val oreIncome = planets.oreRatesByType.map { (oreType, rate) -> oreType.currentValue * rate }.sumRates()

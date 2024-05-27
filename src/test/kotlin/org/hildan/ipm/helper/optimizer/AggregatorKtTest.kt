@@ -1,16 +1,11 @@
 package org.hildan.ipm.helper.optimizer
 
-import org.hildan.ipm.helper.galaxy.ConstantBonusesSamples
-import org.hildan.ipm.helper.galaxy.Galaxy
-import org.hildan.ipm.helper.galaxy.money.Price
-import org.hildan.ipm.helper.galaxy.money.ValueRate
-import org.hildan.ipm.helper.galaxy.planets.Planet
-import org.hildan.ipm.helper.galaxy.resources.OreType
-import org.hildan.ipm.helper.galaxy.resources.Resources
-import org.hildan.ipm.helper.galaxy.resources.of
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.time.*
+import org.hildan.ipm.helper.galaxy.*
+import org.hildan.ipm.helper.galaxy.money.*
+import org.hildan.ipm.helper.galaxy.planets.*
+import org.hildan.ipm.helper.galaxy.resources.*
+import kotlin.test.*
+import kotlin.time.Duration.Companion.seconds
 
 internal class AggregatorKtTest {
 

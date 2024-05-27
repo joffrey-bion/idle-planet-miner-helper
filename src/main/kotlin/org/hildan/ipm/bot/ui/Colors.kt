@@ -1,6 +1,7 @@
 package org.hildan.ipm.bot.ui
 
-inline class Color(private val argb: UInt) {
+@JvmInline
+value class Color(private val argb: UInt) {
     val alpha get() = (argb shr 24).toUByte()
     val red get() = (argb shr 16).toUByte()
     val green get() = (argb shr 8).toUByte()

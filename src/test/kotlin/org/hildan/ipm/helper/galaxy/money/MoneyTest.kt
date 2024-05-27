@@ -1,9 +1,8 @@
 package org.hildan.ipm.helper.galaxy.money
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.time.milliseconds
-import kotlin.time.seconds
+import kotlin.test.*
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 class MoneyTest {
 

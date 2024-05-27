@@ -5,7 +5,7 @@ import org.hildan.ipm.bot.adb.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.OreType
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.seconds
 
 // TODO logging?
 

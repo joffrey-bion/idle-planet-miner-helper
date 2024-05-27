@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm") version "2.0.0"
     application
 }
 
@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("com.malinskiy:adam:0.2.5")
 
     testImplementation(kotlin("test"))
@@ -21,25 +21,6 @@ application {
     mainClass.set("org.hildan.ipm.helper.MainKt")
 }
 
-tasks {
-    val compilerArgs = listOf(
-        "-Xinline-classes",
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xopt-in=kotlin.RequiresOptIn",
-        "-Xopt-in=kotlin.time.ExperimentalTime"
-    )
-    compileKotlin {
-        kotlinOptions.freeCompilerArgs += compilerArgs
-    }
-    compileTestKotlin {
-        kotlinOptions.freeCompilerArgs += compilerArgs
-    }
-    test {
-        useJUnitPlatform()
-        testLogging {
-            events("failed", "standardOut", "standardError")
-            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-            showStackTraces = true
-        }
-    }
+tasks.test {
+    useJUnitPlatform()
 }

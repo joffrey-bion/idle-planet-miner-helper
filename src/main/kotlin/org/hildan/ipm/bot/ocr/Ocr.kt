@@ -32,7 +32,7 @@ class Ocr(
     fun parse(img: BufferedImage): String =
         img.splitOnIrrelevantColumns().joinToString("") { it.readCharacter() }
 
-    private fun BufferedImage.readCharacter(): String = REF_IMGS.maxByOrNull { matchScore(it.img) }!!.value
+    private fun BufferedImage.readCharacter(): String = REF_IMGS.maxBy { matchScore(it.img) }.value
 
     suspend fun savePartsTo(image: BufferedImage, destinationDir: Path) {
         image.splitOnIrrelevantColumns().forEachIndexed { index, subImg ->

@@ -5,8 +5,8 @@ import org.hildan.ipm.bot.api.*
 import org.hildan.ipm.helper.galaxy.Project
 import org.hildan.ipm.helper.galaxy.resources.OreType
 import kotlin.random.Random
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTimedValue
-import kotlin.time.seconds
 
 internal suspend fun ScreenWithGalaxyTopVisible.runCreditsFarmingLoop(): Nothing {
     infiniteLoop {

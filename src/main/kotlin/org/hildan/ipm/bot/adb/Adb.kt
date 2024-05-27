@@ -14,7 +14,7 @@ import org.hildan.ipm.bot.ui.PlatonicCoords
 import java.net.ConnectException
 import kotlin.system.exitProcess
 import kotlin.time.Duration
-import kotlin.time.milliseconds
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val NO_DEVICE_ERROR = "No connected device found, please run 'adb connect localhost:<BS_PORT>' to " +
         "attach Bluestacks to the adb server. You can find the port in Bluestacks Settings > Preferences > Platform " +

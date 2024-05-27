@@ -41,7 +41,7 @@ class Optimizer(initialGalaxy: Galaxy) {
                 states = states.map { async { it.expand() } }.flatMap { it.await() }
             }
         }
-        val bestEndState = states.minBy { it.timeToRoi1(currentGalaxy) }!!
+        val bestEndState = states.minBy { it.timeToRoi1(currentGalaxy) }
         return bestEndState.actionsFromStart.first()
     }
 }

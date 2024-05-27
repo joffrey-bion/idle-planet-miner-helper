@@ -5,10 +5,10 @@ import org.hildan.ipm.bot.ui.Button
 import org.hildan.ipm.bot.ui.Coords
 import org.hildan.ipm.bot.ui.PlatonicCoords
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.measureTime
-import kotlin.time.milliseconds
-import kotlin.time.minutes
-import kotlin.time.seconds
 
 suspend fun Adb.tap(coords: PlatonicCoords) = tap(coords.resolve())
 
@@ -20,7 +20,7 @@ suspend fun Adb.longTap(duration: Duration = 1000.milliseconds, coords: Platonic
     longTap(duration, coords.resolve())
 
 suspend fun Adb.longTap(duration: Duration = 1000.milliseconds, coords: Coords) {
-    shell("input swipe ${coords.x} ${coords.y} ${coords.x} ${coords.y} ${duration.inMilliseconds.toInt()}")
+    shell("input swipe ${coords.x} ${coords.y} ${coords.x} ${coords.y} ${duration.inWholeMilliseconds.toInt()}")
 }
 
 /**

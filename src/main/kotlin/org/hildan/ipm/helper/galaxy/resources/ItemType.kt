@@ -3,9 +3,9 @@ package org.hildan.ipm.helper.galaxy.resources
 import org.hildan.ipm.helper.galaxy.money.Price
 import org.hildan.ipm.helper.galaxy.resources.AlloyType.*
 import kotlin.time.Duration
-import kotlin.time.hours
-import kotlin.time.minutes
-import kotlin.time.seconds
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 enum class ItemType(
     override val baseValue: Price,

@@ -11,14 +11,15 @@ import org.hildan.ipm.helper.utils.associateMerging
 
 val Project.children: Set<Project> get() = ProjectGraph.children[this] ?: emptySet()
 
-inline class TelescopeLevel(private val value: Int) {
+@JvmInline
+value class TelescopeLevel(private val value: Int) {
 
     val unlockedPlanets: Set<Planet>
         get() = unlockedPlanetsByTelescopeLevel.getValue(this)
 }
 
 private val unlockedPlanetsByTelescopeLevel: Map<TelescopeLevel, Set<Planet>> =
-        Planet.values().toList().associateMerging({ it.telescopeLevel }, { setOf(it) }, { s1, s2 -> s1 + s2 })
+        Planet.entries.associateMerging({ it.telescopeLevel }, { setOf(it) }, { s1, s2 -> s1 + s2 })
 
 enum class Project(
     val requiredResources: Resources,
