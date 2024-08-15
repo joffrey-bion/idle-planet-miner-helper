@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("com.malinskiy.adam:adam:0.5.7")
+    implementation("com.malinskiy.adam:adam:0.5.8")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
