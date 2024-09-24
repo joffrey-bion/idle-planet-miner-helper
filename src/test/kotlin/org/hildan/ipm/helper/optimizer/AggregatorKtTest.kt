@@ -1,5 +1,7 @@
 package org.hildan.ipm.helper.optimizer
 
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.test.*
 import org.hildan.ipm.helper.galaxy.*
 import org.hildan.ipm.helper.galaxy.money.*
 import org.hildan.ipm.helper.galaxy.planets.*
@@ -55,23 +57,30 @@ internal class AggregatorKtTest {
     )
 
     @Test
-    fun `should combine mine upgrades to the same planet`() {
-        val actions = sequenceOf(upgradeBalorMine3, upgradeBalorMine4)
+    fun `should combine mine upgrades to the same planet`() = runTest {
+        val actions = flowOf(upgradeBalorMine3, upgradeBalorMine4)
         val compactedActions = actions.compact().toList()
         assertEquals(listOf(upgradeBalorMine3Then4), compactedActions)
     }
 
     @Test
-    fun `should not combine different types of upgrades`() {
-        val actions = sequenceOf(upgradeBalorMine3, upgradeBalorShip4)
+    fun `should not combine different types of upgrades`() = runTest {
+        val actions = flowOf(upgradeBalorMine3, upgradeBalorShip4)
         val compactedActions = actions.compact().toList()
         assertEquals(listOf(upgradeBalorMine3, upgradeBalorShip4), compactedActions)
     }
 
     @Test
-    fun `should not combine mine upgrades to the different planets`() {
-        val actions = sequenceOf(upgradeBalorMine3, upgradeAnadiusMine4)
+    fun `should not combine mine upgrades to the different planets`() = runTest {
+        val actions = flowOf(upgradeBalorMine3, upgradeAnadiusMine4)
         val compactedActions = actions.compact().toList()
         assertEquals(listOf(upgradeBalorMine3, upgradeAnadiusMine4), compactedActions)
+    }
+
+    @Test
+    fun `mix of combinable and non combinable`() = runTest {
+        val actions = flowOf(upgradeBalorShip4, upgradeBalorMine3, upgradeBalorMine4, upgradeAnadiusMine4)
+        val compactedActions = actions.compact().toList()
+        assertEquals(listOf(upgradeBalorShip4, upgradeBalorMine3Then4, upgradeAnadiusMine4), compactedActions)
     }
 }

@@ -1,13 +1,12 @@
 package org.hildan.ipm.bot
 
-import kotlinx.coroutines.runBlocking
 import org.hildan.ipm.bot.adb.Adb
 import org.hildan.ipm.bot.api.AllScreensImpl
 import org.hildan.ipm.bot.api.GalaxyScreen
 import org.hildan.ipm.bot.procedures.runCreditsFarmingLoop
 import org.hildan.ipm.bot.ui.OnePlus5CoordsMap
 
-fun main(): Unit = runBlocking {
+suspend fun main() {
     val adb = Adb.connectToFirstDevice(coordsMap = OnePlus5CoordsMap)
     val screen = AllScreensImpl(adb) as GalaxyScreen // change this to match whatever screen is currently running
 

@@ -1,24 +1,27 @@
 package org.hildan.ipm.helper.optimizer
 
-fun Sequence<AppliedAction>.compact() = sequence<AppliedAction> {
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+fun Flow<AppliedAction>.compact() = flow {
     var current: AppliedAction? = null
-    for (next in this@compact) {
+    this@compact.collect { next ->
         if (current == null) {
             current = next
         } else {
-            val combined = current.combineWith(next)
+            val combined = current!!.combineWith(next)
             if (combined != null) {
                 current = combined
             } else {
-                yield(current)
+                emit(current!!)
                 current = next
             }
         }
     }
     if (current != null) {
-        yield(current)
+        emit(current!!)
     }
-}
+}.flowOn(Dispatchers.Default)
 
 private fun AppliedAction.combineWith(next: AppliedAction): AppliedAction? = when {
     areCombinableUpgrades(action, next.action) -> combineWith(next) { _, a2 -> a2 }

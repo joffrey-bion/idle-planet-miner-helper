@@ -1,5 +1,6 @@
 package org.hildan.ipm.helper
 
+import kotlinx.coroutines.flow.*
 import org.hildan.ipm.helper.galaxy.bonuses.*
 import org.hildan.ipm.helper.galaxy.planets.Planet
 import org.hildan.ipm.helper.galaxy.resources.AlloyType
@@ -12,7 +13,7 @@ import org.hildan.ipm.helper.optimizer.compact
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
-fun main() {
+suspend fun main() {
     val lukas = Manager("Lukas", PlanetBonus.of(mineRate = 2.5), Bonus.production(smeltSpeed = 1.1))
     val angela = Manager("Angela", PlanetBonus.of(cargo = 4.0), Bonus.allPlanets(shipSpeed = 1.2))
     val nicole = Manager("Nicole", PlanetBonus.of(cargo = 2.0))
@@ -105,11 +106,11 @@ fun main() {
 
     val time = measureTime {
         var gameTime: Duration = Duration.ZERO
-        Optimizer(input.galaxy)
-            .generateActions(searchDepth = 5)
+        Optimizer(searchDepth = 5)
+            .generateActions(initialGalaxy = input.galaxy)
             .compact()
             .take(500)
-            .forEachIndexed { i, action ->
+            .collectIndexed { i, action ->
                 gameTime += action.time
                 println(formatAction(i, gameTime, action))
             }
